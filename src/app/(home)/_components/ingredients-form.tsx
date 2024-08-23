@@ -1,15 +1,25 @@
 "use client";
 
 import { TIngredient } from "@/types";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import IngredientInput from "./ingredient-input";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { nanoid } from "nanoid/non-secure";
+import { experimental_useObject as useObject } from "ai/react";
+import { RecipeSchema } from "@/types/schema";
+import { useRecipeStore } from "@/store";
 
 const IngredientsForm = () => {
   const { register, handleSubmit } = useForm();
+  const addRecipe = useRecipeStore((state) => state.addRecipe);
+
+  const { object, submit, isLoading } = useObject({
+    api: "/api/ai/recipe",
+    schema: RecipeSchema,
+  });
+
   const [inputs, setInputs] = useState<TIngredient[]>([
     {
       name: "ingredient-0",
@@ -25,8 +35,21 @@ const IngredientsForm = () => {
   }, []);
 
   const onSubmit = (data: any) => {
-    console.log(data);
+    const values = Object.values(data);
+    const ingredients = values.toString();
+
+    submit({
+      ingredients,
+    });
   };
+
+  useEffect(() => {
+    if (object?.content && !isLoading) {
+      addRecipe({
+        content: object.content,
+      });
+    }
+  }, [addRecipe, isLoading, object]);
 
   return (
     <div className="flex flex-col gap-4 items-center">
