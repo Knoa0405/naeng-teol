@@ -1,5 +1,5 @@
 export type TIngredient = {
-  name: string;
+  [key in string]: string;
 };
 
 export type TIngredients = TIngredient[];
