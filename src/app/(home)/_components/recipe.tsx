@@ -16,7 +16,7 @@ export const Recipe = () => {
 
   return (
     <Markdown
-      className={cn("flex flex-col p-4 rounded-sm max-w-72", {
+      className={cn("flex flex-col p-4 rounded-sm", {
         "border border-green-600": !!recipe.content,
       })}
       remarkPlugins={[remarkGfm]}
