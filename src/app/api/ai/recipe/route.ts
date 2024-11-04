@@ -1,3 +1,4 @@
+import { AI_MODEL_NAME } from "@/constants";
 import { RecipeSchema } from "@/types/schema";
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
@@ -7,7 +8,7 @@ export const POST = async (req: Request) => {
 
   try {
     const result = await generateObject({
-      model: openai("gpt-3.5-turbo"),
+      model: openai(AI_MODEL_NAME),
       schema: RecipeSchema,
       system:
         "Create Recipe following ingredients in markdown format, korean language",
