@@ -17,7 +17,7 @@ export const POST = async (req: Request) => {
           content: [
             {
               type: "text",
-              text: "Get ingredients from image, return array like: ['ingredient1', 'ingredient2', 'ingredient3'], in korean language",
+              text: "Get ingredients from image in korean language",
             },
             {
               type: "image",
@@ -37,7 +37,7 @@ export const POST = async (req: Request) => {
       }
     );
   } catch (error) {
-    console.log(error, "error");
+    console.error(error, "error in ai/vision/ingredients");
     throw new Error("Error: create recipe in openai api or upload image to S3");
   }
 };
