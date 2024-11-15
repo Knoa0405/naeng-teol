@@ -24,63 +24,59 @@ const IngredientsForm = () => {
   const addRecipe = useRecipeStore((state) => state.addRecipe);
   const addIngredient = useIngredientsStore((state) => state.addIngredient);
   const [imagePreviewURL, setImagePreviewURL] = useState<string | null>(null);
+  const [inputs, setInputs] = useState<TIngredient[]>([]);
+  const [isBaseLoading, setIsBaseLoading] = useState(false);
 
   const { object, submit, isLoading } = useObject({
     api: "/api/ai/recipe",
     schema: RecipeSchema,
-    onError: (error) => {
-      console.log(error);
-    },
+    onError: console.log,
   });
 
-  const [inputs, setInputs] = useState<TIngredient[]>([]);
-
   const handleAdd = useCallback(({ content = "" } = {}) => {
-    const uniqueId = nanoid();
-
-    setInputs((prev) => [...prev, { id: `ingredient-${uniqueId}`, content }]);
+    setInputs((prev) => [...prev, { id: `ingredient-${nanoid()}`, content }]);
   }, []);
 
+  const handleImageUpload = async (image: File) => {
+    const res = await handleFileUpload(image);
+    const ingredients = await res.pipe(getIngredientsFromImage);
+    ingredients.forEach((ingredient: string) =>
+      handleAdd({ content: ingredient })
+    );
+    return ingredients;
+  };
+
   const onSubmit = async (data: any) => {
-    const { image, ...rest } = data;
+    try {
+      setIsBaseLoading(true);
+      const { image, ...rest } = data;
+      addIngredient(rest);
 
-    if (image?.[0]) {
-      const res = await handleFileUpload(image[0]);
-      const ingredients = await res.pipe(getIngredientsFromImage);
+      const ingredients = image?.[0]
+        ? [...Object.values(data), ...(await handleImageUpload(image[0]))]
+        : [...Object.values(data)];
 
-      ingredients.map((ingredient: string) => {
-        handleAdd({ content: ingredient });
-      });
-
-      submit({
-        ingredients: [...Object.values(data), ...ingredients].toString(),
-      });
+      submit({ ingredients: ingredients.toString() });
+    } catch (error) {
+      console.error("재료 제출 중 오류 발생:", error);
+    } finally {
+      setIsBaseLoading(false);
     }
-
-    addIngredient(rest);
-
-    submit({
-      ingredients: [...Object.values(data)].toString(),
-    });
   };
 
   useEffect(() => {
     if (object?.content && !isLoading) {
-      addRecipe({
-        content: object.content,
-      });
+      addRecipe({ content: object.content });
     }
   }, [addRecipe, isLoading, object]);
 
   useEffect(() => {
     const subscription = watch((value, { name }) => {
-      if (name === "image" && value.image && value.image.length > 0) {
-        const file = value.image[0];
-        const url = URL.createObjectURL(file);
-
-        setImagePreviewURL(url);
+      if (name === "image" && value.image?.[0]) {
+        setImagePreviewURL(URL.createObjectURL(value.image[0]));
       }
     });
+
     return () => {
       if (imagePreviewURL) {
         URL.revokeObjectURL(imagePreviewURL);
@@ -88,6 +84,8 @@ const IngredientsForm = () => {
       subscription.unsubscribe();
     };
   }, [watch, imagePreviewURL]);
+
+  const isSubmitting = isLoading || isBaseLoading;
 
   return (
     <div className="flex flex-col gap-4 items-center">
@@ -128,11 +126,11 @@ const IngredientsForm = () => {
         <PlusIcon className="w-full h-4" />
       </Button>
       <Button
-        disabled={isLoading}
+        disabled={isSubmitting}
         className="w-full"
         onClick={handleSubmit(onSubmit)}
       >
-        {isLoading ? (
+        {isSubmitting ? (
           <>
             <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
             레시피 생성중
