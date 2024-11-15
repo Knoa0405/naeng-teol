@@ -10,8 +10,7 @@ const headingStyles = {
   h2: "text-xl font-semibold mt-5 mb-3",
   h3: "text-lg font-medium mt-4 mb-2",
 };
-
-export const Recipe = () => {
+const Recipe = () => {
   const recipe = useRecipeStore((state) => state.recipe);
 
   return (
@@ -36,3 +35,5 @@ export const Recipe = () => {
     </Markdown>
   );
 };
+
+export default Recipe;
