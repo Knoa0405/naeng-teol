@@ -24,6 +24,7 @@ export const POST = async (req: Request) => {
       }
     );
   } catch (error) {
+    console.error(error, "error in ai/recipe");
     throw new Error("Error: create recipe in openai api");
   }
 };
