@@ -10,13 +10,12 @@ const headingStyles = {
   h2: "text-xl font-semibold mt-5 mb-3",
   h3: "text-lg font-medium mt-4 mb-2",
 };
-
-export const Recipe = () => {
+const Recipe = () => {
   const recipe = useRecipeStore((state) => state.recipe);
 
   return (
     <Markdown
-      className={cn("flex flex-col p-4 rounded-sm max-w-72", {
+      className={cn("flex flex-col p-4 rounded-sm", {
         "border border-green-600": !!recipe.content,
       })}
       remarkPlugins={[remarkGfm]}
@@ -36,3 +35,5 @@ export const Recipe = () => {
     </Markdown>
   );
 };
+
+export default Recipe;

@@ -1,3 +1,4 @@
+import { AI_MODEL_NAME } from "@/constants";
 import { RecipeSchema } from "@/types/schema";
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
@@ -5,15 +6,25 @@ import { generateObject } from "ai";
 export const POST = async (req: Request) => {
   const { ingredients } = await req.json();
 
-  const result = await generateObject({
-    model: openai("gpt-3.5-turbo"),
-    schema: RecipeSchema,
-    system:
-      "Create Recipe following ingredients, please answer markdown format and korean language",
-    prompt: `Create Recipe following ingredients : ${ingredients}`,
-  });
+  try {
+    const result = await generateObject({
+      model: openai(AI_MODEL_NAME),
+      schema: RecipeSchema,
+      system:
+        "Create Recipe following ingredients in markdown format, korean language",
+      prompt: `ingredients : ${ingredients}`,
+    });
 
-  return Response.json({
-    ...result.object,
-  });
+    return Response.json(
+      {
+        ...result.object,
+      },
+      {
+        status: 200,
+      }
+    );
+  } catch (error) {
+    console.error(error, "error in ai/recipe");
+    throw new Error("Error: create recipe in openai api");
+  }
 };

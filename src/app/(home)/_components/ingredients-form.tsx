@@ -13,6 +13,8 @@ import { useIngredientsStore, useRecipeStore } from "@/store";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { handleFileUpload } from "@/lib/utils";
+import { getIngredientsFromImage } from "@/actions";
 
 const IngredientsForm = () => {
   const { register, handleSubmit, watch } = useForm({
@@ -22,59 +24,59 @@ const IngredientsForm = () => {
   const addRecipe = useRecipeStore((state) => state.addRecipe);
   const addIngredient = useIngredientsStore((state) => state.addIngredient);
   const [imagePreviewURL, setImagePreviewURL] = useState<string | null>(null);
+  const [inputs, setInputs] = useState<TIngredient[]>([]);
+  const [isBaseLoading, setIsBaseLoading] = useState(false);
 
   const { object, submit, isLoading } = useObject({
     api: "/api/ai/recipe",
     schema: RecipeSchema,
-    onError: (error) => {
-      console.log(error);
-    },
+    onError: console.log,
   });
 
-  const [inputs, setInputs] = useState<TIngredient[]>([
-    {
-      id: "ingredient-0",
-      content: "",
-    },
-    {
-      id: "ingredient-1",
-      content: "",
-    },
-  ]);
-
-  const handleAdd = useCallback(() => {
-    const id = nanoid();
-    setInputs((prev) => [...prev, { id: `ingredient-${id}`, content: "" }]);
+  const handleAdd = useCallback(({ content = "" } = {}) => {
+    setInputs((prev) => [...prev, { id: `ingredient-${nanoid()}`, content }]);
   }, []);
 
-  const onSubmit = (data: any) => {
-    const { image, ...rest } = data;
-    const file = data.image[0];
+  const handleImageUpload = async (image: File) => {
+    const res = await handleFileUpload(image);
+    const ingredients = await res.pipe(getIngredientsFromImage);
+    ingredients.forEach((ingredient: string) =>
+      handleAdd({ content: ingredient })
+    );
+    return ingredients;
+  };
 
-    addIngredient(rest);
+  const onSubmit = async (data: any) => {
+    try {
+      setIsBaseLoading(true);
+      const { image, ...rest } = data;
+      addIngredient(rest);
 
-    submit({
-      ingredients: Object.values(data).toString(),
-    });
+      const ingredients = image?.[0]
+        ? [...Object.values(data), ...(await handleImageUpload(image[0]))]
+        : [...Object.values(data)];
+
+      submit({ ingredients: ingredients.toString() });
+    } catch (error) {
+      console.error("재료 제출 중 오류 발생:", error);
+    } finally {
+      setIsBaseLoading(false);
+    }
   };
 
   useEffect(() => {
     if (object?.content && !isLoading) {
-      addRecipe({
-        content: object.content,
-      });
+      addRecipe({ content: object.content });
     }
   }, [addRecipe, isLoading, object]);
 
   useEffect(() => {
     const subscription = watch((value, { name }) => {
-      if (name === "image" && value.image && value.image.length > 0) {
-        const file = value.image[0];
-        const url = URL.createObjectURL(file);
-
-        setImagePreviewURL(url);
+      if (name === "image" && value.image?.[0]) {
+        setImagePreviewURL(URL.createObjectURL(value.image[0]));
       }
     });
+
     return () => {
       if (imagePreviewURL) {
         URL.revokeObjectURL(imagePreviewURL);
@@ -82,6 +84,8 @@ const IngredientsForm = () => {
       subscription.unsubscribe();
     };
   }, [watch, imagePreviewURL]);
+
+  const isSubmitting = isLoading || isBaseLoading;
 
   return (
     <div className="flex flex-col gap-4 items-center">
@@ -111,21 +115,22 @@ const IngredientsForm = () => {
           <IngredientInput
             key={input.id}
             id={input.id}
+            defaultValue={input.content}
             {...register(input.id)}
             setInputs={setInputs}
             index={index}
           />
         ))}
       </form>
-      <Button onClick={handleAdd} className="w-full">
+      <Button onClick={() => handleAdd()} className="w-full">
         <PlusIcon className="w-full h-4" />
       </Button>
       <Button
-        disabled={isLoading}
+        disabled={isSubmitting}
         className="w-full"
         onClick={handleSubmit(onSubmit)}
       >
-        {isLoading ? (
+        {isSubmitting ? (
           <>
             <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
             레시피 생성중
