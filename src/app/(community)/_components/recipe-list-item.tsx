@@ -1,6 +1,9 @@
+"use client";
+
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Heart, MessageCircle, Share2 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface RecipeItem {
   id: number;
@@ -16,9 +19,14 @@ interface RecipeListItemProps {
 }
 
 const RecipeListItem = ({ item }: RecipeListItemProps) => {
+  const router = useRouter();
+
   return (
     <div className="break-inside-avoid mb-4">
-      <Card className="overflow-hidden">
+      <Card
+        className="overflow-hidden cursor-pointer"
+        onClick={() => router.push(`/recipe/${item.id}`)}
+      >
         <CardContent className="p-0">
           <Image
             src={item.image}
