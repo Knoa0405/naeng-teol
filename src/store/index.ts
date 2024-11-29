@@ -52,7 +52,7 @@ export const useRecipeStore = create<IRecipeStore>()(
       recipe: {
         content: "",
       },
-      addRecipe: (recipe) =>
+      addRecipe: (recipe: TRecipe) =>
         set(
           () => ({
             recipe,
