@@ -1,7 +1,7 @@
 import prisma from "@/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const cursor = url.searchParams.get("cursor");
   const take = 10; // 한 번에 가져올 포스트 수

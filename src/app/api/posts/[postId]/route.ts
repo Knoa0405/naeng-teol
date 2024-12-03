@@ -1,12 +1,15 @@
 import prisma from "@/db";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET({ params }: { params: { id: string } }) {
-  const { id } = params;
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { postId: string } }
+) {
+  const { postId } = params;
 
   try {
     const post = await prisma.post.findUnique({
-      where: { id: BigInt(id) },
+      where: { id: BigInt(postId) },
     });
 
     if (!post) {
@@ -29,15 +32,15 @@ export async function GET({ params }: { params: { id: string } }) {
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { postId: string } }
 ) {
-  const { id } = params;
+  const { postId } = params;
   const body = await request.json();
   const { title, content, authorId } = body;
 
   try {
     const post = await prisma.post.update({
-      where: { id: BigInt(id) },
+      where: { id: BigInt(postId) },
       data: {
         title,
         content,
@@ -59,12 +62,15 @@ export async function PATCH(
   }
 }
 
-export async function DELETE({ params }: { params: { id: string } }) {
-  const { id } = params;
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { postId: string } }
+) {
+  const { postId } = params;
 
   try {
     const post = await prisma.post.delete({
-      where: { id: Number(id) },
+      where: { id: Number(postId) },
     });
 
     return NextResponse.json(
