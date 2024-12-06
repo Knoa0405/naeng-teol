@@ -1,9 +1,13 @@
 import prisma from "@/db";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+
+interface RouteParams {
+  postId: string;
+}
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: { params: RouteParams }
 ) {
   const { postId } = params;
 

@@ -1,14 +1,19 @@
 import prisma from "@/db";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+
+interface RouteParams {
+  postId: string;
+  commentId: string;
+}
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: RouteParams }
 ) {
-  const { id } = params;
+  const { commentId } = params;
 
   const comment = await prisma.comment.findUnique({
-    where: { id: BigInt(id) },
+    where: { id: BigInt(commentId) },
   });
 
   return NextResponse.json({ comment }, { status: 200 });
@@ -16,13 +21,13 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: RouteParams }
 ) {
-  const { id } = params;
+  const { commentId } = params;
   const body = await request.json();
 
   const comment = await prisma.comment.update({
-    where: { id: BigInt(id) },
+    where: { id: BigInt(commentId) },
     data: body,
   });
 
@@ -31,12 +36,12 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: RouteParams }
 ) {
-  const { id } = params;
+  const { commentId } = params;
 
   const comment = await prisma.comment.delete({
-    where: { id: BigInt(id) },
+    where: { id: BigInt(commentId) },
   });
 
   return NextResponse.json({ comment }, { status: 200 });

@@ -1,9 +1,13 @@
 import prisma from "@/db";
 import { NextRequest, NextResponse } from "next/server";
 
+interface RouteParams {
+  postId: string;
+}
+
 export async function GET(
   request: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: { params: RouteParams }
 ) {
   const { postId } = params;
 
@@ -32,7 +36,7 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: { params: RouteParams }
 ) {
   const { postId } = params;
   const body = await request.json();
@@ -64,7 +68,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: { params: RouteParams }
 ) {
   const { postId } = params;
 
