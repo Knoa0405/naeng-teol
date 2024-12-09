@@ -1,5 +1,6 @@
 "use server";
 
+import { signIn } from "@/auth";
 import { uploadFileToS3 } from "@/lib/upload-s3";
 
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
@@ -49,4 +50,8 @@ const getIngredientsFromAIVision = async (imagePath: string) => {
   }
 
   return response.json();
+};
+
+export const signInWithGoogle = async () => {
+  await signIn("google");
 };
