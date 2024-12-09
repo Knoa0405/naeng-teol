@@ -1,6 +1,5 @@
 "use client";
 
-import { TIngredient } from "@/types";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import IngredientInput from "./ingredient-input";
@@ -15,6 +14,7 @@ import Image from "next/image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { handleFileUpload } from "@/lib/utils";
 import { getIngredientsFromImage } from "@/actions";
+import { TInputIngredient } from "@/types/recipe";
 
 const IngredientsForm = () => {
   const { register, handleSubmit, watch } = useForm({
@@ -24,7 +24,7 @@ const IngredientsForm = () => {
   const addRecipe = useRecipeStore((state) => state.addRecipe);
   const addIngredient = useIngredientsStore((state) => state.addIngredient);
   const [imagePreviewURL, setImagePreviewURL] = useState<string | null>(null);
-  const [inputs, setInputs] = useState<TIngredient[]>([]);
+  const [inputs, setInputs] = useState<TInputIngredient[]>([]);
   const [isBaseLoading, setIsBaseLoading] = useState(false);
 
   const { object, submit, isLoading } = useObject({

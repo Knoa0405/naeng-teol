@@ -1,15 +1,13 @@
 import prisma from "@/db";
 import { type NextRequest, NextResponse } from "next/server";
-
-interface RouteParams {
-  postId: string;
-}
+import { IRouteParams } from "@/types/common";
+import { IPostsRouteParams } from "@/types/posts";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: RouteParams }
+  { params }: IRouteParams<IPostsRouteParams>
 ) {
-  const { postId } = params;
+  const { postId } = await params;
 
   const comments = await prisma.comment.findMany({
     where: {

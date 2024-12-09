@@ -3,13 +3,13 @@
 import { Dispatch, HTMLAttributes, SetStateAction, forwardRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { TIngredient } from "@/types";
+import { TInputIngredient } from "@/types/recipe";
 import { MinusIcon } from "@radix-ui/react-icons";
 import { useIngredientsStore } from "@/store";
 
 type TIngredientInputProps = HTMLAttributes<HTMLInputElement> & {
   id: string;
-  setInputs: Dispatch<SetStateAction<TIngredient[]>>;
+  setInputs: Dispatch<SetStateAction<TInputIngredient[]>>;
   index: number;
 };
 

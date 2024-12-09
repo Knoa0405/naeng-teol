@@ -1,14 +1,14 @@
 import { z } from "zod";
 import { create } from "zustand";
 import { RecipeSchema } from "@/types/schema";
-import { TIngredient, TIngredients } from "@/types";
 import { devtools } from "zustand/middleware";
+import { TInputIngredient, TInputIngredients } from "@/types/recipe";
 import { isProduction } from "@/constants";
 
 type TRecipe = z.infer<typeof RecipeSchema>;
 interface IIngredientsStore {
-  ingredients: TIngredients;
-  addIngredient: (ingredient: TIngredient) => void;
+  ingredients: TInputIngredients;
+  addIngredient: (ingredient: TInputIngredient) => void;
   removeIngredient: (id: string) => void;
 }
 interface IRecipeStore {
@@ -42,7 +42,10 @@ export const useIngredientsStore = create<IIngredientsStore>()(
           "removeIngredient"
         ),
     }),
-    { name: "ingredientsStore", enabled: !isProduction }
+    {
+      name: "ingredientsStore",
+      enabled: !isProduction,
+    }
   )
 );
 
@@ -58,7 +61,7 @@ export const useRecipeStore = create<IRecipeStore>()(
             recipe,
           }),
           false,
-          "recipeStore"
+          "addRecipe"
         ),
     }),
     {
