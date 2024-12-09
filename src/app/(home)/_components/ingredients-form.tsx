@@ -66,7 +66,15 @@ const IngredientsForm = () => {
 
   useEffect(() => {
     if (object?.content && !isLoading) {
-      addRecipe({ content: object.content });
+      addRecipe({
+        title: object.title || "",
+        ingredients:
+          object.ingredients?.filter(
+            (ingredient): ingredient is string => ingredient !== undefined
+          ) || [],
+        content: object.content || "",
+        rawContent: object.rawContent || "",
+      });
     }
   }, [addRecipe, isLoading, object]);
 

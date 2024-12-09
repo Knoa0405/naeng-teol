@@ -1,19 +1,16 @@
-import { z } from "zod";
 import { create } from "zustand";
-import { RecipeSchema } from "@/types/schema";
 import { devtools } from "zustand/middleware";
-import { TInputIngredient, TInputIngredients } from "@/types/recipe";
+import { IRecipe, TInputIngredient, TInputIngredients } from "@/types/recipe";
 import { isProduction } from "@/constants";
 
-type TRecipe = z.infer<typeof RecipeSchema>;
 interface IIngredientsStore {
   ingredients: TInputIngredients;
   addIngredient: (ingredient: TInputIngredient) => void;
   removeIngredient: (id: string) => void;
 }
 interface IRecipeStore {
-  recipe: TRecipe;
-  addRecipe: (recipe: TRecipe) => void;
+  recipe: IRecipe;
+  addRecipe: (recipe: IRecipe) => void;
 }
 
 export const useIngredientsStore = create<IIngredientsStore>()(
@@ -53,12 +50,17 @@ export const useRecipeStore = create<IRecipeStore>()(
   devtools(
     (set) => ({
       recipe: {
+        title: "",
+        ingredients: [],
         content: "",
+        rawContent: "",
       },
-      addRecipe: (recipe: TRecipe) =>
+      addRecipe: (recipe: IRecipe) =>
         set(
           () => ({
-            recipe,
+            recipe: {
+              ...recipe,
+            },
           }),
           false,
           "addRecipe"

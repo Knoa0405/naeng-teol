@@ -32,7 +32,7 @@ const Recipe = () => {
         ),
       }}
     >
-      {recipe.content}
+      {recipe.rawContent}
     </Markdown>
   );
 };
