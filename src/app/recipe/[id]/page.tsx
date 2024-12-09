@@ -1,39 +1,10 @@
-"use client";
+import { IRouteParams } from "@/types/common";
+import RecipeDetail from "@/app/recipe/_components/recipe-detail";
 
-import { useEffect, useState } from "react";
-import Loader from "@/app/(home)/_components/loader";
+export default async function RecipePage({
+  params,
+}: IRouteParams<{ id: string }>) {
+  const { id } = await params;
 
-export default function Recipe({ params }: { params: { id: string } }) {
-  const [recipe, setRecipe] = useState<any>(null);
-
-  useEffect(() => {
-    async function fetchRecipe() {
-      const response = await fetch(`/api/recipes/${params.id}`);
-      const data = await response.json();
-
-      setRecipe(data);
-    }
-
-    fetchRecipe();
-  }, [params.id]);
-
-  if (!recipe) {
-    return <Loader />;
-  }
-
-  return (
-    <div className="recipe-detail">
-      <h1 className="text-4xl font-bold">{recipe.name}</h1>
-      <p>{recipe.description}</p>
-      <ul>
-        {recipe.ingredients.map((ingredient: any) => (
-          <li key={ingredient}>{ingredient}</li>
-        ))}
-      </ul>
-      <div>
-        <h2 className="text-2xl font-bold">Instructions</h2>
-        <p>{recipe.instructions}</p>
-      </div>
-    </div>
-  );
+  return <RecipeDetail id={id} />;
 }
