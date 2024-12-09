@@ -1,7 +1,17 @@
 import prisma from "@/db";
+import { IRouteParams } from "@/types/common";
+import { IPostsRouteParams } from "@/types/posts";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export type TParams = {
+  postId: string;
+  commentId: string;
+};
+
+export async function GET(
+  request: NextRequest,
+  { params }: IRouteParams<IPostsRouteParams>
+) {
   const url = new URL(request.url);
   const cursor = url.searchParams.get("cursor");
   const take = 10; // 한 번에 가져올 포스트 수

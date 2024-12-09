@@ -1,11 +1,13 @@
 import prisma from "@/db";
+import { IRouteParams } from "@/types/common";
+import { IPostsRouteParams } from "@/types/posts";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: IRouteParams<IPostsRouteParams>
 ) {
-  const { postId } = params;
+  const { postId } = await params;
 
   try {
     const post = await prisma.post.findUnique({
@@ -32,9 +34,9 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: IRouteParams<IPostsRouteParams>
 ) {
-  const { postId } = params;
+  const { postId } = await params;
   const body = await request.json();
   const { title, content, authorId } = body;
 
@@ -64,9 +66,9 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: IRouteParams<IPostsRouteParams>
 ) {
-  const { postId } = params;
+  const { postId } = await params;
 
   try {
     const post = await prisma.post.delete({
