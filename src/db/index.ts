@@ -1,15 +1,25 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaNeon } from "@prisma/adapter-neon";
+import { neonConfig, Pool } from "@neondatabase/serverless";
 
-const prismaClientSingleton = () => {
-  return new PrismaClient();
+// 트랜잭션, 세션 사용시 필요
+// import ws from "ws";
+
+// neonConfig.webSocketConstructor = ws;
+
+const createPrismaClient = () => {
+  const connectionString = process.env.POSTGRES_PRISMA_URL;
+  const pool = new Pool({ connectionString });
+  const adapter = new PrismaNeon(pool);
+  return new PrismaClient({ adapter });
 };
 
-declare const globalThis: {
-  prismaGlobal: ReturnType<typeof prismaClientSingleton>;
-} & typeof global;
+declare global {
+  var prisma: PrismaClient | undefined;
+}
 
-const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+const prisma = global.prisma || createPrismaClient();
+
+if (process.env.NODE_ENV === "development") global.prisma = prisma;
 
 export default prisma;
-
-if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;
