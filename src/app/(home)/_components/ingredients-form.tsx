@@ -58,11 +58,11 @@ const IngredientsForm = () => {
     try {
       setIsBaseLoading(true);
       const { image, ...rest } = data;
-      addIngredient(rest);
 
+      addIngredient(rest);
       const ingredients = image?.[0]
-        ? [...Object.values(data), ...(await handleImageUpload(image[0]))]
-        : [...Object.values(data)];
+        ? [...Object.values(rest), ...(await handleImageUpload(image[0]))]
+        : [...Object.values(rest)];
 
       submit({ ingredients: ingredients.toString() });
     } catch (error) {
