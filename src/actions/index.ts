@@ -2,6 +2,7 @@
 
 import { signIn } from "@/auth";
 import { uploadFileToS3 } from "@/lib/upload-s3";
+import { IRecipe } from "@/types/recipe";
 
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
 
@@ -47,6 +48,26 @@ const getIngredientsFromAIVision = async (imagePath: string) => {
   if (!response.ok) {
     const errorText = await response.text();
     throw new Error(`AI Vision API 호출 실패: ${errorText}`);
+  }
+
+  return response.json();
+};
+
+export const saveRecipe = async ({
+  recipe,
+  authorId,
+}: {
+  recipe: IRecipe;
+  authorId: string;
+}) => {
+  const response = await fetch(`${process.env.API_BASE_URL}/posts/create`, {
+    method: "POST",
+    body: JSON.stringify({ recipe, authorId }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`레시피 저장 실패: ${errorText}`);
   }
 
   return response.json();
