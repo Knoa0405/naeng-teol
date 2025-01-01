@@ -10,7 +10,7 @@ export async function GET(
   const { postId } = await params;
 
   try {
-    const post = await prisma.post.findUnique({
+    const post = await prisma.post.findFirst({
       where: { id: BigInt(postId) },
     });
 

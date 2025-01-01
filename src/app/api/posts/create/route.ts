@@ -3,13 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { title, content, authorId } = body;
+  const { title, content, ingredients, rawContent, authorId } = body;
 
   try {
     const post = await prisma.post.create({
       data: {
         title,
         content,
+        ingredients,
+        rawContent,
         author_id: authorId,
       },
     });

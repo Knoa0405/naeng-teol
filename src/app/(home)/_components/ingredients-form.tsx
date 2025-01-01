@@ -13,15 +13,18 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { handleFileUpload } from "@/lib/utils";
-import { getIngredientsFromImage } from "@/actions";
+import { getIngredientsFromImage, saveRecipe } from "@/actions";
 import { TInputIngredient } from "@/types/recipe";
+import { useRouter } from "next/navigation";
 
 const IngredientsForm = () => {
+  const router = useRouter();
   const { register, handleSubmit, watch } = useForm({
     shouldUnregister: true,
   });
 
   const addRecipe = useRecipeStore((state) => state.addRecipe);
+  const recipe = useRecipeStore((state) => state.recipe);
   const addIngredient = useIngredientsStore((state) => state.addIngredient);
   const [imagePreviewURL, setImagePreviewURL] = useState<string | null>(null);
   const [inputs, setInputs] = useState<TInputIngredient[]>([]);
@@ -46,6 +49,11 @@ const IngredientsForm = () => {
     return ingredients;
   };
 
+  const handleSaveRecipe = async () => {
+    // const savedRecipe = await saveRecipe({ recipe, authorId: session.user.id });
+    // console.log(savedRecipe);
+  };
+
   const onSubmit = async (data: any) => {
     try {
       setIsBaseLoading(true);
@@ -66,7 +74,15 @@ const IngredientsForm = () => {
 
   useEffect(() => {
     if (object?.content && !isLoading) {
-      addRecipe({ content: object.content });
+      addRecipe({
+        title: object.title || "",
+        ingredients:
+          object.ingredients?.filter(
+            (ingredient): ingredient is string => ingredient !== undefined
+          ) || [],
+        content: object.content || "",
+        rawContent: object.rawContent || "",
+      });
     }
   }, [addRecipe, isLoading, object]);
 
@@ -135,10 +151,15 @@ const IngredientsForm = () => {
             <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
             레시피 생성중
           </>
+        ) : recipe.content ? (
+          "레시피 다시 만들기"
         ) : (
-          "레시피 생성"
+          "레시피 만들기"
         )}
       </Button>
+      {recipe.content && (
+        <Button onClick={handleSaveRecipe}>레시피 저장</Button>
+      )}
     </div>
   );
 };
