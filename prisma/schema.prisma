@@ -1,10 +1,12 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 enum role {
@@ -14,9 +16,13 @@ enum role {
 }
 
 model User {
-  id         BigInt   @id @default(autoincrement())
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  username   String   @unique
+  id         String    @id @default(cuid())
+  name          String?  @unique
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  accounts   Account[]
+  sessions   Session[]
   role       role     @default(USER)
   posts      Post[]
   comments   Comment[]
@@ -31,9 +37,50 @@ model User {
   bio        String?
   instagram  String?
 
+  created_at DateTime @default(now()) @db.Timestamptz(6)
   is_deleted Boolean  @default(false)
 
   @@map("users")
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String  @map("user_id")
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+ 
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@map("sessions")
+}
+ 
+ 
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+ 
+  @@unique([identifier, token])
+  @@map("verification_tokens")
 }
 
 model Post {
@@ -41,8 +88,10 @@ model Post {
   created_at DateTime @default(now()) @db.Timestamptz(6)
   title      String
   content    String
+  ingredients String[]
+  rawContent String?
   author     User     @relation(fields: [author_id], references: [id])
-  author_id  BigInt
+  author_id  String
   views      Int      @default(0)
   comments   Comment[]
   likes      Like[]
@@ -56,7 +105,7 @@ model Post {
 model Comment {
   id          BigInt     @id @default(autoincrement())
   author      User       @relation(fields: [author_id], references: [id])
-  author_id   BigInt
+  author_id   String
   created_at  DateTime   @default(now()) @db.Timestamptz(6)
   content     String
   post        Post       @relation(fields: [post_id], references: [id])
@@ -75,7 +124,7 @@ model Comment {
 model Notification {
   id          BigInt    @id @default(autoincrement())
   user        User      @relation(fields: [user_id], references: [id])
-  user_id     BigInt    
+  user_id     String    
   type        String    
   content     String    
   is_read     Boolean   @default(false)
@@ -89,9 +138,9 @@ model Notification {
 model Block {
   id          BigInt   @id @default(autoincrement())
   blocker     User     @relation("Blocker", fields: [blocker_id], references: [id])
-  blocker_id  BigInt
+  blocker_id  String
   blocked     User     @relation("Blocked", fields: [blocked_id], references: [id])
-  blocked_id  BigInt
+  blocked_id  String
   created_at  DateTime @default(now()) @db.Timestamptz(6)
 
   @@unique([blocker_id, blocked_id])
@@ -101,7 +150,7 @@ model Block {
 model Like {
   id          BigInt    @id @default(autoincrement())
   user        User      @relation(fields: [user_id], references: [id])
-  user_id     BigInt    
+  user_id     String    
   post        Post      @relation(fields: [post_id], references: [id])
   post_id     BigInt    
   created_at  DateTime  @default(now()) @db.Timestamptz(6)
@@ -113,7 +162,7 @@ model Like {
 model CommentLike {
   id          BigInt    @id @default(autoincrement())
   user        User      @relation(fields: [user_id], references: [id])
-  user_id     BigInt    
+  user_id     String    
   comment     Comment   @relation(fields: [comment_id], references: [id])
   comment_id  BigInt    
   created_at  DateTime  @default(now()) @db.Timestamptz(6)
@@ -121,4 +170,3 @@ model CommentLike {
   @@unique([user_id, comment_id])
   @@map("comment_likes")
 }
-
