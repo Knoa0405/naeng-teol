@@ -104,6 +104,7 @@ const IngredientsForm = () => {
           ) || [],
         content: object.content || "",
         rawContent: object.rawContent || "",
+        referenceLink: object.referenceLink?.filter(link => link !== undefined) || []
       });
     }
   }, [addRecipe, isLoading, object]);
@@ -156,13 +157,13 @@ const IngredientsForm = () => {
           <div className="flex gap-1">
             {categoryOptions.map((category) => (
               // FIXME: Button 컴포넌트 사용시, 클릭시마다 url path 바뀌면서 리다이렉트 발생
-              <div
+                <div
                 key={category.value}
-                className={`px-2 rounded-full ${categories.includes(category.label) ? 'bg-lime-200' : 'bg-lime-50'} text-slate-400 border-2 border-lime-300`}
+                className={`px-2 rounded-full ${categories.includes(category.label) ? 'bg-lime-200 text-black' : 'bg-lime-50 text-slate-400'} border-2 border-lime-300 cursor-pointer`}
                 onClick={() => handleClickCategory(category.label)}
-              >
+                >
                 {category.label}
-              </div>
+                </div>
             ))}
           </div>
         </div>
