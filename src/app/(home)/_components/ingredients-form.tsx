@@ -159,7 +159,7 @@ const IngredientsForm = () => {
               // FIXME: Button 컴포넌트 사용시, 클릭시마다 url path 바뀌면서 리다이렉트 발생
                 <div
                 key={category.value}
-                className={`px-2 rounded-full ${categories.includes(category.label) ? 'bg-lime-200 text-black' : 'bg-lime-50 text-slate-400'} border-2 border-lime-300 cursor-pointer`}
+                className={`px-4 py-2 rounded-full transition-all duration-300 ${categories.includes(category.label) ? 'bg-blue-500 text-white shadow-lg' : 'bg-blue-100 text-gray-700 hover:bg-blue-200'} border-2 border-blue-400 cursor-pointer`}
                 onClick={() => handleClickCategory(category.label)}
                 >
                 {category.label}
