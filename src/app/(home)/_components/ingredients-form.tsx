@@ -15,16 +15,18 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { handleFileUpload } from "@/lib/utils";
 import { getIngredientsFromImage, saveRecipe } from "@/actions";
 import { TInputIngredient } from "@/types/recipe";
-import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const IngredientsForm = () => {
-  const router = useRouter();
+  const session = useSession();
+
   const { register, handleSubmit, watch } = useForm({
     shouldUnregister: true,
   });
 
   const addRecipe = useRecipeStore((state) => state.addRecipe);
   const recipe = useRecipeStore((state) => state.recipe);
+
   const addIngredient = useIngredientsStore((state) => state.addIngredient);
   const [imagePreviewURL, setImagePreviewURL] = useState<string | null>(null);
   const [inputs, setInputs] = useState<TInputIngredient[]>([]);
@@ -43,15 +45,21 @@ const IngredientsForm = () => {
   const handleImageUpload = async (image: File) => {
     const res = await handleFileUpload(image);
     const ingredients = await res.pipe(getIngredientsFromImage);
+
     ingredients.forEach((ingredient: string) =>
       handleAdd({ content: ingredient })
     );
+
     return ingredients;
   };
 
   const handleSaveRecipe = async () => {
-    // const savedRecipe = await saveRecipe({ recipe, authorId: session.user.id });
-    // console.log(savedRecipe);
+    if (session) {
+      await saveRecipe({
+        recipe,
+        authorId: session.data?.user?.id || "",
+      });
+    }
   };
 
   const onSubmit = async (data: any) => {
