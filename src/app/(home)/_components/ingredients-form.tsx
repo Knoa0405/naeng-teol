@@ -17,6 +17,17 @@ import { getIngredientsFromImage, saveRecipe } from "@/actions";
 import { TInputIngredient } from "@/types/recipe";
 import { useSession } from "next-auth/react";
 
+const categoryOptions = [
+  { value: 'korean', label: '한식' },
+  { value: 'chinese', label: '중식' },
+  { value: 'japanese', label: '일식' },
+  { value: 'western', label: '양식' },
+  { value: 'dessert', label: '디저트' },
+  { value: 'etc', label: '기타' }
+];
+
+type categoryOptionType = typeof categoryOptions[number]['label'] | []
+
 const IngredientsForm = () => {
   const session = useSession();
 
@@ -29,6 +40,7 @@ const IngredientsForm = () => {
 
   const addIngredient = useIngredientsStore((state) => state.addIngredient);
   const [imagePreviewURL, setImagePreviewURL] = useState<string | null>(null);
+  const [categories, setCategories] = useState<categoryOptionType[]>([])
   const [inputs, setInputs] = useState<TInputIngredient[]>([]);
   const [isBaseLoading, setIsBaseLoading] = useState(false);
 
@@ -62,6 +74,16 @@ const IngredientsForm = () => {
     }
   };
 
+  const handleClickCategory = (category: categoryOptionType) => {
+    setCategories((prev) => {
+      if (prev.includes(category)) {
+        return prev.filter((cat) => cat !== category);
+      } else {
+        return [...prev, category];
+      }
+    });
+  }
+
   const onSubmit = async (data: any) => {
     try {
       setIsBaseLoading(true);
@@ -72,7 +94,7 @@ const IngredientsForm = () => {
         ? [...Object.values(rest), ...(await handleImageUpload(image[0]))]
         : [...Object.values(rest)];
 
-      submit({ ingredients: ingredients.toString() });
+      submit({ ingredients: ingredients.toString(), categories: categories.toString() });
     } catch (error) {
       console.error("재료 제출 중 오류 발생:", error);
     } finally {
@@ -90,6 +112,7 @@ const IngredientsForm = () => {
           ) || [],
         content: object.content || "",
         rawContent: object.rawContent || "",
+        referenceLink: object.referenceLink?.filter(link => link !== undefined) || []
       });
     }
   }, [addRecipe, isLoading, object]);
@@ -135,6 +158,23 @@ const IngredientsForm = () => {
           accept="image/*"
           {...register("image")}
         />
+        <div>
+        </div>
+        <div className="flex items-center gap-2">
+          <label htmlFor="div">카테고리</label>
+          <div className="flex gap-1">
+            {categoryOptions.map((category) => (
+              // FIXME: Button 컴포넌트 사용시, 클릭시마다 url path 바뀌면서 리다이렉트 발생
+                <div
+                key={category.value}
+                className={`px-4 py-2 rounded-full transition-all duration-300 ${categories.includes(category.label) ? 'bg-blue-500 text-white shadow-lg' : 'bg-blue-100 text-gray-700 hover:bg-blue-200'} border-2 border-blue-400 cursor-pointer`}
+                onClick={() => handleClickCategory(category.label)}
+                >
+                {category.label}
+                </div>
+            ))}
+          </div>
+        </div>
         {inputs.map((input, index) => (
           <IngredientInput
             key={input.id}

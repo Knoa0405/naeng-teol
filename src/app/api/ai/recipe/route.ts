@@ -4,15 +4,15 @@ import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 
 export const POST = async (req: Request) => {
-  const { ingredients } = await req.json();
+  const { ingredients, categories } = await req.json();
 
   try {
     const result = await generateObject({
       model: openai(AI_MODEL_NAME),
       schema: RecipeSchema,
       system:
-        "Create Recipe following ingredients in markdown format, korean language",
-      prompt: `ingredients : ${ingredients}`,
+        "Create Recipe with reference blog link following ingredients in markdown format, korean language",
+      prompt: `ingredients : ${ingredients}, categories: ${categories}`,
     });
 
     return Response.json(
