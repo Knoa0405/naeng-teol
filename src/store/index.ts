@@ -54,6 +54,7 @@ export const useRecipeStore = create<IRecipeStore>()(
         ingredients: [],
         content: "",
         rawContent: "",
+        referenceLink: []
       },
       addRecipe: (recipe: IRecipe) =>
         set(

@@ -5,6 +5,7 @@ export const RecipeSchema = z.object({
   ingredients: z.array(z.string().describe("ingredient name")),
   content: z.string().describe("recipe content"),
   rawContent: z.string().describe("recipe raw content in markdown format"),
+  referenceLink: z.array(z.string().describe("Related reference blog url"))
 });
 
 export const IngredientSchema = z.object({
