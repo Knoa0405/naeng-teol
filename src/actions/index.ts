@@ -13,25 +13,21 @@ const validateImageFile = (image: FormDataEntryValue | null) => {
   }
 };
 
-export const getIngredientsFromImage = async (formData: FormData) => {
-  try {
-    // 이미지 파일 유효성 검사
-    const image = formData.get("image");
-    validateImageFile(image);
+export const getIngredientsFromImage = async (
+  formData: FormData
+): Promise<string[]> => {
+  const image = formData.get("image");
+  validateImageFile(image);
 
-    // S3에 이미지 업로드
-    const { filePath } = await uploadFileToS3({
-      file: image as File,
-    });
+  // S3에 이미지 업로드
+  const { filePath } = await uploadFileToS3({
+    file: image as File,
+  });
 
-    // AI Vision API 호출
-    const data = await getIngredientsFromAIVision(filePath);
+  // AI Vision API 호출
+  const data = await getIngredientsFromAIVision(filePath);
 
-    return data.ingredients;
-  } catch (error) {
-    console.error("이미지로부터 레시피를 가져오는데 실패했습니다:", error);
-    throw error;
-  }
+  return data.ingredients;
 };
 
 const getIngredientsFromAIVision = async (imagePath: string) => {
