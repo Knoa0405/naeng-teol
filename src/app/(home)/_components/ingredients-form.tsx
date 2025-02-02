@@ -16,6 +16,7 @@ import { createFileFormData, pipe } from "@/lib/utils";
 import { getIngredientsFromImage, saveRecipe } from "@/actions";
 import { TInputIngredient } from "@/types/recipe";
 import { useSession } from "next-auth/react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const categoryOptions = [
   { value: "korean", label: "한식" },
@@ -26,7 +27,7 @@ const categoryOptions = [
   { value: "etc", label: "기타" },
 ];
 
-type categoryOptionType = (typeof categoryOptions)[number]["label"] | [];
+type categoryOptionType = (typeof categoryOptions)[number]["value"];
 
 const IngredientsForm = () => {
   const session = useSession();
@@ -59,19 +60,19 @@ const IngredientsForm = () => {
       const ingredients = await pipe<File, string[]>(
         createFileFormData,
         getIngredientsFromImage,
-        (ingredients) =>
+        (ingredients) => {
           ingredients.forEach((ingredient: string) =>
             handleAdd({ content: ingredient })
-          )
-      )(image);
+          );
 
-      ingredients.forEach((ingredient: string) =>
-        handleAdd({ content: ingredient })
-      );
+          return ingredients;
+        }
+      )(image);
 
       return ingredients;
     } catch (error) {
       console.error("이미지 업로드 중 오류 발생:", error);
+      return [];
     }
   };
 
@@ -84,14 +85,15 @@ const IngredientsForm = () => {
     }
   };
 
-  const handleClickCategory = (category: categoryOptionType) => {
-    setCategories((prev) => {
-      if (prev.includes(category)) {
-        return prev.filter((cat) => cat !== category);
-      } else {
-        return [...prev, category];
-      }
-    });
+  const handleClickCategory = (currentCategory: string[]) => {
+    const currentCategoryLabels = currentCategory
+      .map(
+        (category) =>
+          categoryOptions.find((option) => option.value === category)?.label
+      )
+      .filter((label) => label !== undefined);
+
+    setCategories(currentCategoryLabels);
   };
 
   const onSubmit = async (data: any) => {
@@ -101,14 +103,14 @@ const IngredientsForm = () => {
 
       addIngredient(rest);
 
-      const result = (await handleImageUploadProcess(image[0])) || [];
+      const result = image ? await handleImageUploadProcess(image[0]) : [];
+      const ingredients = [...Object.values(rest), ...result];
 
-      const ingredients = image?.[0]
-        ? [...Object.values(rest), ...result]
-        : [...Object.values(rest)];
+      const ingredientsSet = new Set(ingredients);
+      const uniqueIngredients = Array.from(ingredientsSet);
 
       submit({
-        ingredients: ingredients.toString(),
+        ingredients: uniqueIngredients.toString(),
         categories: categories.toString(),
       });
     } catch (error) {
@@ -177,22 +179,13 @@ const IngredientsForm = () => {
         <div></div>
         <div className="flex items-center gap-2">
           <label htmlFor="div">카테고리</label>
-          <div className="flex gap-1">
+          <ToggleGroup type="multiple" onValueChange={handleClickCategory}>
             {categoryOptions.map((category) => (
-              // FIXME: Button 컴포넌트 사용시, 클릭시마다 url path 바뀌면서 리다이렉트 발생
-              <div
-                key={category.value}
-                className={`px-4 py-2 rounded-full transition-all duration-300 ${
-                  categories.includes(category.label)
-                    ? "bg-blue-500 text-white shadow-lg"
-                    : "bg-blue-100 text-gray-700 hover:bg-blue-200"
-                } border-2 border-blue-400 cursor-pointer`}
-                onClick={() => handleClickCategory(category.label)}
-              >
+              <ToggleGroupItem key={category.value} value={category.value}>
                 {category.label}
-              </div>
+              </ToggleGroupItem>
             ))}
-          </div>
+          </ToggleGroup>
         </div>
         {inputs.map((input, index) => (
           <IngredientInput
