@@ -3,7 +3,7 @@
 import { signIn } from "@/auth";
 import { uploadFileToS3 } from "@/lib/upload-s3";
 import { IRecipe } from "@/types/recipe";
-
+import { api } from "@/lib/api-helper";
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
 
 // 이미지 파일 유효성 검사 함수
@@ -27,26 +27,19 @@ export const getIngredientsFromImage = async (
   // AI Vision API 호출
   const data = await getIngredientsFromAIVision(filePath);
 
-  return data.ingredients;
+  return data?.ingredients ?? [];
 };
 
 const getIngredientsFromAIVision = async (imagePath: string) => {
-  const response = await fetch(
-    `${process.env.API_BASE_URL}/ai/vision/ingredients`,
-    {
-      method: "POST",
-      body: JSON.stringify({
+  const response = await api
+    .post<{ ingredients: string[] }>("ai/vision/ingredients", {
+      json: {
         imageUrl: `${IMAGE_ORIGIN_URL}/${imagePath}`,
-      }),
-    }
-  );
+      },
+    })
+    .json();
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`AI Vision API 호출 실패: ${errorText}`);
-  }
-
-  return response.json();
+  return response;
 };
 
 export const saveRecipe = async ({
