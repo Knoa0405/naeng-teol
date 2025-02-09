@@ -16,18 +16,7 @@ import { createFileFormData, pipe } from "@/lib/utils";
 import { getIngredientsFromImage, saveRecipe } from "@/actions";
 import { TInputIngredient } from "@/types/recipe";
 import { useSession } from "next-auth/react";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-
-const categoryOptions = [
-  { value: "korean", label: "한식" },
-  { value: "chinese", label: "중식" },
-  { value: "japanese", label: "일식" },
-  { value: "western", label: "양식" },
-  { value: "dessert", label: "디저트" },
-  { value: "etc", label: "기타" },
-];
-
-type categoryOptionType = (typeof categoryOptions)[number]["value"];
+import RecipeCategories, { TCategoryOption } from "./recipe-categories";
 
 const IngredientsForm = () => {
   const session = useSession();
@@ -41,14 +30,29 @@ const IngredientsForm = () => {
 
   const addIngredient = useIngredientsStore((state) => state.addIngredient);
   const [imagePreviewURL, setImagePreviewURL] = useState<string | null>(null);
-  const [categories, setCategories] = useState<categoryOptionType[]>([]);
+  const [categories, setCategories] = useState<TCategoryOption[]>([]);
   const [inputs, setInputs] = useState<TInputIngredient[]>([]);
   const [isBaseLoading, setIsBaseLoading] = useState(false);
 
-  const { object, submit, isLoading } = useObject({
+  const { submit, isLoading } = useObject({
     api: "/api/ai/recipe",
     schema: RecipeSchema,
     onError: console.error,
+    onFinish: ({ object }) => {
+      if (object) {
+        addRecipe({
+          title: object.title || "",
+          ingredients:
+            object.ingredients?.filter(
+              (ingredient): ingredient is string => ingredient !== undefined
+            ) || [],
+          content: object.content || "",
+          rawContent: object.rawContent || "",
+          referenceLink:
+            object.referenceLink?.filter((link) => link !== undefined) || [],
+        });
+      }
+    },
   });
 
   const handleAdd = useCallback(({ content = "" } = {}) => {
@@ -85,17 +89,6 @@ const IngredientsForm = () => {
     }
   };
 
-  const handleClickCategory = (currentCategory: string[]) => {
-    const currentCategoryLabels = currentCategory
-      .map(
-        (category) =>
-          categoryOptions.find((option) => option.value === category)?.label
-      )
-      .filter((label) => label !== undefined);
-
-    setCategories(currentCategoryLabels);
-  };
-
   const onSubmit = async (data: any) => {
     try {
       setIsBaseLoading(true);
@@ -119,22 +112,6 @@ const IngredientsForm = () => {
       setIsBaseLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (object?.content && !isLoading) {
-      addRecipe({
-        title: object.title || "",
-        ingredients:
-          object.ingredients?.filter(
-            (ingredient): ingredient is string => ingredient !== undefined
-          ) || [],
-        content: object.content || "",
-        rawContent: object.rawContent || "",
-        referenceLink:
-          object.referenceLink?.filter((link) => link !== undefined) || [],
-      });
-    }
-  }, [addRecipe, isLoading, object]);
 
   useEffect(() => {
     return () => {
@@ -176,17 +153,7 @@ const IngredientsForm = () => {
             }
           }}
         />
-        <div></div>
-        <div className="flex items-center gap-2">
-          <label htmlFor="div">카테고리</label>
-          <ToggleGroup type="multiple" onValueChange={handleClickCategory}>
-            {categoryOptions.map((category) => (
-              <ToggleGroupItem key={category.value} value={category.value}>
-                {category.label}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        </div>
+        <RecipeCategories setCategories={setCategories} />
         {inputs.map((input, index) => (
           <IngredientInput
             key={input.id}
