@@ -2,7 +2,8 @@
 
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import { Button } from "@/ui/button";
-import { SignIn } from "@/components/ui/sign-in";
+import SignIn from "@/components/ui/sign-in";
+import SignOut from "@/components/ui/sign-out";
 
 import {
   NavigationMenuLink,
@@ -17,10 +18,12 @@ import {
 import { NavigationMenuItem } from "@radix-ui/react-navigation-menu";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const MainNav = () => {
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   const navigationItems = [
     { label: "냉장고 털기", href: "/" },
@@ -56,7 +59,7 @@ const MainNav = () => {
         <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
         <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
       </Button>
-      <SignIn />
+      {session ? <SignOut /> : <SignIn />}
     </nav>
   );
 };

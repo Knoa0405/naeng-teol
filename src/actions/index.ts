@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn } from "@/auth";
+import { signIn, signOut } from "@/auth";
 import { uploadFileToS3 } from "@/lib/upload-s3";
 import { IRecipe } from "@/types/recipe";
 import { api } from "@/lib/api-helper";
@@ -62,6 +62,10 @@ export const saveRecipe = async ({
     .json();
 
   return response;
+};
+
+export const signOutAction = async () => {
+  await signOut();
 };
 
 export const signInWithGoogle = async () => {
