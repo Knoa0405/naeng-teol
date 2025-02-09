@@ -42,6 +42,12 @@ const getIngredientsFromAIVision = async (imagePath: string) => {
   return response;
 };
 
+export const getRecipe = async (id: string) => {
+  const response = await api.get<IRecipe>(`recipes/${id}`).json();
+
+  return response;
+};
+
 export const saveRecipe = async ({
   recipe,
   authorId,
@@ -49,17 +55,13 @@ export const saveRecipe = async ({
   recipe: IRecipe;
   authorId: string;
 }) => {
-  const response = await fetch(`${process.env.API_BASE_URL}/posts/create`, {
-    method: "POST",
-    body: JSON.stringify({ recipe, authorId }),
-  });
+  const response = await api
+    .post("posts/create", {
+      json: { recipe, authorId },
+    })
+    .json();
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`레시피 저장 실패: ${errorText}`);
-  }
-
-  return response.json();
+  return response;
 };
 
 export const signInWithGoogle = async () => {
