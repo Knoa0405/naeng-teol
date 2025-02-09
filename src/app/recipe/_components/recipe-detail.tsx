@@ -2,29 +2,16 @@
 
 import { useEffect, useState } from "react";
 import Loader from "@/app/(home)/_components/loader";
+import { IRecipe } from "@/types/recipe";
 
-export default function RecipeDetail({ id }: { id: string }) {
-  const [recipe, setRecipe] = useState<any>(null);
+interface IRecipeDetailProps {
+  recipe: IRecipe;
+}
 
-  useEffect(() => {
-    async function fetchRecipe() {
-      const response = await fetch(`/api/recipes/${id}`);
-      const data = await response.json();
-
-      setRecipe(data);
-    }
-
-    fetchRecipe();
-  }, [id]);
-
-  if (!recipe) {
-    return <Loader />;
-  }
-
+export default function RecipeDetail({ recipe }: IRecipeDetailProps) {
   return (
     <div className="recipe-detail">
-      <h1 className="text-4xl font-bold">{recipe.name}</h1>
-      <p>{recipe.description}</p>
+      <h1 className="text-4xl font-bold">{recipe.title}</h1>
       <ul>
         {recipe.ingredients.map((ingredient: any) => (
           <li key={ingredient}>{ingredient}</li>
@@ -32,7 +19,6 @@ export default function RecipeDetail({ id }: { id: string }) {
       </ul>
       <div>
         <h2 className="text-2xl font-bold">Instructions</h2>
-        <p>{recipe.instructions}</p>
       </div>
     </div>
   );
