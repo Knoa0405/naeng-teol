@@ -21,9 +21,9 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 const MainNav = () => {
+  const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
-  const { data: session } = useSession();
 
   const navigationItems = [
     { label: "냉장고 털기", href: "/" },
@@ -33,7 +33,7 @@ const MainNav = () => {
   return (
     <nav className="flex justify-center items-center space-x-4 lg:space-x-6 pt-4">
       <NavigationMenu>
-        <NavigationMenuList className="flex items-center">
+        <NavigationMenuList className="flex items-center gap-4">
           {navigationItems.map((item) => (
             <NavigationMenuItem key={item.href}>
               <Link href={item.href} legacyBehavior passHref>
