@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn, signOut } from "@/auth";
+import { auth, signIn, signOut } from "@/auth";
 import { IRecipe } from "@/types/recipe";
 import { api } from "@/lib/api-helper";
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
@@ -23,16 +23,16 @@ export const getRecipe = async (id: string) => {
   return response;
 };
 
-export const saveRecipe = async ({
-  recipe,
-  authorId,
-}: {
-  recipe: IRecipe;
-  authorId: string;
-}) => {
+export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("User not found");
+  }
+  // TODO: post 로 변경 recipe 은 따로 저장
   const response = await api
     .post("posts/create", {
-      json: { recipe, authorId },
+      json: { recipe, authorId: session.user.id },
     })
     .json();
 
