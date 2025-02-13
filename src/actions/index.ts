@@ -1,76 +1,46 @@
 "use server";
 
-import { signIn } from "@/auth";
-import { uploadFileToS3 } from "@/lib/upload-s3";
+import { auth, signIn, signOut } from "@/auth";
 import { IRecipe } from "@/types/recipe";
-
+import { api } from "@/lib/api-helper";
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
 
-// 이미지 파일 유효성 검사 함수
-const validateImageFile = (image: FormDataEntryValue | null) => {
-  if (!(image instanceof File)) {
-    throw new Error("유효하지 않은 이미지 파일 형식입니다.");
-  }
-};
-
-export const getIngredientsFromImage = async (formData: FormData) => {
-  try {
-    // 이미지 파일 유효성 검사
-    const image = formData.get("image");
-    validateImageFile(image);
-
-    // S3에 이미지 업로드
-    const { filePath } = await uploadFileToS3({
-      file: image as File,
-    });
-
-    // AI Vision API 호출
-    const data = await getIngredientsFromAIVision(filePath);
-
-    return data.ingredients;
-  } catch (error) {
-    console.error("이미지로부터 레시피를 가져오는데 실패했습니다:", error);
-    throw error;
-  }
-};
-
-const getIngredientsFromAIVision = async (imagePath: string) => {
-  const response = await fetch(
-    `${process.env.API_BASE_URL}/ai/vision/ingredients`,
-    {
-      method: "POST",
-      body: JSON.stringify({
+export const getIngredientsFromAIVision = async (imagePath: string) => {
+  const response = await api
+    .post<{ ingredients: string[] }>("ai/vision/ingredients", {
+      json: {
         imageUrl: `${IMAGE_ORIGIN_URL}/${imagePath}`,
-      }),
-    }
-  );
+      },
+    })
+    .json();
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`AI Vision API 호출 실패: ${errorText}`);
-  }
-
-  return response.json();
+  return response.ingredients ?? [];
 };
 
-export const saveRecipe = async ({
-  recipe,
-  authorId,
-}: {
-  recipe: IRecipe;
-  authorId: string;
-}) => {
-  const response = await fetch(`${process.env.API_BASE_URL}/posts/create`, {
-    method: "POST",
-    body: JSON.stringify({ recipe, authorId }),
-  });
+export const getRecipe = async (id: string) => {
+  const response = await api.get<IRecipe>(`recipes/${id}`).json();
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`레시피 저장 실패: ${errorText}`);
+  return response;
+};
+
+export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("User not found");
   }
+  // TODO: post 로 변경 recipe 은 따로 저장
+  const response = await api
+    .post("posts/create", {
+      json: { recipe, authorId: session.user.id },
+    })
+    .json();
 
-  return response.json();
+  return response;
+};
+
+export const signOutAction = async () => {
+  await signOut();
 };
 
 export const signInWithGoogle = async () => {

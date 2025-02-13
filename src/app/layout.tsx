@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import MainNav from "@/components/layout/main-nav";
+import { SessionProvider } from "next-auth/react";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -34,8 +35,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <MainNav />
-          {children}
+          <SessionProvider>
+            <MainNav />
+            {children}
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>
