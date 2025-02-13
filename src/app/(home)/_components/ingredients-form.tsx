@@ -91,7 +91,7 @@ const IngredientsForm = () => {
       setIsBaseLoading(true);
       const { image, ...rest } = data;
 
-      const ingredientsFromImage = image
+      const ingredientsFromImage = image[0]
         ? await getIngredientsFromImage(image[0])
         : [];
 
