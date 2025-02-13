@@ -1,19 +1,18 @@
+"use server";
+
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
-const s3Client = new S3Client({
-  region: "ap-northeast-2",
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-});
+export const uploadFileToS3 = async (file: File) => {
+  const s3Client = new S3Client({
+    region: "ap-northeast-2",
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+  });
 
-interface TUploadFile {
-  file: File;
-}
-
-export const uploadFileToS3 = async ({ file }: TUploadFile) => {
   const name = file.name;
+
   const fileBuffer = await file.arrayBuffer();
 
   const isImage = file.type.startsWith("image/");
@@ -29,10 +28,7 @@ export const uploadFileToS3 = async ({ file }: TUploadFile) => {
     ContentType: file.type || "application/octet-stream",
   };
 
-  const uploadResult = await s3Client.send(new PutObjectCommand(uploadParams));
+  await s3Client.send(new PutObjectCommand(uploadParams));
 
-  return {
-    uploadResult,
-    filePath,
-  };
+  return filePath;
 };
