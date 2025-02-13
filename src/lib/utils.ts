@@ -14,7 +14,7 @@ export function pipe<T, R>(
     fns.reduce((promise, fn) => promise.then(fn), Promise.resolve(initial));
 }
 
-export const createFileFormData = async (file: File) => {
+export const createFormData = async (file: File) => {
   const fileName = encodeURIComponent(file.name);
   const renamedFile = new File([file], fileName, { type: file.type });
 
