@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { createFormData, pipe } from "@/lib/utils";
 import { getIngredientsFromAIVision, saveRecipe } from "@/actions";
 import { TInputIngredient } from "@/types/recipe";
-import { useSession } from "next-auth/react";
 import RecipeCategories, { TCategoryOption } from "./recipe-categories";
 import { uploadFileToS3 } from "@/lib/upload-s3";
 import { getImageFile } from "@/lib/get-image-file";
@@ -21,8 +20,6 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
 
 const IngredientsForm = () => {
-  const session = useSession();
-
   const { register, handleSubmit } = useForm({
     shouldUnregister: true,
   });
@@ -34,9 +31,9 @@ const IngredientsForm = () => {
 
   const [categories, setCategories] = useState<TCategoryOption[]>([]);
   const [inputs, setInputs] = useState<TInputIngredient[]>([]);
-  const [isBaseLoading, setIsBaseLoading] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
-  const { submit, isLoading } = useObject({
+  const { submit, isLoading: isRecipeLoading } = useObject({
     api: "/api/ai/recipe",
     schema: RecipeSchema,
     onError: console.error,
@@ -78,17 +75,14 @@ const IngredientsForm = () => {
   };
 
   const handleSaveRecipe = async () => {
-    if (session) {
-      await saveRecipe({
-        recipe,
-        authorId: session.data?.user?.id || "",
-      });
-    }
+    await saveRecipe({
+      recipe,
+    });
   };
 
   const onSubmit = async (data: any) => {
     try {
-      setIsBaseLoading(true);
+      setIsPending(true);
       const { image, ...rest } = data;
 
       const ingredientsFromImage = image[0]
@@ -104,11 +98,11 @@ const IngredientsForm = () => {
     } catch (error) {
       console.error("재료 제출 중 오류 발생:", error);
     } finally {
-      setIsBaseLoading(false);
+      setIsPending(false);
     }
   };
 
-  const isSubmitting = isLoading || isBaseLoading;
+  const isLoading = isRecipeLoading || isPending;
 
   useEffect(() => {
     return () => {
@@ -164,11 +158,11 @@ const IngredientsForm = () => {
         <PlusIcon className="w-full h-4" />
       </Button>
       <Button
-        disabled={isSubmitting}
+        disabled={isLoading}
         className="w-full"
         onClick={handleSubmit(onSubmit)}
       >
-        {isSubmitting ? (
+        {isLoading ? (
           <>
             <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
             레시피 생성중
