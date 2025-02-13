@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TInputIngredient } from "@/types/recipe";
 import { MinusIcon } from "@radix-ui/react-icons";
-import { useIngredientsStore } from "@/store";
 
 type TIngredientInputProps = HTMLAttributes<HTMLInputElement> & {
   id: string;
@@ -15,13 +14,8 @@ type TIngredientInputProps = HTMLAttributes<HTMLInputElement> & {
 
 const IngredientInput = forwardRef<HTMLInputElement, TIngredientInputProps>(
   ({ setInputs, index, ...props }, ref) => {
-    const removeIngredient = useIngredientsStore(
-      (state) => state.removeIngredient
-    );
-
     const handleRemove = () => {
       setInputs((prev) => prev.filter((input) => input.id !== props.id));
-      removeIngredient(props.id);
     };
 
     return (

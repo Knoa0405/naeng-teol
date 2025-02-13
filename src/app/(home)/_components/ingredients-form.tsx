@@ -8,15 +8,17 @@ import { PlusIcon, ReloadIcon } from "@radix-ui/react-icons";
 import { nanoid } from "nanoid/non-secure";
 import { experimental_useObject as useObject } from "ai/react";
 import { RecipeSchema } from "@/types/schema";
-import { useIngredientsStore, useRecipeStore } from "@/store";
+import { useRecipeStore } from "@/store";
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { createFileFormData, pipe } from "@/lib/utils";
-import { getIngredientsFromImage, saveRecipe } from "@/actions";
+import { createFormData, pipe } from "@/lib/utils";
+import { getIngredientsFromAIVision, saveRecipe } from "@/actions";
 import { TInputIngredient } from "@/types/recipe";
 import { useSession } from "next-auth/react";
 import RecipeCategories, { TCategoryOption } from "./recipe-categories";
+import { uploadFileToS3 } from "@/lib/upload-s3";
+import { getImageFile } from "@/lib/get-image-file";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import Image from "next/image";
 
 const IngredientsForm = () => {
   const session = useSession();
@@ -28,8 +30,8 @@ const IngredientsForm = () => {
   const addRecipe = useRecipeStore((state) => state.addRecipe);
   const recipe = useRecipeStore((state) => state.recipe);
 
-  const addIngredient = useIngredientsStore((state) => state.addIngredient);
   const [imagePreviewURL, setImagePreviewURL] = useState<string | null>(null);
+
   const [categories, setCategories] = useState<TCategoryOption[]>([]);
   const [inputs, setInputs] = useState<TInputIngredient[]>([]);
   const [isBaseLoading, setIsBaseLoading] = useState(false);
@@ -55,27 +57,22 @@ const IngredientsForm = () => {
     },
   });
 
-  const handleAdd = useCallback(({ content = "" } = {}) => {
+  const handleAddInput = useCallback(({ content = "" } = {}) => {
     setInputs((prev) => [...prev, { id: `ingredient-${nanoid()}`, content }]);
   }, []);
 
-  const handleImageUploadProcess = async (image: File) => {
+  const getIngredientsFromImage = async (image: File): Promise<string[]> => {
     try {
       const ingredients = await pipe<File, string[]>(
-        createFileFormData,
-        getIngredientsFromImage,
-        (ingredients) => {
-          ingredients.forEach((ingredient: string) =>
-            handleAdd({ content: ingredient })
-          );
-
-          return ingredients;
-        }
+        createFormData,
+        getImageFile,
+        uploadFileToS3,
+        getIngredientsFromAIVision
       )(image);
 
       return ingredients;
     } catch (error) {
-      console.error("이미지 업로드 중 오류 발생:", error);
+      console.error("이미지에서 재료 추출 중 오류 발생:", error);
       return [];
     }
   };
@@ -94,16 +91,14 @@ const IngredientsForm = () => {
       setIsBaseLoading(true);
       const { image, ...rest } = data;
 
-      addIngredient(rest);
+      const ingredientsFromImage = image
+        ? await getIngredientsFromImage(image[0])
+        : [];
 
-      const result = image ? await handleImageUploadProcess(image[0]) : [];
-      const ingredients = [...Object.values(rest), ...result];
-
-      const ingredientsSet = new Set(ingredients);
-      const uniqueIngredients = Array.from(ingredientsSet);
+      const allIngredients = [...Object.values(rest), ...ingredientsFromImage];
 
       submit({
-        ingredients: uniqueIngredients.toString(),
+        ingredients: allIngredients.toString(),
         categories: categories.toString(),
       });
     } catch (error) {
@@ -113,6 +108,8 @@ const IngredientsForm = () => {
     }
   };
 
+  const isSubmitting = isLoading || isBaseLoading;
+
   useEffect(() => {
     return () => {
       if (imagePreviewURL) {
@@ -120,8 +117,6 @@ const IngredientsForm = () => {
       }
     };
   }, [imagePreviewURL]);
-
-  const isSubmitting = isLoading || isBaseLoading;
 
   return (
     <div className="flex flex-col gap-4 items-center">
@@ -165,7 +160,7 @@ const IngredientsForm = () => {
           />
         ))}
       </form>
-      <Button onClick={() => handleAdd()} className="w-full">
+      <Button onClick={() => handleAddInput()} className="w-full">
         <PlusIcon className="w-full h-4" />
       </Button>
       <Button
