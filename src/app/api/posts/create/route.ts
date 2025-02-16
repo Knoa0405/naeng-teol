@@ -1,8 +1,17 @@
 import prisma from "@/db";
 import { NextRequest, NextResponse } from "next/server";
+import { IPost } from "@/types/posts";
 
-export async function POST(request: NextRequest) {
-  const body = await request.json();
+interface IRequestBody extends IPost {}
+interface IResponseBody {
+  post: IPost | null;
+  error?: string;
+}
+
+export async function POST(
+  request: NextRequest
+): Promise<NextResponse<IResponseBody>> {
+  const body = (await request.json()) as IRequestBody;
   const { title, content, ingredients, rawContent, authorId } = body;
 
   try {
@@ -12,7 +21,7 @@ export async function POST(request: NextRequest) {
         content,
         ingredients,
         rawContent,
-        author_id: authorId,
+        authorId,
       },
     });
 
@@ -24,7 +33,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to create post" },
+      { post: null, error: "Failed to create post" },
       { status: 500 }
     );
   }
