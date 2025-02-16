@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Loader from "@/app/(home)/_components/loader";
 import { IRecipe } from "@/types/recipe";
 
 interface IRecipeDetailProps {
