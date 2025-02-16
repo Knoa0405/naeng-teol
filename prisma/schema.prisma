@@ -27,18 +27,18 @@ model User {
   posts      Post[]
   comments   Comment[]
   blocks     Block[]  @relation("Blocker")
-  blocked_by Block[]  @relation("Blocked")
+  blockedBy  Block[]  @relation("Blocked")
   likes      Like[]
-  comment_likes CommentLike[]
-  updated_at DateTime  @updatedAt @db.Timestamptz(6)
+  commentLikes CommentLike[]
+  updatedAt DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
   notifications Notification[]
   // 프로필 정보
   avatar     String?
   bio        String?
   instagram  String?
 
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  is_deleted Boolean  @default(false)
+  createdAt DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  isDeleted Boolean  @default(false) @map("is_deleted")
 
   @@map("users")
 }
@@ -49,13 +49,13 @@ model Account {
   type               String
   provider           String
   providerAccountId  String  @map("provider_account_id")
-  refresh_token      String? @db.Text
-  access_token       String? @db.Text
-  expires_at         Int?
-  token_type         String?
+  refreshToken       String? @db.Text @map("refresh_token")
+  accessToken        String? @db.Text @map("access_token")
+  expiresAt          Int?    @map("expires_at")
+  tokenType          String? @map("token_type")
   scope              String?
-  id_token           String? @db.Text
-  session_state      String?
+  idToken            String? @db.Text @map("id_token")
+  sessionState       String? @map("session_state")
  
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
  
@@ -85,88 +85,88 @@ model VerificationToken {
 
 model Post {
   id         BigInt   @id @default(autoincrement())
-  created_at DateTime @default(now()) @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
   title      String
   content    String
   ingredients String[]
-  rawContent String?
-  author     User     @relation(fields: [author_id], references: [id])
-  author_id  String
+  rawContent String   @map("raw_content")
+  author     User     @relation(fields: [authorId], references: [id])
+  authorId  String    @map("author_id")
   views      Int      @default(0)
   comments   Comment[]
   likes      Like[]
-  likes_count Int      @default(0)
-  updated_at DateTime  @updatedAt @db.Timestamptz(6)
-  is_deleted Boolean  @default(false)
+  likesCount Int      @default(0) @map("likes_count")
+  updatedAt DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+  isDeleted Boolean   @default(false) @map("is_deleted")
 
   @@map("posts")
 }
 
 model Comment {
   id          BigInt     @id @default(autoincrement())
-  author      User       @relation(fields: [author_id], references: [id])
-  author_id   String
-  created_at  DateTime   @default(now()) @db.Timestamptz(6)
+  author      User       @relation(fields: [authorId], references: [id])
+  authorId   String      @map("author_id")
+  createdAt  DateTime    @default(now()) @db.Timestamptz(6) @map("created_at")
   content     String
-  post        Post       @relation(fields: [post_id], references: [id])
-  post_id     BigInt
-  parent      Comment?   @relation("CommentReplies", fields: [parent_id], references: [id])
-  parent_id   BigInt?
+  post        Post       @relation(fields: [postId], references: [id])
+  postId     BigInt      @map("post_id")
+  parent      Comment?   @relation("CommentReplies", fields: [parentId], references: [id])
+  parentId   BigInt?     @map("parent_id")
   replies     Comment[]  @relation("CommentReplies")
-  updated_at  DateTime   @updatedAt @db.Timestamptz(6)
+  updatedAt  DateTime    @updatedAt @db.Timestamptz(6) @map("updated_at")
   likes       CommentLike[]
-  likes_count Int        @default(0)
-  is_deleted  Boolean    @default(false)
+  likesCount Int         @default(0) @map("likes_count")
+  isDeleted  Boolean     @default(false) @map("is_deleted")
 
   @@map("comments")
 }
 
 model Notification {
   id          BigInt    @id @default(autoincrement())
-  user        User      @relation(fields: [user_id], references: [id])
-  user_id     String    
+  user        User      @relation(fields: [userId], references: [id])
+  userId     String     @map("user_id")
   type        String    
   content     String    
-  is_read     Boolean   @default(false)
-  created_at  DateTime  @default(now()) @db.Timestamptz(6)
-  comment_id  BigInt?   
-  post_id     BigInt?  
+  isRead     Boolean   @default(false) @map("is_read")
+  createdAt  DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  commentId  BigInt?   @map("comment_id")
+  postId     BigInt?   @map("post_id")
 
   @@map("notifications")
 }
 
 model Block {
   id          BigInt   @id @default(autoincrement())
-  blocker     User     @relation("Blocker", fields: [blocker_id], references: [id])
-  blocker_id  String
-  blocked     User     @relation("Blocked", fields: [blocked_id], references: [id])
-  blocked_id  String
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  blocker     User     @relation("Blocker", fields: [blockerId], references: [id])
+  blockerId  String    @map("blocker_id")
+  blocked     User     @relation("Blocked", fields: [blockedId], references: [id])
+  blockedId  String    @map("blocked_id")
+  createdAt  DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
 
-  @@unique([blocker_id, blocked_id])
+  @@unique([blockerId, blockedId])
   @@map("blocks")
 }
 
 model Like {
   id          BigInt    @id @default(autoincrement())
-  user        User      @relation(fields: [user_id], references: [id])
-  user_id     String    
-  post        Post      @relation(fields: [post_id], references: [id])
-  post_id     BigInt    
-  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  user        User      @relation(fields: [userId], references: [id])
+  userId     String     @map("user_id")
+  post        Post      @relation(fields: [postId], references: [id])
+  postId     BigInt     @map("post_id")
+  createdAt  DateTime   @default(now()) @db.Timestamptz(6) @map("created_at")
 
-  @@unique([user_id, post_id])
+  @@unique([userId, postId])
   @@map("likes")
 }
 
 model CommentLike {
   id          BigInt    @id @default(autoincrement())
-  user        User      @relation(fields: [user_id], references: [id])
-  user_id     String    
-  comment     Comment   @relation(fields: [comment_id], references: [id])
-  comment_id  BigInt    
-  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  user        User      @relation(fields: [userId], references: [id])
+  userId     String     @map("user_id")
+  comment     Comment   @relation(fields: [commentId], references: [id])
+  commentId  BigInt     @map("comment_id")
+  createdAt  DateTime   @default(now()) @db.Timestamptz(6) @map("created_at")
 
-  @@unique([user_id, comment_id])
+  @@unique([userId, commentId])
   @@map("comment_likes")
 }
