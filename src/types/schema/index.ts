@@ -11,13 +11,13 @@ export const RecipeSchema = z.object({
 });
 
 export const PostSchema = RecipeSchema.extend({
-  id: z.bigint().describe("post id"),
+  id: z.bigint().optional().describe("post id"),
   authorId: z.string().describe("author id"),
-  views: z.number().describe("number of views"),
-  likesCount: z.number().describe("number of likes"),
-  isDeleted: z.boolean().describe("is deleted"),
-  updatedAt: z.date().describe("updated at"),
-  createdAt: z.date().describe("created at"),
+  views: z.number().optional().describe("number of views"),
+  likesCount: z.number().optional().describe("number of likes"),
+  isDeleted: z.boolean().optional().describe("is deleted"),
+  updatedAt: z.date().optional().describe("updated at"),
+  createdAt: z.date().optional().describe("created at"),
 });
 
 export const IngredientSchema = z.object({

@@ -3,6 +3,11 @@
 import { auth, signIn, signOut } from "@/auth";
 import { IRecipe } from "@/types/recipe";
 import { api } from "@/lib/api-helper";
+import {
+  ICreatePostRequestBody,
+  ICreatePostResponseBody,
+} from "@/app/api/posts/create/route";
+
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
 
 export const getIngredientsFromAIVision = async (imagePath: string) => {
@@ -29,10 +34,19 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
   if (!session?.user) {
     throw new Error("User not found");
   }
+
+  const requestBody: ICreatePostRequestBody = {
+    authorId: session.user.id ?? "",
+    title: recipe.title,
+    ingredients: recipe.ingredients,
+    content: recipe.content,
+    rawContent: recipe.rawContent,
+  };
+
   // TODO: post 로 변경 recipe 은 따로 저장
   const response = await api
-    .post("posts/create", {
-      json: { recipe, authorId: session.user.id },
+    .post<ICreatePostResponseBody>("posts/create", {
+      json: requestBody,
     })
     .json();
 
