@@ -42,8 +42,11 @@ export const api = ky.create({
     ],
   },
   retry: {
-    limit: 2,
+    limit: 3,
     methods: ["get", "put", "post", "patch", "delete"],
+    delay(attemptCount) {
+      return Math.min(1000 * 2 ** attemptCount, 10000);
+    },
   },
   timeout: 30000,
 });
