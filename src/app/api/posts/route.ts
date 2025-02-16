@@ -20,7 +20,7 @@ export async function GET(
     take: take + 1, // 다음 페이지가 있는지 확인하기 위해 하나 더 가져옴
     skip: cursor ? 1 : 0, // 커서가 있을 경우 첫 번째 포스트를 건너뜀
     cursor: cursor ? { id: Number(cursor) } : undefined,
-    orderBy: { created_at: "desc" },
+    orderBy: { createdAt: "desc" },
   });
 
   const hasNextPage = posts.length > take;

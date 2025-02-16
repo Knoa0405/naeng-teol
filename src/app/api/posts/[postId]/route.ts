@@ -46,7 +46,7 @@ export async function PATCH(
       data: {
         title,
         content,
-        author_id: authorId,
+        authorId: authorId,
       },
     });
 
