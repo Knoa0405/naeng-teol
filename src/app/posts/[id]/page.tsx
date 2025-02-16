@@ -1,5 +1,5 @@
 import { IRouteParams } from "@/types/common";
-import RecipeDetail from "@/app/recipe/_components/recipe-detail";
+import RecipeDetail from "@/app/posts/_components/recipe-detail";
 import { getRecipe } from "@/actions";
 
 export default async function RecipePage({
