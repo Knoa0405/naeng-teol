@@ -47,8 +47,6 @@ const IngredientsForm = () => {
             ) || [],
           content: object.content || "",
           rawContent: object.rawContent || "",
-          referenceLink:
-            object.referenceLink?.filter((link) => link !== undefined) || [],
         });
       }
     },

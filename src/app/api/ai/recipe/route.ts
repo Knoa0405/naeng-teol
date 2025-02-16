@@ -11,7 +11,7 @@ export const POST = async (req: Request) => {
       model: openai(AI_MODEL_NAME),
       schema: RecipeSchema,
       system:
-        "Create Recipe with reference blog link following ingredients in markdown format, korean language",
+        "Create Recipe following ingredients in markdown format, korean language",
       prompt: `ingredients : ${ingredients}, categories: ${categories}`,
     });
 
