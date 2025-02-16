@@ -128,7 +128,10 @@ const IngredientsForm = () => {
           />
         </AspectRatio>
       )}
-      <form className="flex flex-col gap-4 w-full">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-4 w-full"
+      >
         <Input
           key="image"
           id="image"
@@ -153,29 +156,31 @@ const IngredientsForm = () => {
             index={index}
           />
         ))}
-      </form>
-      <Button onClick={() => handleAddInput()} className="w-full">
-        <PlusIcon className="w-full h-4" />
-      </Button>
-      <Button
-        disabled={isLoading}
-        className="w-full"
-        onClick={handleSubmit(onSubmit)}
-      >
-        {isLoading ? (
-          <>
-            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-            레시피 생성중
-          </>
-        ) : recipe.content ? (
-          "레시피 다시 만들기"
-        ) : (
-          "레시피 만들기"
+        <Button
+          type="button"
+          onClick={() => handleAddInput()}
+          className="w-full"
+        >
+          <PlusIcon className="w-full h-4" />
+        </Button>
+        <Button type="submit" disabled={isLoading} className="w-full">
+          {isLoading ? (
+            <>
+              <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+              레시피 생성중
+            </>
+          ) : recipe.content ? (
+            "레시피 다시 만들기"
+          ) : (
+            "레시피 만들기"
+          )}
+        </Button>
+        {recipe.content && (
+          <Button type="button" onClick={handleSaveRecipe}>
+            레시피 저장
+          </Button>
         )}
-      </Button>
-      {recipe.content && (
-        <Button onClick={handleSaveRecipe}>레시피 저장</Button>
-      )}
+      </form>
     </div>
   );
 };
