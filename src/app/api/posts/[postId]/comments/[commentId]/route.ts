@@ -1,10 +1,9 @@
 import prisma from "@/db";
 import { IRouteParams } from "@/types/common";
-import { type NextRequest, NextResponse } from "next/server";
 import { IPostsRouteParams } from "@/types/posts";
 
 export async function GET(
-  request: NextRequest,
+  request: Request,
   { params }: IRouteParams<IPostsRouteParams>
 ) {
   const { commentId } = await params;
@@ -13,11 +12,11 @@ export async function GET(
     where: { id: BigInt(commentId) },
   });
 
-  return NextResponse.json({ comment }, { status: 200 });
+  return Response.json({ comment }, { status: 200 });
 }
 
 export async function PATCH(
-  request: NextRequest,
+  request: Request,
   { params }: IRouteParams<IPostsRouteParams>
 ) {
   const { commentId } = await params;
@@ -28,11 +27,11 @@ export async function PATCH(
     data: body,
   });
 
-  return NextResponse.json({ comment }, { status: 200 });
+  return Response.json({ comment }, { status: 200 });
 }
 
 export async function DELETE(
-  request: NextRequest,
+  request: Request,
   { params }: IRouteParams<IPostsRouteParams>
 ) {
   const { commentId } = await params;
@@ -41,5 +40,5 @@ export async function DELETE(
     where: { id: BigInt(commentId) },
   });
 
-  return NextResponse.json({ comment }, { status: 200 });
+  return Response.json({ comment }, { status: 200 });
 }

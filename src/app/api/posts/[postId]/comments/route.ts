@@ -1,10 +1,9 @@
 import prisma from "@/db";
-import { type NextRequest, NextResponse } from "next/server";
 import { IRouteParams } from "@/types/common";
 import { IPostsRouteParams } from "@/types/posts";
 
 export async function GET(
-  request: NextRequest,
+  request: Request,
   { params }: IRouteParams<IPostsRouteParams>
 ) {
   const { postId } = await params;
@@ -15,5 +14,5 @@ export async function GET(
     },
   });
 
-  return NextResponse.json({ comments }, { status: 200 });
+  return Response.json({ comments }, { status: 200 });
 }

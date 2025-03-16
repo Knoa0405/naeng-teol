@@ -1,7 +1,6 @@
 import prisma from "@/db";
 import { IRouteParams } from "@/types/common";
 import { IPostsRouteParams } from "@/types/posts";
-import { NextRequest, NextResponse } from "next/server";
 
 export type TParams = {
   postId: string;
@@ -9,7 +8,7 @@ export type TParams = {
 };
 
 export async function GET(
-  request: NextRequest,
+  request: Request,
   { params }: IRouteParams<IPostsRouteParams>
 ) {
   const url = new URL(request.url);
@@ -26,5 +25,5 @@ export async function GET(
   const hasNextPage = posts.length > take;
   if (hasNextPage) posts.pop(); // 다음 페이지가 있으면 마지막 포스트 제거
 
-  return NextResponse.json({ posts, hasNextPage }, { status: 200 });
+  return Response.json({ posts, hasNextPage }, { status: 200 });
 }

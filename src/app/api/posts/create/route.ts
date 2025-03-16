@@ -1,5 +1,4 @@
 import prisma from "@/db";
-import { NextRequest, NextResponse } from "next/server";
 import { IPost } from "@/types/posts";
 
 export interface ICreatePostRequestBody extends IPost {}
@@ -8,9 +7,7 @@ export interface ICreatePostResponseBody {
   error?: string;
 }
 
-export async function POST(
-  request: NextRequest
-): Promise<NextResponse<ICreatePostResponseBody>> {
+export async function POST(request: Request): Promise<Response> {
   const body = (await request.json()) as ICreatePostRequestBody;
   const { title, content, ingredients, rawContent, authorId } = body;
 
@@ -25,14 +22,21 @@ export async function POST(
       },
     });
 
-    return NextResponse.json(
+    return Response.json(
       {
-        post,
+        post: {
+          id: post.id.toString(),
+          title: post.title,
+          content: post.content,
+          rawContent: post.rawContent,
+          ingredients: post.ingredients,
+        },
       },
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json(
+    console.error(error);
+    return Response.json(
       { post: null, error: "Failed to create post" },
       { status: 500 }
     );

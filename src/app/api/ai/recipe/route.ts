@@ -3,8 +3,8 @@ import { RecipeSchema } from "@/types/schema";
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 
-export const POST = async (req: Request) => {
-  const { ingredients, categories } = await req.json();
+export const POST = async (request: Request) => {
+  const { ingredients, categories } = await request.json();
 
   try {
     const result = await generateObject({
