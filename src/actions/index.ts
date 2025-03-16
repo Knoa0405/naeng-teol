@@ -43,7 +43,6 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
     rawContent: recipe.rawContent,
   };
 
-  // TODO: post 로 변경 recipe 은 따로 저장
   const response = await api
     .post<ICreatePostResponseBody>("posts/create", {
       json: requestBody,
