@@ -25,7 +25,7 @@ const RecipeListItem = ({ item }: RecipeListItemProps) => {
     <div className="break-inside-avoid mb-4">
       <Card
         className="overflow-hidden cursor-pointer"
-        onClick={() => router.push(`/recipe/${item.id}`)}
+        onClick={() => router.push(`/posts/${item.id}`)}
       >
         <CardContent className="p-0">
           <Image
