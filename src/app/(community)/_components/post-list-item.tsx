@@ -19,18 +19,7 @@ const PostListItem = ({ item }: PostListItemProps) => {
         className="overflow-hidden cursor-pointer"
         onClick={() => router.push(`/posts/${item.id}`)}
       >
-        <CardContent className="p-0">
-          <Image
-            src="https://via.placeholder.com/600/800"
-            alt={item.title}
-            width={600}
-            height={600}
-            className="w-full h-auto object-cover"
-            loading="lazy"
-            placeholder="blur"
-            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPc8h8AAm0BtR3QMUIAAAAASUVORK5CYII="
-          />
-        </CardContent>
+        <CardContent className="p-0">{/* 이미지 영역 */}</CardContent>
         <CardContent className="p-4">
           <h3 className="font-semibold text-lg">{item.title}</h3>
           <p className="text-sm text-gray-600">{item.content}</p>
