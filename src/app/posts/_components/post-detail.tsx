@@ -7,7 +7,6 @@ interface IPostDetailProps {
 }
 
 export default function PostDetail({ post }: IPostDetailProps) {
-  console.log(post);
   return (
     <div className="post-detail">
       <h1 className="text-4xl font-bold">{post.title}</h1>
