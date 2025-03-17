@@ -22,8 +22,8 @@ export const getIngredientsFromAIVision = async (imagePath: string) => {
   return response.ingredients ?? [];
 };
 
-export const getRecipe = async (id: string) => {
-  const response = await api.get<IRecipe>(`recipes/${id}`).json();
+export const getPost = async (id: string) => {
+  const response = await api.get<IPost>(`posts/${id}`).json();
 
   return response;
 };
