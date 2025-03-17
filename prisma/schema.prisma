@@ -83,7 +83,7 @@ model VerificationToken {
 }
 
 model Post {
-  id          BigInt    @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   title       String
   content     String
   ingredients String[]
@@ -102,15 +102,15 @@ model Post {
 }
 
 model Comment {
-  id         BigInt        @id @default(autoincrement())
+  id         Int           @id @default(autoincrement())
   author     User          @relation(fields: [authorId], references: [id])
   authorId   String        @map("author_id")
   createdAt  DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
   content    String
   post       Post          @relation(fields: [postId], references: [id])
-  postId     BigInt        @map("post_id")
+  postId     Int           @map("post_id")
   parent     Comment?      @relation("CommentReplies", fields: [parentId], references: [id])
-  parentId   BigInt?       @map("parent_id")
+  parentId   Int?          @map("parent_id")
   replies    Comment[]     @relation("CommentReplies")
   updatedAt  DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
   likes      CommentLike[]
@@ -121,21 +121,21 @@ model Comment {
 }
 
 model Notification {
-  id        BigInt   @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
   userId    String   @map("user_id")
   type      String
   content   String
   isRead    Boolean  @default(false) @map("is_read")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  commentId BigInt?  @map("comment_id")
-  postId    BigInt?  @map("post_id")
+  commentId Int?     @map("comment_id")
+  postId    Int?     @map("post_id")
 
   @@map("notifications")
 }
 
 model Block {
-  id        BigInt   @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   blocker   User     @relation("Blocker", fields: [blockerId], references: [id])
   blockerId String   @map("blocker_id")
   blocked   User     @relation("Blocked", fields: [blockedId], references: [id])
@@ -147,11 +147,11 @@ model Block {
 }
 
 model Like {
-  id        BigInt   @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
   userId    String   @map("user_id")
   post      Post     @relation(fields: [postId], references: [id])
-  postId    BigInt   @map("post_id")
+  postId    Int      @map("post_id")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   @@unique([userId, postId])
@@ -159,11 +159,11 @@ model Like {
 }
 
 model CommentLike {
-  id        BigInt   @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
   userId    String   @map("user_id")
   comment   Comment  @relation(fields: [commentId], references: [id])
-  commentId BigInt   @map("comment_id")
+  commentId Int      @map("comment_id")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   @@unique([userId, commentId])
