@@ -53,16 +53,11 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
 };
 
 export const getPosts = async () => {
-  try {
-    const response = await api.get<{ posts: IPost[]; hasNextPage: boolean }>(
-      "posts"
-    );
+  const response = await api.get<{ posts: IPost[]; hasNextPage: boolean }>(
+    "posts"
+  );
 
-    return response.json();
-  } catch (error) {
-    console.error(error);
-    return { posts: [], hasNextPage: false };
-  }
+  return response.json();
 };
 
 export const signOutAction = async () => {
