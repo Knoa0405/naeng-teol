@@ -1,172 +1,168 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
   provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
-}
-
-enum role {
-  ADMIN
-  SUPER_ADMIN
-  USER
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model User {
-  id         String    @id @default(cuid())
-  name          String?  @unique
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
+  id            String         @id @default(cuid())
+  name          String?        @unique
+  email         String?        @unique
+  emailVerified DateTime?      @map("email_verified")
   image         String?
-  accounts   Account[]
-  sessions   Session[]
-  role       role     @default(USER)
-  posts      Post[]
-  comments   Comment[]
-  blocks     Block[]  @relation("Blocker")
-  blocked_by Block[]  @relation("Blocked")
-  likes      Like[]
-  comment_likes CommentLike[]
-  updated_at DateTime  @updatedAt @db.Timestamptz(6)
+  role          role           @default(USER)
+  updatedAt     DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  avatar        String?
+  bio           String?
+  instagram     String?
+  createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  isDeleted     Boolean        @default(false) @map("is_deleted")
+  accounts      Account[]
+  blockedBy     Block[]        @relation("Blocked")
+  blocks        Block[]        @relation("Blocker")
+  commentLikes  CommentLike[]
+  comments      Comment[]
+  likes         Like[]
   notifications Notification[]
-  // 프로필 정보
-  avatar     String?
-  bio        String?
-  instagram  String?
-
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  is_deleted Boolean  @default(false)
+  posts         Post[]
+  sessions      Session[]
 
   @@map("users")
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String  @map("user_id")
-  type               String
-  provider           String
-  providerAccountId  String  @map("provider_account_id")
-  refresh_token      String? @db.Text
-  access_token       String? @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? @db.Text
-  session_state      String?
- 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refreshToken      String? @map("refresh_token") @db.Text
+  accessToken       String? @map("access_token") @db.Text
+  expiresAt         Int?    @map("expires_at")
+  tokenType         String? @map("token_type")
+  scope             String?
+  idToken           String? @map("id_token") @db.Text
+  sessionState      String? @map("session_state")
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([provider, providerAccountId])
   @@map("accounts")
 }
- 
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique @map("session_token")
   userId       String   @map("user_id")
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@map("sessions")
 }
- 
- 
+
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@unique([identifier, token])
   @@map("verification_tokens")
 }
 
 model Post {
-  id         BigInt   @id @default(autoincrement())
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  title      String
-  content    String
+  id          Int       @id @default(autoincrement())
+  title       String
+  content     String
   ingredients String[]
-  rawContent String?
-  author     User     @relation(fields: [author_id], references: [id])
-  author_id  String
-  views      Int      @default(0)
-  comments   Comment[]
-  likes      Like[]
-  likes_count Int      @default(0)
-  updated_at DateTime  @updatedAt @db.Timestamptz(6)
-  is_deleted Boolean  @default(false)
+  rawContent  String    @map("raw_content")
+  authorId    String    @map("author_id")
+  views       Int       @default(0)
+  likesCount  Int       @default(0) @map("likes_count")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  isDeleted   Boolean   @default(false) @map("is_deleted")
+  comments    Comment[]
+  likes       Like[]
+  author      User      @relation(fields: [authorId], references: [id])
 
   @@map("posts")
 }
 
 model Comment {
-  id          BigInt     @id @default(autoincrement())
-  author      User       @relation(fields: [author_id], references: [id])
-  author_id   String
-  created_at  DateTime   @default(now()) @db.Timestamptz(6)
-  content     String
-  post        Post       @relation(fields: [post_id], references: [id])
-  post_id     BigInt
-  parent      Comment?   @relation("CommentReplies", fields: [parent_id], references: [id])
-  parent_id   BigInt?
-  replies     Comment[]  @relation("CommentReplies")
-  updated_at  DateTime   @updatedAt @db.Timestamptz(6)
-  likes       CommentLike[]
-  likes_count Int        @default(0)
-  is_deleted  Boolean    @default(false)
+  id         Int           @id @default(autoincrement())
+  authorId   String        @map("author_id")
+  createdAt  DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  content    String
+  postId     Int           @map("post_id")
+  parentId   Int?          @map("parent_id")
+  updatedAt  DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+  likesCount Int           @default(0) @map("likes_count")
+  isDeleted  Boolean       @default(false) @map("is_deleted")
+  likes      CommentLike[]
+  author     User          @relation(fields: [authorId], references: [id])
+  parent     Comment?      @relation("CommentReplies", fields: [parentId], references: [id])
+  replies    Comment[]     @relation("CommentReplies")
+  post       Post          @relation(fields: [postId], references: [id])
 
   @@map("comments")
 }
 
 model Notification {
-  id          BigInt    @id @default(autoincrement())
-  user        User      @relation(fields: [user_id], references: [id])
-  user_id     String    
-  type        String    
-  content     String    
-  is_read     Boolean   @default(false)
-  created_at  DateTime  @default(now()) @db.Timestamptz(6)
-  comment_id  BigInt?   
-  post_id     BigInt?  
+  id        Int      @id @default(autoincrement())
+  userId    String   @map("user_id")
+  type      String
+  content   String
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  commentId Int?     @map("comment_id")
+  postId    Int?     @map("post_id")
+  user      User     @relation(fields: [userId], references: [id])
 
   @@map("notifications")
 }
 
 model Block {
-  id          BigInt   @id @default(autoincrement())
-  blocker     User     @relation("Blocker", fields: [blocker_id], references: [id])
-  blocker_id  String
-  blocked     User     @relation("Blocked", fields: [blocked_id], references: [id])
-  blocked_id  String
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  id        Int      @id @default(autoincrement())
+  blockerId String   @map("blocker_id")
+  blockedId String   @map("blocked_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  blocked   User     @relation("Blocked", fields: [blockedId], references: [id])
+  blocker   User     @relation("Blocker", fields: [blockerId], references: [id])
 
-  @@unique([blocker_id, blocked_id])
+  @@unique([blockerId, blockedId])
   @@map("blocks")
 }
 
 model Like {
-  id          BigInt    @id @default(autoincrement())
-  user        User      @relation(fields: [user_id], references: [id])
-  user_id     String    
-  post        Post      @relation(fields: [post_id], references: [id])
-  post_id     BigInt    
-  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  id        Int      @id @default(autoincrement())
+  userId    String   @map("user_id")
+  postId    Int      @map("post_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  post      Post     @relation(fields: [postId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
-  @@unique([user_id, post_id])
+  @@unique([userId, postId])
   @@map("likes")
 }
 
 model CommentLike {
-  id          BigInt    @id @default(autoincrement())
-  user        User      @relation(fields: [user_id], references: [id])
-  user_id     String    
-  comment     Comment   @relation(fields: [comment_id], references: [id])
-  comment_id  BigInt    
-  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  id        Int      @id @default(autoincrement())
+  userId    String   @map("user_id")
+  commentId Int      @map("comment_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
-  @@unique([user_id, comment_id])
+  @@unique([userId, commentId])
   @@map("comment_likes")
+}
+
+enum role {
+  ADMIN
+  SUPER_ADMIN
+  USER
 }

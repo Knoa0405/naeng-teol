@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useActionState, useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import IngredientInput from "./ingredient-input";
 import { Button } from "@/components/ui/button";
@@ -11,15 +11,22 @@ import { RecipeSchema } from "@/types/schema";
 import { useRecipeStore } from "@/store";
 import { Input } from "@/components/ui/input";
 import { createFormData, pipe } from "@/lib/utils";
-import { getIngredientsFromAIVision, saveRecipe } from "@/actions";
+import {
+  getIngredientsFromAIVision,
+  saveRecipe,
+  signInWithGoogle,
+} from "@/actions";
 import { TInputIngredient } from "@/types/recipe";
 import RecipeCategories, { TCategoryOption } from "./recipe-categories";
 import { uploadFileToS3 } from "@/lib/upload-s3";
 import { getImageFile } from "@/lib/get-image-file";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
+import { useToast } from "@/components/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 const IngredientsForm = () => {
+  const { toast } = useToast();
   const { register, handleSubmit } = useForm({
     shouldUnregister: true,
   });
@@ -47,8 +54,6 @@ const IngredientsForm = () => {
             ) || [],
           content: object.content || "",
           rawContent: object.rawContent || "",
-          referenceLink:
-            object.referenceLink?.filter((link) => link !== undefined) || [],
         });
       }
     },
@@ -75,10 +80,37 @@ const IngredientsForm = () => {
   };
 
   const handleSaveRecipe = async () => {
-    await saveRecipe({
-      recipe,
-    });
+    try {
+      await saveRecipe({
+        recipe,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        switch (error.message) {
+          case "User not found":
+            toast({
+              variant: "destructive",
+              title: "레시피 저장 실패",
+              description: "로그인 후 이용해주세요",
+              action: (
+                <ToastAction
+                  altText="로그인"
+                  onClick={() => signInWithGoogle()}
+                >
+                  로그인
+                </ToastAction>
+              ),
+            });
+            break;
+        }
+      }
+    }
   };
+
+  const [_, saveRecipeAction, isSaveRecipePending] = useActionState(
+    handleSaveRecipe,
+    undefined
+  );
 
   const onSubmit = async (data: any) => {
     try {
@@ -128,7 +160,10 @@ const IngredientsForm = () => {
           />
         </AspectRatio>
       )}
-      <form className="flex flex-col gap-4 w-full">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-4 w-full"
+      >
         <Input
           key="image"
           id="image"
@@ -153,29 +188,40 @@ const IngredientsForm = () => {
             index={index}
           />
         ))}
+        <Button
+          type="button"
+          onClick={() => handleAddInput()}
+          className="w-full"
+        >
+          <PlusIcon className="w-full h-4" />
+        </Button>
+        <Button type="submit" disabled={isLoading} className="w-full">
+          {isLoading ? (
+            <>
+              <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+              레시피 생성중
+            </>
+          ) : recipe.content ? (
+            "레시피 다시 만들기"
+          ) : (
+            "레시피 만들기"
+          )}
+        </Button>
       </form>
-      <Button onClick={() => handleAddInput()} className="w-full">
-        <PlusIcon className="w-full h-4" />
-      </Button>
-      <Button
-        disabled={isLoading}
-        className="w-full"
-        onClick={handleSubmit(onSubmit)}
-      >
-        {isLoading ? (
-          <>
-            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-            레시피 생성중
-          </>
-        ) : recipe.content ? (
-          "레시피 다시 만들기"
-        ) : (
-          "레시피 만들기"
+      <form action={saveRecipeAction} className="flex flex-col w-full">
+        {recipe.content && (
+          <Button type="submit" disabled={isSaveRecipePending}>
+            {isSaveRecipePending ? (
+              <>
+                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                레시피 저장중
+              </>
+            ) : (
+              "레시피 저장"
+            )}
+          </Button>
         )}
-      </Button>
-      {recipe.content && (
-        <Button onClick={handleSaveRecipe}>레시피 저장</Button>
-      )}
+      </form>
     </div>
   );
 };

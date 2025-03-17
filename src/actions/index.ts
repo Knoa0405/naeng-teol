@@ -3,6 +3,11 @@
 import { auth, signIn, signOut } from "@/auth";
 import { IRecipe } from "@/types/recipe";
 import { api } from "@/lib/api-helper";
+import {
+  ICreatePostRequestBody,
+  ICreatePostResponseBody,
+} from "@/app/api/posts/create/route";
+import { IPost } from "@/types/posts";
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
 
 export const getIngredientsFromAIVision = async (imagePath: string) => {
@@ -17,8 +22,8 @@ export const getIngredientsFromAIVision = async (imagePath: string) => {
   return response.ingredients ?? [];
 };
 
-export const getRecipe = async (id: string) => {
-  const response = await api.get<IRecipe>(`recipes/${id}`).json();
+export const getPost = async (id: string) => {
+  const response = await api.get<IPost>(`posts/${id}`).json();
 
   return response;
 };
@@ -29,13 +34,28 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
   if (!session?.user) {
     throw new Error("User not found");
   }
-  // TODO: post 로 변경 recipe 은 따로 저장
+
+  const requestBody: ICreatePostRequestBody = {
+    authorId: session.user.id ?? "",
+    title: recipe.title,
+    ingredients: recipe.ingredients,
+    content: recipe.content,
+    rawContent: recipe.rawContent,
+  };
+
   const response = await api
-    .post("posts/create", {
-      json: { recipe, authorId: session.user.id },
+    .post<ICreatePostResponseBody>("posts/create", {
+      json: requestBody,
     })
     .json();
 
+  return response;
+};
+
+export const getPosts = async () => {
+  const response = await api.get<{ posts: IPost[]; hasNextPage: boolean }>(
+    "posts"
+  );
   return response;
 };
 

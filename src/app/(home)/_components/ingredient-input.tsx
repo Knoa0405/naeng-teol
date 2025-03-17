@@ -19,7 +19,7 @@ const IngredientInput = forwardRef<HTMLInputElement, TIngredientInputProps>(
     };
 
     return (
-      <div>
+      <>
         <label className="font-semibold">재료 {index + 1}</label>
         <div className="flex gap-4">
           <Input {...props} ref={ref} />
@@ -27,7 +27,7 @@ const IngredientInput = forwardRef<HTMLInputElement, TIngredientInputProps>(
             <MinusIcon className="w-4 h-4" />
           </Button>
         </div>
-      </div>
+      </>
     );
   }
 );

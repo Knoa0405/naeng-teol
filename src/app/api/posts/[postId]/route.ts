@@ -1,31 +1,25 @@
 import prisma from "@/db";
 import { IRouteParams } from "@/types/common";
 import { IPostsRouteParams } from "@/types/posts";
-import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  request: NextRequest,
+  request: Request,
   { params }: IRouteParams<IPostsRouteParams>
 ) {
   const { postId } = await params;
 
   try {
     const post = await prisma.post.findFirst({
-      where: { id: BigInt(postId) },
+      where: { id: Number(postId) },
     });
 
     if (!post) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+      return Response.json({ error: "Post not found" }, { status: 404 });
     }
 
-    return NextResponse.json(
-      {
-        post,
-      },
-      { status: 200 }
-    );
+    return Response.json(post, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
+    return Response.json(
       { error: "Failed to fetch post from database" },
       { status: 500 }
     );
@@ -33,7 +27,7 @@ export async function GET(
 }
 
 export async function PATCH(
-  request: NextRequest,
+  request: Request,
   { params }: IRouteParams<IPostsRouteParams>
 ) {
   const { postId } = await params;
@@ -42,22 +36,22 @@ export async function PATCH(
 
   try {
     const post = await prisma.post.update({
-      where: { id: BigInt(postId) },
+      where: { id: Number(postId) },
       data: {
         title,
         content,
-        author_id: authorId,
+        authorId: authorId,
       },
     });
 
-    return NextResponse.json(
+    return Response.json(
       {
         post,
       },
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json(
+    return Response.json(
       { error: "Failed to update post in database" },
       { status: 500 }
     );
@@ -65,7 +59,7 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  request: Request,
   { params }: IRouteParams<IPostsRouteParams>
 ) {
   const { postId } = await params;
@@ -75,14 +69,14 @@ export async function DELETE(
       where: { id: Number(postId) },
     });
 
-    return NextResponse.json(
+    return Response.json(
       {
         post,
       },
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json(
+    return Response.json(
       { error: "Failed to delete post from database" },
       { status: 500 }
     );
