@@ -1,13 +1,13 @@
 import { IRouteParams } from "@/types/common";
-import RecipeDetail from "@/app/posts/_components/recipe-detail";
-import { getRecipe } from "@/actions";
+import { getPost } from "@/actions";
+import PostDetail from "../_components/post-detail";
 
-export default async function RecipePage({
+export default async function PostPage({
   params,
 }: IRouteParams<{ id: string }>) {
   const { id } = await params;
 
-  const recipe = await getRecipe(id);
+  const post = await getPost(id);
 
-  return <RecipeDetail recipe={recipe} />;
+  return <PostDetail post={post} />;
 }

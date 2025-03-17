@@ -10,19 +10,14 @@ export async function GET(
 
   try {
     const post = await prisma.post.findFirst({
-      where: { id: BigInt(postId) },
+      where: { id: Number(postId) },
     });
 
     if (!post) {
       return Response.json({ error: "Post not found" }, { status: 404 });
     }
 
-    return Response.json(
-      {
-        post,
-      },
-      { status: 200 }
-    );
+    return Response.json(post, { status: 200 });
   } catch (error) {
     return Response.json(
       { error: "Failed to fetch post from database" },
@@ -41,7 +36,7 @@ export async function PATCH(
 
   try {
     const post = await prisma.post.update({
-      where: { id: BigInt(postId) },
+      where: { id: Number(postId) },
       data: {
         title,
         content,
