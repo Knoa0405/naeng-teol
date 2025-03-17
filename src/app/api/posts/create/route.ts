@@ -24,13 +24,7 @@ export async function POST(request: Request): Promise<Response> {
 
     return Response.json(
       {
-        post: {
-          id: post.id.toString(),
-          title: post.title,
-          content: post.content,
-          rawContent: post.rawContent,
-          ingredients: post.ingredients,
-        },
+        post,
       },
       { status: 200 }
     );
