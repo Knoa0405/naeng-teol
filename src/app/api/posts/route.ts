@@ -1,18 +1,9 @@
 import prisma from "@/db";
-import { IRouteParams } from "@/types/common";
-import { IPostsRouteParams } from "@/types/posts";
+import { type NextRequest } from "next/server";
 
-export type TParams = {
-  postId: string;
-  commentId: string;
-};
-
-export async function GET(
-  request: Request,
-  { params }: IRouteParams<IPostsRouteParams>
-) {
-  const url = new URL(request.url);
-  const cursor = url.searchParams.get("cursor");
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const cursor = searchParams.get("cursor");
   const take = 10; // 한 번에 가져올 포스트 수
 
   const posts = await prisma.post.findMany({
