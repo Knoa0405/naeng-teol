@@ -7,7 +7,7 @@ import {
   ICreatePostRequestBody,
   ICreatePostResponseBody,
 } from "@/app/api/posts/create/route";
-
+import { IPost } from "@/types/posts";
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
 
 export const getIngredientsFromAIVision = async (imagePath: string) => {
@@ -49,6 +49,13 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
     })
     .json();
 
+  return response;
+};
+
+export const getPosts = async () => {
+  const response = await api.get<{ posts: IPost[]; hasNextPage: boolean }>(
+    "posts"
+  );
   return response;
 };
 
