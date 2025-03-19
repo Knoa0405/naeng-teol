@@ -1,6 +1,8 @@
 import PostLists from "../_components/post-lists";
 import { getPosts } from "@/actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function Community() {
   const postsData = await getPosts();
   const posts = postsData.posts;
