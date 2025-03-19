@@ -11,9 +11,9 @@ export default async function PostsLayout({
   const post = await getPost(id);
 
   return (
-    <div className="p-4">
+    <section className="px-4 py-8">
       <h1 className="text-4xl font-bold">{post.title}</h1>
       {children}
-    </div>
+    </section>
   );
 }
