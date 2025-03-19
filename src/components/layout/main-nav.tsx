@@ -8,7 +8,7 @@ import {
 import { NavigationMenuItem } from "@radix-ui/react-navigation-menu";
 import { auth } from "@/auth";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { NavLink } from "@/components/nav-link";
+import { NavLink } from "./nav-link";
 
 const MainNav = async () => {
   const session = await auth();

@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import {
   NavigationMenuLink,
   navigationMenuTriggerStyle,
-} from "./ui/navigation-menu";
+} from "@/components/ui/navigation-menu";
 
 interface NavLinkProps {
   href: string;
