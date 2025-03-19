@@ -5,6 +5,7 @@ const SignOut = () => {
   return (
     <form
       action={async () => {
+        "use server";
         await signOutAction();
       }}
     >
