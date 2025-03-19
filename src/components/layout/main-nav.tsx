@@ -1,29 +1,17 @@
-"use client";
-
-import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
-import { Button } from "@/ui/button";
 import SignIn from "@/components/ui/sign-in";
 import SignOut from "@/components/ui/sign-out";
 
-import {
-  NavigationMenuLink,
-  navigationMenuTriggerStyle,
-} from "@/ui/navigation-menu";
-import { useTheme } from "next-themes";
-import Link from "next/link";
 import {
   NavigationMenu,
   NavigationMenuList,
 } from "@radix-ui/react-navigation-menu";
 import { NavigationMenuItem } from "@radix-ui/react-navigation-menu";
-import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { auth } from "@/auth";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { NavLink } from "@/components/nav-link";
 
-const MainNav = () => {
-  const { data: session } = useSession();
-  const { theme, setTheme } = useTheme();
-  const pathname = usePathname();
+const MainNav = async () => {
+  const session = await auth();
 
   const navigationItems = [
     { label: "냉장고 털기", href: "/" },
@@ -36,29 +24,12 @@ const MainNav = () => {
         <NavigationMenuList className="flex items-center gap-4">
           {navigationItems.map((item) => (
             <NavigationMenuItem key={item.href}>
-              <Link href={item.href} legacyBehavior passHref>
-                <NavigationMenuLink
-                  className={cn(
-                    "text-sm font-medium text-muted-foreground hover:text-primary",
-                    pathname === item.href && "text-primary",
-                    navigationMenuTriggerStyle()
-                  )}
-                >
-                  {item.label}
-                </NavigationMenuLink>
-              </Link>
+              <NavLink href={item.href} label={item.label} />
             </NavigationMenuItem>
           ))}
         </NavigationMenuList>
       </NavigationMenu>
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      >
-        <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-        <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      </Button>
+      <ThemeToggle />
       {session ? <SignOut /> : <SignIn />}
     </nav>
   );
