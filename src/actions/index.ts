@@ -56,7 +56,8 @@ export const getPosts = async () => {
   const response = await api.get<{ posts: IPost[]; hasNextPage: boolean }>(
     "posts"
   );
-  return response;
+
+  return response.json();
 };
 
 export const signOutAction = async () => {

@@ -9,7 +9,7 @@ export async function GET(
   const { commentId } = await params;
 
   const comment = await prisma.comment.findUnique({
-    where: { id: BigInt(commentId) },
+    where: { id: Number(commentId) },
   });
 
   return Response.json({ comment }, { status: 200 });
@@ -23,7 +23,7 @@ export async function PATCH(
   const body = await request.json();
 
   const comment = await prisma.comment.update({
-    where: { id: BigInt(commentId) },
+    where: { id: Number(commentId) },
     data: body,
   });
 
@@ -37,7 +37,7 @@ export async function DELETE(
   const { commentId } = await params;
 
   const comment = await prisma.comment.delete({
-    where: { id: BigInt(commentId) },
+    where: { id: Number(commentId) },
   });
 
   return Response.json({ comment }, { status: 200 });

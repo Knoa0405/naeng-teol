@@ -1,9 +1,11 @@
 import PostLists from "../_components/post-lists";
 import { getPosts } from "@/actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function Community() {
   const postsData = await getPosts();
-  const posts = (await postsData.json()).posts;
+  const posts = postsData.posts;
 
   return (
     <section className="flex min-h-screen flex-col gap-4 px-4 py-8">

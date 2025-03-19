@@ -10,7 +10,7 @@ export async function GET(
 
   const comments = await prisma.comment.findMany({
     where: {
-      postId: BigInt(postId),
+      postId: Number(postId),
     },
   });
 
