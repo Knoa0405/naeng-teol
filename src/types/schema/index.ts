@@ -44,16 +44,16 @@ export const LikeSchema = z.object({
 });
 
 export const PostSchema = RecipeSchema.extend({
-  id: z.number().optional().describe("post id"),
+  id: z.number().describe("post id"),
   authorId: z.string().describe("author id"),
-  views: z.number().optional().describe("number of views"),
-  likesCount: z.number().optional().describe("number of likes"),
-  isDeleted: z.boolean().optional().describe("is deleted"),
-  updatedAt: z.date().optional().describe("updated at"),
-  createdAt: z.date().optional().describe("created at"),
-  comments: z.array(CommentSchema).optional().describe("post comments"),
-  likes: z.array(LikeSchema).optional().describe("post likes"),
-  author: UserSchema.optional().describe("post author"),
+  views: z.number().describe("number of views"),
+  likesCount: z.number().describe("number of likes"),
+  isDeleted: z.boolean().describe("is deleted"),
+  updatedAt: z.date().describe("updated at"),
+  createdAt: z.date().describe("created at"),
+  comments: z.array(CommentSchema).describe("post comments"),
+  likes: z.array(LikeSchema).describe("post likes"),
+  author: UserSchema.describe("post author"),
 });
 
 export const PostParamsSchema = PostSchema.omit({ id: true }).extend({

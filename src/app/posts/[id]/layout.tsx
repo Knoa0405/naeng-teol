@@ -1,19 +1,17 @@
-import { getPost } from "@/actions";
-
 export default async function PostsLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
-  const post = await getPost(id);
-
   return (
-    <section className="px-4 py-8">
-      <h1 className="text-4xl font-bold">{post.title}</h1>
+    <div className="container max-w-4xl mx-auto py-8">
+      <div className="flex flex-col gap-2 mb-8">
+        <h1 className="text-4xl font-bold tracking-tight">나만의 레시피</h1>
+        <p className="text-muted-foreground">
+          맛있는 요리의 순간을 공유해보세요
+        </p>
+      </div>
       {children}
-    </section>
+    </div>
   );
 }
