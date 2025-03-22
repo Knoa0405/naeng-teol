@@ -1,18 +1,12 @@
-import SignIn from "@/components/ui/sign-in";
-import SignOut from "@/components/ui/sign-out";
-
 import {
   NavigationMenu,
   NavigationMenuList,
 } from "@radix-ui/react-navigation-menu";
 import { NavigationMenuItem } from "@radix-ui/react-navigation-menu";
-import { auth } from "@/auth";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { NavLink } from "./nav-link";
-
+import SessionSign from "./session-sign";
 const MainNav = async () => {
-  const session = await auth();
-
   const navigationItems = [
     { label: "냉장고 털기", href: "/" },
     { label: "커뮤니티", href: "/community" },
@@ -30,7 +24,7 @@ const MainNav = async () => {
         </NavigationMenuList>
       </NavigationMenu>
       <ThemeToggle />
-      {session ? <SignOut /> : <SignIn />}
+      <SessionSign />
     </nav>
   );
 };
