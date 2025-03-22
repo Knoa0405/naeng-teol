@@ -8,5 +8,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
     strategy: "jwt",
   },
+  callbacks: {
+    session({ session, token }) {
+      const id = token.sub;
+
+      if (id) {
+        session.user.id = id;
+      }
+
+      return session;
+    },
+  },
   ...authConfig,
 });

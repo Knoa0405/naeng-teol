@@ -32,7 +32,7 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
   const session = await auth();
 
   if (!session?.user) {
-    throw new Error("User not found");
+    return { error: "User not found" };
   }
 
   const requestBody: ICreatePostRequestBody = {

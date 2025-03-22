@@ -7,6 +7,9 @@ import MainNav from "@/components/layout/main-nav";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@/components/ui/toaster";
 
+export const fetchCache = "default-cache";
+export const dynamic = "force-static";
+
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",

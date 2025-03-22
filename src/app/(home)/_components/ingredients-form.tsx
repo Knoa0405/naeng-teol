@@ -81,9 +81,13 @@ const IngredientsForm = () => {
 
   const handleSaveRecipe = async () => {
     try {
-      await saveRecipe({
+      const response = await saveRecipe({
         recipe,
       });
+
+      if (response.error) {
+        throw new Error(response.error);
+      }
     } catch (error) {
       if (error instanceof Error) {
         switch (error.message) {
