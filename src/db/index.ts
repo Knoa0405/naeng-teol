@@ -1,25 +1,22 @@
-import { PrismaClient } from "@prisma/client";
+import { Pool } from "@neondatabase/serverless";
 import { PrismaNeon } from "@prisma/adapter-neon";
-import { neonConfig, Pool } from "@neondatabase/serverless";
+import { PrismaClient } from "@prisma/client";
+import dotenv from "dotenv";
 
-// 트랜잭션, 세션 사용시 필요
-// import ws from "ws";
+dotenv.config();
 
-// neonConfig.webSocketConstructor = ws;
-
-const createPrismaClient = () => {
-  const connectionString = process.env.DATABASE_URL;
-  const pool = new Pool({ connectionString });
-  const adapter = new PrismaNeon(pool);
-  return new PrismaClient({ adapter });
-};
+const connectionString = `${process.env.DATABASE_URL}`;
+const pool = new Pool({ connectionString });
+const adapter = new PrismaNeon(pool);
 
 declare global {
   var prisma: PrismaClient | undefined;
 }
 
-const prisma = global.prisma || createPrismaClient();
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
-if (process.env.NODE_ENV === "development") global.prisma = prisma;
+const prisma = globalForPrisma.prisma || new PrismaClient({ adapter });
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export default prisma;
