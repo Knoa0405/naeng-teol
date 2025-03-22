@@ -3,7 +3,7 @@ name: Code Review GPT
 on:
   pull_request:
     branches: [main]
-
+permissions: write-all
 jobs:
   run_code_review:
     runs-on: ubuntu-latest
