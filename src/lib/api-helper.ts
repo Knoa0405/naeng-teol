@@ -1,9 +1,7 @@
 import ky, { HTTPError } from "ky";
 
-const isServer = typeof window === "undefined";
-
 export const api = ky.create({
-  prefixUrl: process.env.API_BASE_URL,
+  prefixUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
