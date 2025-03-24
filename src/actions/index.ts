@@ -1,13 +1,13 @@
 "use server";
 
-import { auth, signIn, signOut } from "@/auth";
-import { IRecipe } from "@/types/recipe";
-import { api } from "@/lib/api-helper";
 import {
   ICreatePostRequestBody,
   ICreatePostResponseBody,
 } from "@/app/api/posts/create/route";
+import { auth, signIn, signOut } from "@/auth";
+import { api } from "@/lib/api-helper";
 import { IPost } from "@/types/posts";
+import { IRecipe } from "@/types/recipe";
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
 
 export const getIngredientsFromAIVision = async (imagePath: string) => {
@@ -54,7 +54,7 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
 
 export const getPosts = async () => {
   const response = await api.get<{ posts: IPost[]; hasNextPage: boolean }>(
-    "posts"
+    "posts",
   );
 
   return response.json();

@@ -1,10 +1,12 @@
 "use client";
 
 import { Dispatch, HTMLAttributes, SetStateAction, forwardRef } from "react";
+
+import { MinusIcon } from "@radix-ui/react-icons";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TInputIngredient } from "@/types/recipe";
-import { MinusIcon } from "@radix-ui/react-icons";
 
 type TIngredientInputProps = HTMLAttributes<HTMLInputElement> & {
   id: string;
@@ -15,7 +17,7 @@ type TIngredientInputProps = HTMLAttributes<HTMLInputElement> & {
 const IngredientInput = forwardRef<HTMLInputElement, TIngredientInputProps>(
   ({ setInputs, index, ...props }, ref) => {
     const handleRemove = () => {
-      setInputs((prev) => prev.filter((input) => input.id !== props.id));
+      setInputs(prev => prev.filter(input => input.id !== props.id));
     };
 
     return (
@@ -29,7 +31,7 @@ const IngredientInput = forwardRef<HTMLInputElement, TIngredientInputProps>(
         </div>
       </>
     );
-  }
+  },
 );
 
 IngredientInput.displayName = "IngredientInput";

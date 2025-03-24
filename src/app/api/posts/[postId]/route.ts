@@ -4,7 +4,7 @@ import { IPostsRouteParams } from "@/types/posts";
 
 export async function GET(
   request: Request,
-  { params }: IRouteParams<IPostsRouteParams>
+  { params }: IRouteParams<IPostsRouteParams>,
 ) {
   const { postId } = await params;
 
@@ -19,16 +19,18 @@ export async function GET(
 
     return Response.json(post, { status: 200 });
   } catch (error) {
+    console.error(error, "error in api/posts/[postId]");
+
     return Response.json(
       { error: "Failed to fetch post from database" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PATCH(
   request: Request,
-  { params }: IRouteParams<IPostsRouteParams>
+  { params }: IRouteParams<IPostsRouteParams>,
 ) {
   const { postId } = await params;
   const body = await request.json();
@@ -48,19 +50,21 @@ export async function PATCH(
       {
         post,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
+    console.error(error, "error in api/posts/[postId]");
+
     return Response.json(
       { error: "Failed to update post in database" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: Request,
-  { params }: IRouteParams<IPostsRouteParams>
+  { params }: IRouteParams<IPostsRouteParams>,
 ) {
   const { postId } = await params;
 
@@ -73,12 +77,14 @@ export async function DELETE(
       {
         post,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
+    console.error(error, "error in api/posts/[postId]");
+
     return Response.json(
       { error: "Failed to delete post from database" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

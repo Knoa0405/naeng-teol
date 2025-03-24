@@ -13,12 +13,12 @@ export async function POST(request: Request): Promise<Response> {
 
   if (!title || !content || !ingredients || !rawContent || !authorId) {
     const missingFields = Object.keys(body).filter(
-      (key) => !body[key as keyof ICreatePostRequestBody]
+      key => !body[key as keyof ICreatePostRequestBody],
     );
 
     return Response.json(
       { error: `Missing required fields: ${missingFields.join(", ")}` },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -37,13 +37,13 @@ export async function POST(request: Request): Promise<Response> {
       {
         post,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
     return Response.json(
       { post: null, error: "Failed to create post" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,6 +1,8 @@
-import { signInWithGoogle } from "@/actions";
-import { Button } from "./button";
 import Image from "next/image";
+
+import { signInWithGoogle } from "@/actions";
+
+import { Button } from "./button";
 // TODO: 나중에 내 서버에 있는 이미지로 바꿔야 함
 const PROVIDER_LOGO_PATH = "https://authjs.dev/img/providers";
 

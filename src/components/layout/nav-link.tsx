@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+
 import {
   NavigationMenuLink,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { cn } from "@/lib/utils";
 
 interface NavLinkProps {
   href: string;
@@ -23,7 +24,7 @@ export function NavLink({ href, label }: NavLinkProps) {
         className={cn(
           "text-sm font-medium text-muted-foreground hover:text-primary",
           isActive && "text-primary",
-          navigationMenuTriggerStyle()
+          navigationMenuTriggerStyle(),
         )}
       >
         {label}

@@ -1,5 +1,6 @@
-import { isProduction } from "@/constants";
 import ky, { HTTPError } from "ky";
+
+import { isProduction } from "@/constants";
 
 export const api = ky.create({
   prefixUrl: isProduction

@@ -1,4 +1,5 @@
 import { signOutAction } from "@/actions";
+
 import { Button } from "./button";
 
 const SignOut = () => {

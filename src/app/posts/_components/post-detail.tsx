@@ -1,10 +1,12 @@
-import Image from "next/image";
 import { Eye } from "lucide-react";
+import Image from "next/image";
+
+import { getPost } from "@/actions";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import LikeButton from "./like-button";
-import { getPost } from "@/actions";
 import { IPostParams } from "@/types/posts";
+
+import LikeButton from "./like-button";
 
 interface IPostDetailProps {
   id: IPostParams["id"];
@@ -42,7 +44,7 @@ export default async function PostDetail({ id }: IPostDetailProps) {
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3">재료</h3>
           <ul className="grid grid-cols-2 gap-2">
-            {post.ingredients.map((ingredient) => (
+            {post.ingredients.map(ingredient => (
               <li key={ingredient} className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
                 {ingredient}

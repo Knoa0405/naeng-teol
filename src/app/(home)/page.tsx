@@ -1,7 +1,8 @@
 import { Suspense } from "react";
+
 import IngredientsForm from "./_components/ingredients-form";
-import Recipe from "./_components/recipe";
 import Loader from "./_components/loader";
+import Recipe from "./_components/recipe";
 
 export default function Home() {
   return (
