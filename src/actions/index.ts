@@ -8,6 +8,7 @@ import { auth, signIn, signOut } from "@/auth";
 import { api } from "@/lib/api-helper";
 import { IPost } from "@/types/posts";
 import { IRecipe } from "@/types/recipe";
+
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
 
 export const getIngredientsFromAIVision = async (imagePath: string) => {

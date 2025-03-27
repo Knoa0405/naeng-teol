@@ -2,8 +2,8 @@
 
 import { useActionState, useCallback, useEffect, useState } from "react";
 
+import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { PlusIcon, ReloadIcon } from "@radix-ui/react-icons";
-import { experimental_useObject as useObject } from "ai/react";
 import { nanoid } from "nanoid/non-secure";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
