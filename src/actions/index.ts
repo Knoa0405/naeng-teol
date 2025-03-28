@@ -4,6 +4,7 @@ import {
   ICreatePostRequestBody,
   ICreatePostResponseBody,
 } from "@/app/api/posts/route";
+
 import { auth, signIn, signOut } from "@/auth";
 import { api } from "@/lib/api-helper";
 import { IPost } from "@/types/posts";
