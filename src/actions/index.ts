@@ -6,7 +6,7 @@ import { api } from "@/lib/api-helper";
 import {
   ICreatePostRequestBody,
   ICreatePostResponseBody,
-} from "@/app/api/posts/create/route";
+} from "@/app/api/posts/route";
 import { IPost } from "@/types/posts";
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
 
@@ -44,7 +44,7 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
   };
 
   const response = await api
-    .post<ICreatePostResponseBody>("posts/create", {
+    .post<ICreatePostResponseBody>("posts", {
       json: requestBody,
     })
     .json();
