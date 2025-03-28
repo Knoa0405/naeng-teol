@@ -4,7 +4,7 @@ import { IPostsRouteParams } from "@/types/posts";
 
 export async function GET(
   request: Request,
-  { params }: IRouteParams<IPostsRouteParams>
+  { params }: IRouteParams<IPostsRouteParams>,
 ) {
   const { commentId } = await params;
 
@@ -17,7 +17,7 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: IRouteParams<IPostsRouteParams>
+  { params }: IRouteParams<IPostsRouteParams>,
 ) {
   const { commentId } = await params;
   const body = await request.json();
@@ -32,7 +32,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: IRouteParams<IPostsRouteParams>
+  { params }: IRouteParams<IPostsRouteParams>,
 ) {
   const { commentId } = await params;
 

@@ -4,7 +4,7 @@ import { IPostsRouteParams } from "@/types/posts";
 
 export async function GET(
   request: Request,
-  { params }: IRouteParams<IPostsRouteParams>
+  { params }: IRouteParams<IPostsRouteParams>,
 ) {
   const { postId } = await params;
 

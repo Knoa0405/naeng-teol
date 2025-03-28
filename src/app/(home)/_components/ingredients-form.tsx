@@ -1,29 +1,32 @@
 "use client";
 
 import { useActionState, useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import IngredientInput from "./ingredient-input";
-import { Button } from "@/components/ui/button";
+
+import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { PlusIcon, ReloadIcon } from "@radix-ui/react-icons";
 import { nanoid } from "nanoid/non-secure";
-import { experimental_useObject as useObject } from "ai/react";
-import { RecipeSchema } from "@/types/schema";
-import { useRecipeStore } from "@/store";
-import { Input } from "@/components/ui/input";
-import { createFormData, pipe } from "@/lib/utils";
+import Image from "next/image";
+import { useForm } from "react-hook-form";
+
 import {
   getIngredientsFromAIVision,
   saveRecipe,
   signInWithGoogle,
 } from "@/actions";
-import { TInputIngredient } from "@/types/recipe";
-import RecipeCategories, { TCategoryOption } from "./recipe-categories";
-import { uploadFileToS3 } from "@/lib/upload-s3";
-import { getImageFile } from "@/lib/get-image-file";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import Image from "next/image";
 import { useToast } from "@/components/hooks/use-toast";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ToastAction } from "@/components/ui/toast";
+import { getImageFile } from "@/lib/get-image-file";
+import { uploadFileToS3 } from "@/lib/upload-s3";
+import { createFormData, pipe } from "@/lib/utils";
+import { useRecipeStore } from "@/store";
+import { TInputIngredient } from "@/types/recipe";
+import { RecipeSchema } from "@/types/schema";
+
+import IngredientInput from "./ingredient-input";
+import RecipeCategories, { TCategoryOption } from "./recipe-categories";
 
 const IngredientsForm = () => {
   const { toast } = useToast();
@@ -31,8 +34,8 @@ const IngredientsForm = () => {
     shouldUnregister: true,
   });
 
-  const addRecipe = useRecipeStore((state) => state.addRecipe);
-  const recipe = useRecipeStore((state) => state.recipe);
+  const addRecipe = useRecipeStore(state => state.addRecipe);
+  const recipe = useRecipeStore(state => state.recipe);
 
   const [imagePreviewURL, setImagePreviewURL] = useState<string | null>(null);
 
@@ -50,7 +53,7 @@ const IngredientsForm = () => {
           title: object.title || "",
           ingredients:
             object.ingredients?.filter(
-              (ingredient): ingredient is string => ingredient !== undefined
+              (ingredient): ingredient is string => ingredient !== undefined,
             ) || [],
           content: object.content || "",
           rawContent: object.rawContent || "",
@@ -60,7 +63,7 @@ const IngredientsForm = () => {
   });
 
   const handleAddInput = useCallback(({ content = "" } = {}) => {
-    setInputs((prev) => [...prev, { id: `ingredient-${nanoid()}`, content }]);
+    setInputs(prev => [...prev, { id: `ingredient-${nanoid()}`, content }]);
   }, []);
 
   const getIngredientsFromImage = async (image: File): Promise<string[]> => {
@@ -69,7 +72,7 @@ const IngredientsForm = () => {
         createFormData,
         getImageFile,
         uploadFileToS3,
-        getIngredientsFromAIVision
+        getIngredientsFromAIVision,
       )(image);
 
       return ingredients;
@@ -111,9 +114,9 @@ const IngredientsForm = () => {
     }
   };
 
-  const [_, saveRecipeAction, isSaveRecipePending] = useActionState(
+  const [, saveRecipeAction, isSaveRecipePending] = useActionState(
     handleSaveRecipe,
-    undefined
+    undefined,
   );
 
   const onSubmit = async (data: any) => {
@@ -174,7 +177,7 @@ const IngredientsForm = () => {
           type="file"
           accept="image/*"
           {...register("image")}
-          onChange={(e) => {
+          onChange={e => {
             const file = e.target.files?.[0];
             if (file) {
               setImagePreviewURL(URL.createObjectURL(file));

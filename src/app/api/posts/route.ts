@@ -1,4 +1,3 @@
-import prisma from "@/db";
 import { type NextRequest } from "next/server";
 import { IPost } from "@/types/posts";
 
@@ -7,6 +6,8 @@ export interface ICreatePostResponseBody {
   post: IPost | null;
   error?: string;
 }
+
+import prisma from "@/db";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;

@@ -1,5 +1,6 @@
-import { PostParamsSchema, PostSchema } from "@/types/schema";
 import { z } from "zod";
+
+import { PostParamsSchema, PostSchema } from "@/types/schema";
 
 export interface IPostsRouteParams {
   postId: string;

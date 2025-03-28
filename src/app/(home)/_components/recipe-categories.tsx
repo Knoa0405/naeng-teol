@@ -1,5 +1,6 @@
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Dispatch, SetStateAction } from "react";
+
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export const CATEGORY_OPTIONS = [
   { value: "korean", label: "한식" },
@@ -20,10 +21,10 @@ const RecipeCategories = ({ setCategories }: RecipeCategoriesProps) => {
   const handleClickCategory = (currentCategory: string[]) => {
     const currentCategoryLabels = currentCategory
       .map(
-        (category) =>
-          CATEGORY_OPTIONS.find((option) => option.value === category)?.label
+        category =>
+          CATEGORY_OPTIONS.find(option => option.value === category)?.label,
       )
-      .filter((label) => label !== undefined);
+      .filter(label => label !== undefined);
 
     setCategories(currentCategoryLabels);
   };
@@ -32,7 +33,7 @@ const RecipeCategories = ({ setCategories }: RecipeCategoriesProps) => {
     <div className="flex items-center gap-2">
       <label htmlFor="div">카테고리</label>
       <ToggleGroup type="multiple" onValueChange={handleClickCategory}>
-        {CATEGORY_OPTIONS.map((category) => (
+        {CATEGORY_OPTIONS.map(category => (
           <ToggleGroupItem key={category.value} value={category.value}>
             {category.label}
           </ToggleGroupItem>

@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
+
 import { Inter as FontSans } from "next/font/google";
+
 import "@/styles/globals.css";
-import { cn } from "@/lib/utils";
-import { ThemeProvider } from "@/components/theme-provider";
-import MainNav from "@/components/layout/main-nav";
 import { SessionProvider } from "next-auth/react";
+
+import MainNav from "@/components/layout/main-nav";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { cn } from "@/lib/utils";
 
 export const fetchCache = "default-cache";
 export const dynamic = "force-static";
@@ -30,7 +33,7 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
+          fontSans.variable,
         )}
       >
         <ThemeProvider

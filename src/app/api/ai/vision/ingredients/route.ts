@@ -1,7 +1,8 @@
-import { AI_MODEL_NAME } from "@/constants";
-import { IngredientSchema } from "@/types/schema";
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
+
+import { AI_MODEL_NAME } from "@/constants";
+import { IngredientSchema } from "@/types/schema";
 
 export const POST = async (request: Request) => {
   const { imageUrl } = await request.json();
@@ -34,7 +35,7 @@ export const POST = async (request: Request) => {
       },
       {
         status: 200,
-      }
+      },
     );
   } catch (error) {
     console.error(error, "error in ai/vision/ingredients");

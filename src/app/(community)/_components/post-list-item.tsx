@@ -1,10 +1,10 @@
 "use client";
 
+import { Heart, MessageCircle, Share2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { IPost } from "@/types/posts";
-import { Heart, MessageCircle, Share2 } from "lucide-react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 interface PostListItemProps {
   item: IPost;

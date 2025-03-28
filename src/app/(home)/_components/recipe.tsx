@@ -1,9 +1,10 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { useRecipeStore } from "@/store";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+
+import { cn } from "@/lib/utils";
+import { useRecipeStore } from "@/store";
 
 const headingStyles = {
   h1: "text-2xl font-bold mt-6 mb-4",
@@ -12,7 +13,7 @@ const headingStyles = {
 };
 
 const Recipe = () => {
-  const recipe = useRecipeStore((state) => state.recipe);
+  const recipe = useRecipeStore(state => state.recipe);
 
   return (
     <Markdown
@@ -21,15 +22,9 @@ const Recipe = () => {
       })}
       remarkPlugins={[remarkGfm]}
       components={{
-        h1: ({ node, ...props }) => (
-          <h1 className={headingStyles.h1} {...props} />
-        ),
-        h2: ({ node, ...props }) => (
-          <h2 className={headingStyles.h2} {...props} />
-        ),
-        h3: ({ node, ...props }) => (
-          <h3 className={headingStyles.h3} {...props} />
-        ),
+        h1: ({ ...props }) => <h1 className={headingStyles.h1} {...props} />,
+        h2: ({ ...props }) => <h2 className={headingStyles.h2} {...props} />,
+        h3: ({ ...props }) => <h3 className={headingStyles.h3} {...props} />,
       }}
     >
       {recipe.rawContent}

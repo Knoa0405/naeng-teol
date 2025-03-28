@@ -1,8 +1,9 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import SignOut from "../ui/sign-out";
+
 import SignIn from "../ui/sign-in";
+import SignOut from "../ui/sign-out";
 
 const SessionSign = () => {
   const session = useSession();

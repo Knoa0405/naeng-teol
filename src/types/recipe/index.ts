@@ -1,5 +1,6 @@
-import { IngredientSchema, RecipeSchema } from "@/types/schema";
 import { z } from "zod";
+
+import { IngredientSchema, RecipeSchema } from "@/types/schema";
 
 export type TInputIngredient = {
   [key in string]: string;

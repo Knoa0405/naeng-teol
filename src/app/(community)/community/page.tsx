@@ -1,5 +1,6 @@
-import PostLists from "../_components/post-lists";
 import { getPosts } from "@/actions";
+
+import PostLists from "../_components/post-lists";
 
 export default async function Community() {
   const postsData = await getPosts();

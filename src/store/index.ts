@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { IRecipe, TInputIngredient, TInputIngredients } from "@/types/recipe";
+
 import { isProduction } from "@/constants";
+import { IRecipe } from "@/types/recipe";
 
 interface IRecipeStore {
   recipe: IRecipe;
@@ -10,7 +11,7 @@ interface IRecipeStore {
 
 export const useRecipeStore = create<IRecipeStore>()(
   devtools(
-    (set) => ({
+    set => ({
       recipe: {
         title: "",
         ingredients: [],
@@ -25,12 +26,12 @@ export const useRecipeStore = create<IRecipeStore>()(
             },
           }),
           false,
-          "addRecipe"
+          "addRecipe",
         ),
     }),
     {
       name: "recipeStore",
       enabled: !isProduction,
-    }
-  )
+    },
+  ),
 );

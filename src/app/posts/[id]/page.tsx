@@ -1,6 +1,7 @@
 import { IRouteParams } from "@/types/common";
-import PostDetail from "../_components/post-detail";
 import { IPostParams } from "@/types/posts";
+
+import PostDetail from "../_components/post-detail";
 
 export default async function PostPage({
   params,
