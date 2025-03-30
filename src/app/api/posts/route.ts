@@ -1,4 +1,6 @@
 import { type NextRequest } from "next/server";
+
+import prisma from "@/db";
 import { IPost } from "@/types/posts";
 
 export interface ICreatePostRequestBody extends Partial<IPost> {}
@@ -6,8 +8,6 @@ export interface ICreatePostResponseBody {
   post: IPost | null;
   error?: string;
 }
-
-import prisma from "@/db";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -33,12 +33,12 @@ export async function POST(request: Request): Promise<Response> {
 
   if (!title || !content || !ingredients || !rawContent || !authorId) {
     const missingFields = Object.keys(body).filter(
-      (key) => !body[key as keyof ICreatePostRequestBody]
+      key => !body[key as keyof ICreatePostRequestBody],
     );
 
     return Response.json(
       { error: `Missing required fields: ${missingFields.join(", ")}` },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -57,13 +57,13 @@ export async function POST(request: Request): Promise<Response> {
       {
         post,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
     return Response.json(
       { post: null, error: "Failed to create post" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

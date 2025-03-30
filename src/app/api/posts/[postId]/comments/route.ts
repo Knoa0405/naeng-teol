@@ -16,3 +16,18 @@ export async function GET(
 
   return Response.json({ comments }, { status: 200 });
 }
+
+export async function POST(request: Request) {
+  const body = await request.json();
+  const { postId, content, authorId } = body;
+
+  const comment = await prisma.comment.create({
+    data: {
+      postId: Number(postId),
+      content,
+      authorId,
+    },
+  });
+
+  return Response.json({ comment }, { status: 200 });
+}

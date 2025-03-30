@@ -5,24 +5,20 @@ import { useState } from "react";
 import { AlertCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 
-import { z } from "zod";
-
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { CommentSchema } from "@/types/schema";
+import { IComment } from "@/types/posts/comments";
 
 import { CommentForm } from "./comment-form";
 import { CommentList } from "./comment-list";
 
-type Comment = z.infer<typeof CommentSchema>;
-
 interface CommentSectionProps {
   postId: number;
-  comments?: Comment[];
+  comments: IComment[];
 }
 
-export function CommentSection({ postId, comments = [] }: CommentSectionProps) {
+export function CommentSection({ postId, comments }: CommentSectionProps) {
   const { data: session } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

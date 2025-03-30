@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { cn } from "@/lib/utils";
 import { CommentSchema } from "@/types/schema";
 
 import { CommentForm } from "./comment-form";
@@ -89,9 +90,9 @@ export function CommentItem({
   };
 
   return (
-    <div className={`space-y-4 ${isReply ? "" : "border-b pb-4"}`}>
+    <div className={cn("space-y-4", { "border-b pb-4": !isReply })}>
       <div className="flex gap-3">
-        <Avatar className={isReply ? "h-8 w-8" : "h-10 w-10"}>
+        <Avatar className={cn({ "h-8 w-8": isReply, "h-10 w-10": !isReply })}>
           <AvatarImage
             src={comment.author.avatar || comment.author.image || undefined}
             alt={comment.author.name || "사용자"}

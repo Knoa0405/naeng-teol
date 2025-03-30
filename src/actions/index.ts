@@ -8,6 +8,7 @@ import {
 import { auth, signIn, signOut } from "@/auth";
 import { api } from "@/lib/api-helper";
 import { IPost } from "@/types/posts";
+import { IComment } from "@/types/posts/comments";
 import { IRecipe } from "@/types/recipe";
 
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
@@ -57,6 +58,25 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
 export const getPosts = async () => {
   const response = await api.get<{ posts: IPost[]; hasNextPage: boolean }>(
     "posts",
+  );
+
+  return response.json();
+};
+
+export const getComments = async (postId: string) => {
+  const response = await api.get<{ comments: IComment[] }>(
+    `posts/${postId}/comments`,
+  );
+
+  return response.json();
+};
+
+export const postComment = async (postId: string, content: string) => {
+  const response = await api.post<{ comment: IComment }>(
+    `posts/${postId}/comments`,
+    {
+      json: { content },
+    },
   );
 
   return response.json();
