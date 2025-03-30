@@ -90,9 +90,17 @@ export function CommentItem({
   };
 
   return (
-    <div className={cn("space-y-4", { "border-b pb-4": !isReply })}>
-      <div className="flex gap-3">
-        <Avatar className={cn({ "h-8 w-8": isReply, "h-10 w-10": !isReply })}>
+    <div
+      className={cn("space-y-4", {
+        "border-b pb-4": !isReply,
+      })}
+    >
+      <div className={cn("flex gap-3")}>
+        <Avatar
+          className={cn("h-10 w-10", {
+            "h-8 w-8": isReply,
+          })}
+        >
           <AvatarImage
             src={comment.author.avatar || comment.author.image || undefined}
             alt={comment.author.name || "사용자"}
