@@ -14,6 +14,10 @@ import { IRecipe } from "@/types/recipe";
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
 
 export const getIngredientsFromAIVision = async (imagePath: string) => {
+  if (!IMAGE_ORIGIN_URL) {
+    throw new Error("CLOUDFRONT_URL is not set");
+  }
+
   const response = await api
     .post<{ ingredients: string[] }>("ai/vision/ingredients", {
       json: {
