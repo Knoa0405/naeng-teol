@@ -3,15 +3,21 @@
 import {
   ICreatePostRequestBody,
   ICreatePostResponseBody,
-} from "@/app/api/posts/create/route";
+} from "@/app/api/posts/route";
+
 import { auth, signIn, signOut } from "@/auth";
 import { api } from "@/lib/api-helper";
 import { IPost } from "@/types/posts";
+import { IComment } from "@/types/posts/comments";
 import { IRecipe } from "@/types/recipe";
 
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
 
 export const getIngredientsFromAIVision = async (imagePath: string) => {
+  if (!IMAGE_ORIGIN_URL) {
+    throw new Error("CLOUDFRONT_URL is not set");
+  }
+
   const response = await api
     .post<{ ingredients: string[] }>("ai/vision/ingredients", {
       json: {
@@ -45,7 +51,7 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
   };
 
   const response = await api
-    .post<ICreatePostResponseBody>("posts/create", {
+    .post<ICreatePostResponseBody>("posts", {
       json: requestBody,
     })
     .json();
@@ -56,6 +62,25 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
 export const getPosts = async () => {
   const response = await api.get<{ posts: IPost[]; hasNextPage: boolean }>(
     "posts",
+  );
+
+  return response.json();
+};
+
+export const getComments = async (postId: string) => {
+  const response = await api.get<{ comments: IComment[] }>(
+    `posts/${postId}/comments`,
+  );
+
+  return response.json();
+};
+
+export const postComment = async (postId: string, content: string) => {
+  const response = await api.post<{ comment: IComment }>(
+    `posts/${postId}/comments`,
+    {
+      json: { content },
+    },
   );
 
   return response.json();
