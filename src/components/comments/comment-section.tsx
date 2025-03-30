@@ -118,7 +118,7 @@ const DUMMY_COMMENTS: IComment[] = [
 
 interface CommentSectionProps {
   postId: number;
-  comments: IComment[];
+  comments?: IComment[];
 }
 
 export function CommentSection({

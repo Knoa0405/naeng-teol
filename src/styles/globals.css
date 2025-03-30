@@ -63,9 +63,13 @@
   * {
     @apply border-border;
   }
+  html {
+    display: flex;
+    justify-content: center;
+  }
   body {
+    flex: 1;
     @apply bg-background text-foreground;
     max-width: 780px;
-    margin: 0 auto;
   }
 }

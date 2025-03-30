@@ -16,6 +16,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -132,6 +134,8 @@ export function CommentItem({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>댓글 관리</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleDelete}>
                     삭제하기
                   </DropdownMenuItem>
