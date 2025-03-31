@@ -74,22 +74,59 @@ model VerificationToken {
 }
 
 model Post {
-  id          Int       @id @default(autoincrement())
+  id          Int             @id @default(autoincrement())
   title       String
   content     String
   ingredients String[]
-  rawContent  String    @map("raw_content")
-  authorId    String    @map("author_id")
-  views       Int       @default(0)
-  likesCount  Int       @default(0) @map("likes_count")
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  isDeleted   Boolean   @default(false) @map("is_deleted")
+  rawContent  String          @map("raw_content")
+  authorId    String          @map("author_id")
+  views       Int             @default(0)
+  likesCount  Int             @default(0) @map("likes_count")
+  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  isDeleted   Boolean         @default(false) @map("is_deleted")
   comments    Comment[]
   likes       Like[]
-  author      User      @relation(fields: [authorId], references: [id])
+  author      User            @relation(fields: [authorId], references: [id])
+  images      ImageRelation[]
 
   @@map("posts")
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  url       String
+  hash      String?  @unique
+  alt       String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  relations ImageRelation[]
+
+  @@map("images")
+}
+
+enum EntityType {
+  POST
+  COMMENT
+}
+
+model ImageRelation {
+  id         Int        @id @default(autoincrement())
+  imageId    Int
+  entityType EntityType
+  entityId   Int
+  order      Int        @default(0)
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  image   Image    @relation(fields: [imageId], references: [id])
+  post    Post?    @relation(fields: [entityId], references: [id], map: "image_relations_post_fkey")
+  comment Comment? @relation(fields: [entityId], references: [id], map: "image_relations_comment_fkey")
+
+  @@unique([entityType, entityId, order])
+  @@index([imageId])
+  @@index([entityType, entityId])
+  @@map("image_relations")
 }
 
 model Comment {
@@ -107,6 +144,8 @@ model Comment {
   parent     Comment?      @relation("CommentReplies", fields: [parentId], references: [id])
   replies    Comment[]     @relation("CommentReplies")
   post       Post          @relation(fields: [postId], references: [id])
+
+  ImageRelation ImageRelation[]
 
   @@map("comments")
 }
