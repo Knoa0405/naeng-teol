@@ -6,7 +6,7 @@ import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
 import { useRecipeStore } from "@/store";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { getImageFromAI } from "@/actions";
 import Image from "next/image";
 
@@ -21,7 +21,10 @@ const Recipe = () => {
   const [imageUrl, setImageUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
-  const stringifiedIngredients = recipe.ingredients.toString();
+  const stringifiedIngredients = useMemo(
+    () => recipe.ingredients.toString(),
+    [recipe.ingredients],
+  );
 
   useEffect(() => {
     if (!recipe.rawContent) {
