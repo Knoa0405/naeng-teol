@@ -9,6 +9,7 @@ import MainNav from "@/components/layout/main-nav";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
+import { Analytics } from "@vercel/analytics/react";
 
 export const fetchCache = "default-cache";
 export const dynamic = "force-static";
@@ -48,6 +49,7 @@ export default function RootLayout({
             <Toaster />
           </SessionProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
