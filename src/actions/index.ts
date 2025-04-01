@@ -59,6 +59,14 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
   return response;
 };
 
+export const getImageFromAI = async (rawContent: string) => {
+  const response = await api.post<{ imageUrl: string }>("ai/image", {
+    json: { rawContent },
+  });
+
+  return response.json();
+};
+
 export const getPosts = async () => {
   const response = await api.get<{ posts: IPost[]; hasNextPage: boolean }>(
     "posts",
