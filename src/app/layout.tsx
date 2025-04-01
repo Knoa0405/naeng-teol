@@ -9,7 +9,7 @@ import MainNav from "@/components/layout/main-nav";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
-import { Analytics } from "@vercel/analytics/react";
+import { Analytics } from "@vercel/analytics/next";
 
 export const fetchCache = "default-cache";
 export const dynamic = "force-static";
