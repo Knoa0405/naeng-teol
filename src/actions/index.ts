@@ -7,6 +7,7 @@ import {
 
 import { auth, signIn, signOut } from "@/auth";
 import { api } from "@/lib/api-helper";
+import { getFullImageUrl } from "@/lib/upload-s3";
 import { IPost } from "@/types/posts";
 import { IComment } from "@/types/posts/comments";
 import { IRecipe } from "@/types/recipe";
@@ -21,7 +22,7 @@ export const getIngredientsFromAIVision = async (imagePath: string) => {
   const response = await api
     .post<{ ingredients: string[] }>("ai/vision/ingredients", {
       json: {
-        imageUrl: `${IMAGE_ORIGIN_URL}/${imagePath}`,
+        imageUrl: getFullImageUrl(imagePath),
       },
     })
     .json();

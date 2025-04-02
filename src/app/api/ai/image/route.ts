@@ -2,7 +2,11 @@ import { openai } from "@ai-sdk/openai";
 import { experimental_generateImage as generateImage } from "ai";
 
 import { AI_IMAGE_MODEL_NAME, AI_IMAGE_SIZE, AI_IMAGE_N } from "@/constants";
-import { isImageExistsFromS3, uploadImageToS3 } from "@/lib/upload-s3";
+import {
+  getFullImageUrl,
+  isImageExistsFromS3,
+  uploadImageToS3,
+} from "@/lib/upload-s3";
 import { createHashFromContents } from "@/lib/utils";
 
 interface IRequest {
@@ -22,7 +26,7 @@ export const POST = async (request: Request) => {
     if (isImageExists) {
       return Response.json(
         {
-          imageUrl: `${process.env.CLOUDFRONT_URL}/${prevFilePath}`,
+          imageUrl: getFullImageUrl(prevFilePath),
         },
         { status: 200 },
       );
@@ -35,14 +39,14 @@ export const POST = async (request: Request) => {
       size: AI_IMAGE_SIZE,
     });
 
-    const fullFilePath = await uploadImageToS3(
+    const fullImageUrl = await uploadImageToS3(
       images[0].uint8Array,
       imageFilePath,
     );
 
     return Response.json(
       {
-        imageUrl: fullFilePath,
+        imageUrl: fullImageUrl,
       },
       { status: 200 },
     );
