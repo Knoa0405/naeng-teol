@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
   images: {
     remotePatterns: [
@@ -10,7 +11,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: process.env.CLOUDFRONT_DOMAIN,
+        hostname: process.env.CLOUDFRONT_DOMAIN || "",
         port: "",
         pathname: "/**",
       },

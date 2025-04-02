@@ -1,14 +1,15 @@
 "use client";
 
+import { useEffect, useState, useMemo } from "react";
+
+import Image from "next/image";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+import { getImageFromAI } from "@/actions";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { cn } from "@/lib/utils";
 import { useRecipeStore } from "@/store";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { useEffect, useState, useMemo } from "react";
-import { getImageFromAI } from "@/actions";
-import Image from "next/image";
 
 const headingStyles = {
   h1: "text-2xl font-bold mt-6 mb-4",

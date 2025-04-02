@@ -7,15 +7,11 @@ import {
 } from "@aws-sdk/client-s3";
 
 import { convertToWebP } from "./convert-to-webp";
-
-type TDomain = string;
-type TPath = string;
-
-type TFullImageUrl = `${TDomain}/${TPath}`;
-
-export const getFullImageUrl = (path: TPath): TFullImageUrl => {
-  return `${process.env.CLOUDFRONT_URL}/${path}`;
-};
+import {
+  getFullImageUrl,
+  type TFullImageUrl,
+  type TPath,
+} from "./get-full-image-url";
 
 export const isImageExistsFromS3 = async (filePath: string) => {
   const s3Client = new S3Client({

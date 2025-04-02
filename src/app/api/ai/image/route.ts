@@ -2,13 +2,9 @@ import { openai } from "@ai-sdk/openai";
 import { experimental_generateImage as generateImage } from "ai";
 
 import { AI_IMAGE_MODEL_NAME, AI_IMAGE_SIZE, AI_IMAGE_N } from "@/constants";
-import {
-  getFullImageUrl,
-  isImageExistsFromS3,
-  uploadImageToS3,
-} from "@/lib/upload-s3";
+import { getFullImageUrl } from "@/lib/get-full-image-url";
+import { isImageExistsFromS3, uploadImageToS3 } from "@/lib/upload-s3";
 import { createHashFromContents } from "@/lib/utils";
-
 interface IRequest {
   rawContent: string;
 }

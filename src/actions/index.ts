@@ -7,7 +7,7 @@ import {
 
 import { auth, signIn, signOut } from "@/auth";
 import { api } from "@/lib/api-helper";
-import { getFullImageUrl } from "@/lib/upload-s3";
+import { getFullImageUrl } from "@/lib/get-full-image-url";
 import { IPost } from "@/types/posts";
 import { IComment } from "@/types/posts/comments";
 import { IRecipe } from "@/types/recipe";
