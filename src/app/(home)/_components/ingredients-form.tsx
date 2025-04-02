@@ -130,6 +130,25 @@ const IngredientsForm = () => {
 
       const allIngredients = [...Object.values(rest), ...ingredientsFromImage];
 
+      if (ingredientsFromImage.length === 0) {
+        toast({
+          variant: "destructive",
+          title: "이미지에서 식재료를 추출하지 못했어요",
+          description: "좀더 명확한 이미지로 시도해주세요",
+        });
+
+        return;
+      }
+
+      if (allIngredients.length === 0) {
+        toast({
+          variant: "destructive",
+          title: "식재료가 없어 레시피를 만들 수 없어요",
+          description: "식재료를 추가해주세요",
+        });
+        return;
+      }
+
       submit({
         ingredients: allIngredients.toString(),
         categories: categories.toString(),
