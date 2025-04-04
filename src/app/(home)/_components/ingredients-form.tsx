@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { PlusIcon, ReloadIcon } from "@radix-ui/react-icons";
@@ -8,19 +8,11 @@ import { nanoid } from "nanoid/non-secure";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 
-import {
-  getIngredientsFromAIVision,
-  saveRecipe,
-  signInWithGoogle,
-} from "@/actions";
 import { useToast } from "@/components/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ToastAction } from "@/components/ui/toast";
-import { getImageFile } from "@/lib/get-image-file";
-import { uploadFileToS3 } from "@/lib/upload-s3";
-import { createFormData, pipe } from "@/lib/utils";
+import { TagsInput } from "@/components/ui/tags-input";
 import { useRecipeStore } from "@/store";
 import { TInputIngredient } from "@/types/recipe";
 import { RecipeSchema } from "@/types/schema";
@@ -28,15 +20,19 @@ import { RecipeSchema } from "@/types/schema";
 import IngredientInput from "./ingredient-input";
 import RecipeCategories, { TCategoryOption } from "./recipe-categories";
 
+import RecipeForm from "./recipe-form";
+
+import { getIngredientsFromImage } from "../_lib/utils";
+
 const IngredientsForm = () => {
   const { toast } = useToast();
+  const recipe = useRecipeStore(state => state.recipe);
+
   const { register, handleSubmit } = useForm({
     shouldUnregister: true,
   });
 
   const addRecipe = useRecipeStore(state => state.addRecipe);
-  const recipe = useRecipeStore(state => state.recipe);
-
   const [imagePreviewURL, setImagePreviewURL] = useState<string | null>(null);
 
   const [categories, setCategories] = useState<TCategoryOption[]>([]);
@@ -66,59 +62,6 @@ const IngredientsForm = () => {
     setInputs(prev => [...prev, { id: `ingredient-${nanoid()}`, content }]);
   }, []);
 
-  const getIngredientsFromImage = async (image: File): Promise<string[]> => {
-    try {
-      const ingredients = await pipe<File, string[]>(
-        createFormData,
-        getImageFile,
-        uploadFileToS3,
-        getIngredientsFromAIVision,
-      )(image);
-
-      return ingredients;
-    } catch (error) {
-      console.error("이미지에서 재료 추출 중 오류 발생:", error);
-      return [];
-    }
-  };
-
-  const handleSaveRecipe = async () => {
-    try {
-      const response = await saveRecipe({
-        recipe,
-      });
-
-      if (response.error) {
-        throw new Error(response.error);
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        switch (error.message) {
-          case "User not found":
-            toast({
-              variant: "destructive",
-              title: "레시피 저장 실패",
-              description: "로그인 후 이용해주세요",
-              action: (
-                <ToastAction
-                  altText="로그인"
-                  onClick={() => signInWithGoogle()}
-                >
-                  로그인
-                </ToastAction>
-              ),
-            });
-            break;
-        }
-      }
-    }
-  };
-
-  const [, saveRecipeAction, isSaveRecipePending] = useActionState(
-    handleSaveRecipe,
-    undefined,
-  );
-
   const onSubmit = async (data: any) => {
     try {
       setIsPending(true);
@@ -128,16 +71,18 @@ const IngredientsForm = () => {
         ? await getIngredientsFromImage(image[0])
         : [];
 
-      const allIngredients = [...Object.values(rest), ...ingredientsFromImage];
+      const allIngredients = [
+        ...Object.values(rest),
+        ...ingredientsFromImage,
+      ].filter(ingredient => ingredient !== "");
 
-      if (ingredientsFromImage.length === 0) {
+      // 이미지가 있는데 식재료를 추출하지 못했을 때
+      if (image[0] && ingredientsFromImage.length === 0) {
         toast({
           variant: "destructive",
           title: "이미지에서 식재료를 추출하지 못했어요",
           description: "좀더 명확한 이미지로 시도해주세요",
         });
-
-        return;
       }
 
       if (allIngredients.length === 0) {
@@ -203,6 +148,11 @@ const IngredientsForm = () => {
             }
           }}
         />
+        <TagsInput
+          tags={inputs}
+          setTags={setInputs}
+          placeholder="식재료를 입력해주세요"
+        />
         <RecipeCategories setCategories={setCategories} />
         {inputs.map((input, index) => (
           <IngredientInput
@@ -234,20 +184,7 @@ const IngredientsForm = () => {
           )}
         </Button>
       </form>
-      <form action={saveRecipeAction} className="flex flex-col w-full">
-        {recipe.content && (
-          <Button type="submit" disabled={isSaveRecipePending}>
-            {isSaveRecipePending ? (
-              <>
-                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                레시피 저장중
-              </>
-            ) : (
-              "레시피 저장"
-            )}
-          </Button>
-        )}
-      </form>
+      <RecipeForm />
     </div>
   );
 };

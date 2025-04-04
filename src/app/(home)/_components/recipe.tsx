@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -10,7 +11,6 @@ import { getImageFromAI } from "@/actions";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { cn } from "@/lib/utils";
 import { useRecipeStore } from "@/store";
-import { Loader2 } from "lucide-react";
 
 const headingStyles = {
   h1: "text-2xl font-bold mt-6 mb-4",
@@ -23,10 +23,10 @@ const Recipe = () => {
   const [imageUrl, setImageUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
-  const stringifiedIngredients = useMemo(
-    () => recipe.ingredients.toString(),
-    [recipe.ingredients],
-  );
+  const stringifiedIngredients = useMemo(() => {
+    console.log(recipe.ingredients);
+    // const ingredients = recipe.ingredients.
+  }, [recipe.ingredients]);
 
   useEffect(() => {
     if (!recipe.rawContent) {
@@ -41,7 +41,7 @@ const Recipe = () => {
     };
 
     fetchImage();
-  }, [stringifiedIngredients]);
+  }, [stringifiedIngredients, recipe.rawContent]);
 
   if (!recipe.rawContent) {
     return null;
