@@ -1,12 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { experimental_useObject as useObject } from "@ai-sdk/react";
-import { PlusIcon, ReloadIcon } from "@radix-ui/react-icons";
-import { nanoid } from "nanoid/non-secure";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import { useToast } from "@/components/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -14,10 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TagsInput } from "@/components/ui/tags-input";
 import { useRecipeStore } from "@/store";
-import { TInputIngredient } from "@/types/recipe";
 import { RecipeSchema } from "@/types/schema";
 
-import IngredientInput from "./ingredient-input";
 import RecipeCategories, { TCategoryOption } from "./recipe-categories";
 
 import RecipeForm from "./recipe-form";
@@ -27,17 +24,18 @@ import { getIngredientsFromImage } from "../_lib/utils";
 const IngredientsForm = () => {
   const { toast } = useToast();
   const recipe = useRecipeStore(state => state.recipe);
-
-  const { register, handleSubmit } = useForm({
-    shouldUnregister: true,
-  });
-
   const addRecipe = useRecipeStore(state => state.addRecipe);
   const [imagePreviewURL, setImagePreviewURL] = useState<string | null>(null);
-
   const [categories, setCategories] = useState<TCategoryOption[]>([]);
-  const [inputs, setInputs] = useState<TInputIngredient[]>([]);
   const [isPending, setIsPending] = useState(false);
+
+  const { register, handleSubmit, control, setValue } = useForm({
+    shouldUnregister: true,
+    defaultValues: {
+      ingredients: [] as string[],
+      image: undefined,
+    },
+  });
 
   const { submit, isLoading: isRecipeLoading } = useObject({
     api: "/api/ai/recipe",
@@ -58,26 +56,22 @@ const IngredientsForm = () => {
     },
   });
 
-  const handleAddInput = useCallback(({ content = "" } = {}) => {
-    setInputs(prev => [...prev, { id: `ingredient-${nanoid()}`, content }]);
-  }, []);
-
   const onSubmit = async (data: any) => {
     try {
       setIsPending(true);
-      const { image, ...rest } = data;
+      const { image, ingredients } = data;
 
-      const ingredientsFromImage = image[0]
+      const ingredientsFromImage = image?.[0]
         ? await getIngredientsFromImage(image[0])
         : [];
 
-      const allIngredients = [
-        ...Object.values(rest),
+      const allIngredients: string[] = [
+        ...ingredients,
         ...ingredientsFromImage,
       ].filter(ingredient => ingredient !== "");
 
       // 이미지가 있는데 식재료를 추출하지 못했을 때
-      if (image[0] && ingredientsFromImage.length === 0) {
+      if (image?.[0] && ingredientsFromImage.length === 0) {
         toast({
           variant: "destructive",
           title: "이미지에서 식재료를 추출하지 못했어요",
@@ -98,6 +92,8 @@ const IngredientsForm = () => {
         ingredients: allIngredients.toString(),
         categories: categories.toString(),
       });
+
+      setValue("ingredients", allIngredients);
     } catch (error) {
       console.error("재료 제출 중 오류 발생:", error);
     } finally {
@@ -148,30 +144,20 @@ const IngredientsForm = () => {
             }
           }}
         />
-        <TagsInput
-          tags={inputs}
-          setTags={setInputs}
-          placeholder="식재료를 입력해주세요"
-        />
         <RecipeCategories setCategories={setCategories} />
-        {inputs.map((input, index) => (
-          <IngredientInput
-            key={input.id}
-            id={input.id}
-            defaultValue={input.content}
-            {...register(input.id)}
-            setInputs={setInputs}
-            index={index}
-          />
-        ))}
-        <Button
-          type="button"
-          onClick={() => handleAddInput()}
-          className="w-full"
-        >
-          <PlusIcon className="w-full h-4" />
-        </Button>
-        <Button type="submit" disabled={isLoading} className="w-full">
+        <Controller
+          control={control}
+          name="ingredients"
+          render={({ field }) => (
+            <TagsInput
+              id="ingredients"
+              placeholder="식재료를 입력해주세요"
+              value={field.value}
+              onValueChange={field.onChange}
+            />
+          )}
+        />
+        <Button type="submit" disabled={isLoading} className="w-full/2">
           {isLoading ? (
             <>
               <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />

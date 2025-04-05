@@ -24,8 +24,7 @@ const Recipe = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const stringifiedIngredients = useMemo(() => {
-    console.log(recipe.ingredients);
-    // const ingredients = recipe.ingredients.
+    return recipe.ingredients.toString().replaceAll(",", "");
   }, [recipe.ingredients]);
 
   useEffect(() => {
@@ -41,7 +40,7 @@ const Recipe = () => {
     };
 
     fetchImage();
-  }, [stringifiedIngredients, recipe.rawContent]);
+  }, [stringifiedIngredients]);
 
   if (!recipe.rawContent) {
     return null;

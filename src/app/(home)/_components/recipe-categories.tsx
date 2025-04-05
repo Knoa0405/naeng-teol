@@ -31,7 +31,9 @@ const RecipeCategories = ({ setCategories }: RecipeCategoriesProps) => {
 
   return (
     <div className="flex items-center gap-2">
-      <label htmlFor="div">카테고리</label>
+      <label className="sr-only" htmlFor="categories">
+        카테고리
+      </label>
       <ToggleGroup type="multiple" onValueChange={handleClickCategory}>
         {CATEGORY_OPTIONS.map(category => (
           <ToggleGroupItem key={category.value} value={category.value}>
