@@ -88,11 +88,13 @@ const Recipe = () => {
           h1: ({ ...props }) => <h1 className={headingStyles.h1} {...props} />,
           h2: ({ ...props }) => <h2 className={headingStyles.h2} {...props} />,
           h3: ({ ...props }) => <h3 className={headingStyles.h3} {...props} />,
-          ul: ({ ...props }) => <ul className="flex gap-4 my-2" {...props} />,
+          ul: ({ ...props }) => (
+            <ul className="flex gap-4 my-2 flex-wrap" {...props} />
+          ),
           ol: ({ ...props }) => <ol className="flex-col gap-10" {...props} />,
           li: ({ ...props }) => (
             <li
-              className="flex items-center before:content-['•'] before:text-primary pb-2 gap-1"
+              className="flex items-start before:content-['•'] before:text-primary pb-2 gap-1"
               {...props}
             />
           ),
