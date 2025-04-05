@@ -220,8 +220,10 @@ export const TagsInput = React.forwardRef<HTMLDivElement, TagsInputProps>(
           case "Enter":
             if (inputValue.trim() !== "") {
               e.preventDefault();
-              onValueChangeHandler(inputValue);
-              setInputValue("");
+              if (!e.nativeEvent.isComposing) {
+                onValueChangeHandler(inputValue);
+                setInputValue("");
+              }
             }
             break;
         }
