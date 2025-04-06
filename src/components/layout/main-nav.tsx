@@ -16,7 +16,7 @@ const MainNav = async () => {
   ];
 
   return (
-    <nav className="flex justify-center items-center space-x-4 lg:space-x-6 pt-4">
+    <nav className="flex items-center justify-center space-x-4 pt-4 lg:space-x-6">
       <NavigationMenu>
         <NavigationMenuList className="flex items-center gap-4">
           {navigationItems.map(item => (

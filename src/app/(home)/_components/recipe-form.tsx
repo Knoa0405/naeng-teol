@@ -50,7 +50,7 @@ const RecipeForm = () => {
   );
 
   return (
-    <form action={saveRecipeAction} className="flex flex-col w-full">
+    <form action={saveRecipeAction} className="flex w-full flex-col">
       {recipe.content && (
         <Button type="submit" disabled={isSaveRecipePending}>
           {isSaveRecipePending ? (

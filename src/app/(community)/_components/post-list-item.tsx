@@ -14,29 +14,29 @@ const PostListItem = ({ item }: PostListItemProps) => {
   const router = useRouter();
 
   return (
-    <div className="break-inside-avoid mb-4">
+    <div className="mb-4 break-inside-avoid">
       <Card
-        className="overflow-hidden cursor-pointer"
+        className="cursor-pointer overflow-hidden"
         onClick={() => router.push(`/posts/${item.id}`)}
       >
         <CardContent className="p-0">{/* 이미지 영역 */}</CardContent>
         <CardContent className="p-4">
-          <h3 className="font-semibold text-lg">{item.title}</h3>
+          <h3 className="text-lg font-semibold">{item.title}</h3>
           <p className="text-sm text-gray-600">{item.content}</p>
         </CardContent>
-        <CardFooter className="p-4 pt-0 flex justify-between">
+        <CardFooter className="flex justify-between p-4 pt-0">
           <div className="flex items-center gap-2">
             <button className="flex items-center gap-1 hover:text-red-500">
-              <Heart className="w-4 h-4" />
+              <Heart className="h-4 w-4" />
               <span className="text-sm">{item.likesCount}</span>
             </button>
             <button className="flex items-center gap-1 hover:text-blue-500">
-              <MessageCircle className="w-4 h-4" />
+              <MessageCircle className="h-4 w-4" />
               <span className="text-sm">{item.views}</span>
             </button>
           </div>
           <button className="hover:text-gray-600">
-            <Share2 className="w-4 h-4" />
+            <Share2 className="h-4 w-4" />
           </button>
         </CardFooter>
       </Card>

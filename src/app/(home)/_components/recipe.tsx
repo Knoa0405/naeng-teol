@@ -51,7 +51,7 @@ const Recipe = () => {
       <div className="flex flex-col gap-4 pb-4">
         <AspectRatio
           ratio={16 / 9}
-          className="bg-muted relative overflow-hidden rounded-md"
+          className="relative overflow-hidden rounded-md bg-muted"
         >
           <div
             className={cn(
@@ -59,11 +59,11 @@ const Recipe = () => {
               isLoading ? "opacity-100" : "opacity-5",
             )}
           >
-            <div className="w-full h-full animate-pulse bg-gray-200" />
+            <div className="h-full w-full animate-pulse bg-gray-200" />
           </div>
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <Loader2 className="w-8 h-8 animate-spin text-gray-600" />
+              <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
             </div>
           )}
           <Image
@@ -80,7 +80,7 @@ const Recipe = () => {
         </AspectRatio>
       </div>
       <Markdown
-        className={cn("flex flex-col p-4 rounded-sm", {
+        className={cn("flex flex-col rounded-sm p-4", {
           "border border-primary": !!recipe.content,
         })}
         remarkPlugins={[remarkGfm]}
@@ -89,12 +89,12 @@ const Recipe = () => {
           h2: ({ ...props }) => <h2 className={headingStyles.h2} {...props} />,
           h3: ({ ...props }) => <h3 className={headingStyles.h3} {...props} />,
           ul: ({ ...props }) => (
-            <ul className="flex gap-4 my-2 flex-wrap" {...props} />
+            <ul className="my-2 flex flex-wrap gap-4" {...props} />
           ),
           ol: ({ ...props }) => <ol className="flex-col gap-10" {...props} />,
           li: ({ ...props }) => (
             <li
-              className="flex items-start before:content-['•'] before:text-primary pb-2 gap-1"
+              className="flex items-start gap-1 pb-2 before:text-primary before:content-['•']"
               {...props}
             />
           ),

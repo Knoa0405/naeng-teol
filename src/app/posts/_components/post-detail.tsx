@@ -30,7 +30,7 @@ export default async function PostDetail({ id }: IPostDetailProps) {
         </div>
       </CardHeader>
       <CardContent className="p-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold">{post.title}</h2>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -44,7 +44,7 @@ export default async function PostDetail({ id }: IPostDetailProps) {
         <Separator className="my-4" />
 
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">재료</h3>
+          <h3 className="mb-3 text-lg font-semibold">재료</h3>
           <ul className="grid grid-cols-2 gap-2">
             {post.ingredients.map(ingredient => (
               <li key={ingredient} className="flex items-center gap-2">
@@ -56,7 +56,7 @@ export default async function PostDetail({ id }: IPostDetailProps) {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold mb-3">조리 방법</h3>
+          <h3 className="mb-3 text-lg font-semibold">조리 방법</h3>
           <ol className="space-y-3">
             {post.content
               .split(/\d+\.\s+/)

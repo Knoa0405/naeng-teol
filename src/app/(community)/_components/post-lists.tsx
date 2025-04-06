@@ -11,7 +11,7 @@ interface PostListsProps {
 const PostLists = ({ posts }: PostListsProps) => {
   return (
     <div className="container mx-auto p-4">
-      <div className="columns-2 md:columns-2 lg:columns-3 xl:columns-4 gap-4">
+      <div className="columns-2 gap-4 md:columns-2 lg:columns-3 xl:columns-4">
         {posts.map(item => (
           <PostListItem key={item.id} item={item} />
         ))}

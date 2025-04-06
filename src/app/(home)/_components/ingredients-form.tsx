@@ -112,7 +112,7 @@ const IngredientsForm = () => {
   }, [imagePreviewURL]);
 
   return (
-    <div className="flex flex-col gap-4 items-center">
+    <div className="flex flex-col items-center gap-4">
       <h3 className="text-xl font-bold">식재료를 추가해주세요</h3>
       <span className="text-sm text-gray-500">
         버튼을 누르고 기다리면 레시피가 나와요
@@ -129,7 +129,7 @@ const IngredientsForm = () => {
       )}
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-4 w-full"
+        className="flex w-full flex-col gap-4"
       >
         <Input
           key="image"
