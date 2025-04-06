@@ -17,6 +17,7 @@ export const useRecipeStore = create<IRecipeStore>()(
         ingredients: [],
         content: "",
         rawContent: "",
+        images: [],
       },
       addRecipe: (recipe: IRecipe) =>
         set(

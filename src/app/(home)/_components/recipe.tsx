@@ -20,6 +20,7 @@ const headingStyles = {
 
 const Recipe = () => {
   const recipe = useRecipeStore(state => state.recipe);
+  const addRecipe = useRecipeStore(state => state.addRecipe);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,8 +36,23 @@ const Recipe = () => {
     const fetchImage = async () => {
       setIsLoading(true);
       const image = await getImageFromAI(recipe.rawContent);
+
       setImageUrl(image.imageUrl);
-      setIsLoading(false);
+      addRecipe({
+        ...recipe,
+        images: [
+          {
+            order: 0,
+            entityType: "POST",
+            image: {
+              id: 0,
+              url: image.imageUrl,
+              alt: "AI generated recipe image",
+              hash: "",
+            },
+          },
+        ],
+      });
     };
 
     fetchImage();

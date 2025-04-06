@@ -49,6 +49,7 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
     ingredients: recipe.ingredients,
     content: recipe.content,
     rawContent: recipe.rawContent,
+    images: recipe.images,
   };
 
   const response = await api

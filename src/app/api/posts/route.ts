@@ -19,6 +19,13 @@ export async function GET(request: NextRequest) {
     take: take + 1,
     cursor: cursor ? { id: cursor } : undefined,
     orderBy: { createdAt: "desc" },
+    include: {
+      images: {
+        include: {
+          image: true,
+        },
+      },
+    },
   });
 
   const hasNextPage = posts.length > take;
@@ -29,7 +36,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: Request): Promise<Response> {
   const body = (await request.json()) as ICreatePostRequestBody;
-  const { title, content, ingredients, rawContent, authorId } = body;
+  const { title, content, ingredients, rawContent, authorId, images } = body;
 
   if (!title || !content || !ingredients || !rawContent || !authorId) {
     const missingFields = Object.keys(body).filter(
@@ -50,6 +57,30 @@ export async function POST(request: Request): Promise<Response> {
         content,
         rawContent,
         ingredients,
+        // 이미지 생성
+        images:
+          images && images.length > 0
+            ? {
+                create: images.map(imageRelation => ({
+                  order: imageRelation.order,
+                  entityType: "POST",
+                  image: {
+                    create: {
+                      url: imageRelation.image.url,
+                      alt: imageRelation.image.alt,
+                      hash: imageRelation.image.hash ?? undefined,
+                    },
+                  },
+                })),
+              }
+            : undefined,
+      },
+      include: {
+        images: {
+          include: {
+            image: true,
+          },
+        },
       },
     });
 
