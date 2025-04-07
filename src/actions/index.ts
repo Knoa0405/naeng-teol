@@ -49,6 +49,7 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
     ingredients: recipe.ingredients,
     content: recipe.content,
     rawContent: recipe.rawContent,
+    images: recipe.images,
   };
 
   const response = await api
@@ -61,7 +62,11 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
 };
 
 export const getImageFromAI = async (rawContent: string) => {
-  const response = await api.post<{ imageUrl: string }>("ai/image", {
+  const response = await api.post<{
+    imageUrl: string;
+    imagePath: string;
+    hashFileName: string;
+  }>("ai/image", {
     json: { rawContent },
   });
 

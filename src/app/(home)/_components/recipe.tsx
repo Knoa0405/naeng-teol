@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -19,28 +20,38 @@ const headingStyles = {
 
 const Recipe = () => {
   const recipe = useRecipeStore(state => state.recipe);
-  const [imageUrl, setImageUrl] = useState<string>("");
+  const addRecipe = useRecipeStore(state => state.addRecipe);
+  const [imagePath, setImagePath] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
-  const stringifiedIngredients = useMemo(
-    () => recipe.ingredients.toString(),
-    [recipe.ingredients],
-  );
-
   useEffect(() => {
-    if (!recipe.rawContent) {
+    if (!recipe.rawContent || (recipe.images && recipe.images.length > 0)) {
       return;
     }
 
     const fetchImage = async () => {
       setIsLoading(true);
       const image = await getImageFromAI(recipe.rawContent);
-      setImageUrl(image.imageUrl);
+      setImagePath(image.imagePath);
+
+      addRecipe({
+        images: [
+          {
+            order: 0,
+            image: {
+              url: image.imagePath,
+              hash: image.hashFileName,
+              alt: "AI generated recipe image",
+            },
+          },
+        ],
+      });
+
       setIsLoading(false);
     };
 
     fetchImage();
-  }, [stringifiedIngredients]);
+  }, [recipe.rawContent, recipe.images, addRecipe]);
 
   if (!recipe.rawContent) {
     return null;
@@ -51,23 +62,32 @@ const Recipe = () => {
       <div className="flex flex-col gap-4 pb-4">
         <AspectRatio
           ratio={16 / 9}
-          className="bg-muted relative overflow-hidden rounded-md"
+          className="relative overflow-hidden rounded-md bg-muted"
         >
           <div
             className={cn(
               "absolute inset-0 transition-opacity duration-700 ease-in-out",
-              isLoading ? "opacity-100" : "opacity-20",
+              isLoading ? "opacity-100" : "opacity-5",
             )}
           >
-            <div className="w-full h-full animate-pulse bg-gray-200" />
+            <div className="h-full w-full animate-pulse bg-gray-200" />
           </div>
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
+            </div>
+          )}
           <Image
-            src={imageUrl || "/placeholder.png"}
+            src={
+              imagePath
+                ? `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${imagePath}`
+                : "/placeholder.png"
+            }
             alt="generated image from ai"
             fill
             className={cn(
               "h-full w-full rounded-md object-cover transition-opacity duration-700 ease-in-out",
-              isLoading ? "opacity-20" : "opacity-100",
+              isLoading ? "opacity-5" : "opacity-100",
             )}
             placeholder="blur"
             blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4dHRsdHR4dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR3/2wBDAR0XFyAeIRshIRshHRsdIR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR3/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
@@ -75,14 +95,24 @@ const Recipe = () => {
         </AspectRatio>
       </div>
       <Markdown
-        className={cn("flex flex-col p-4 rounded-sm", {
-          "border border-green-600": !!recipe.content,
+        className={cn("flex flex-col rounded-sm p-4", {
+          "border border-primary": !!recipe.content,
         })}
         remarkPlugins={[remarkGfm]}
         components={{
           h1: ({ ...props }) => <h1 className={headingStyles.h1} {...props} />,
           h2: ({ ...props }) => <h2 className={headingStyles.h2} {...props} />,
           h3: ({ ...props }) => <h3 className={headingStyles.h3} {...props} />,
+          ul: ({ ...props }) => (
+            <ul className="my-2 flex flex-wrap gap-4" {...props} />
+          ),
+          ol: ({ ...props }) => <ol className="flex-col gap-10" {...props} />,
+          li: ({ ...props }) => (
+            <li
+              className="flex items-start gap-1 pb-2 before:text-primary before:content-['•']"
+              {...props}
+            />
+          ),
         }}
       >
         {recipe.rawContent}

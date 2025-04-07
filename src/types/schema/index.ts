@@ -1,10 +1,16 @@
 import { z } from "zod";
 
+import { ImageRelationRequestSchema, ImageRelationSchema } from "../common";
+
 export const RecipeSchema = z.object({
   title: z.string().describe("recipe title"),
   ingredients: z.array(z.string().describe("ingredient name")),
   content: z.string().describe("recipe content"),
   rawContent: z.string().describe("recipe raw content in markdown format"),
+  images: z
+    .array(ImageRelationRequestSchema)
+    .optional()
+    .describe("post images"),
 });
 
 export const UserSchema = z.object({
@@ -46,6 +52,7 @@ export const LikeSchema = z.object({
 export const PostSchema = RecipeSchema.extend({
   id: z.number().describe("post id"),
   authorId: z.string().describe("author id"),
+  images: z.array(ImageRelationSchema).describe("post images"),
   views: z.number().describe("number of views"),
   likesCount: z.number().describe("number of likes"),
   isDeleted: z.boolean().describe("is deleted"),
@@ -54,6 +61,13 @@ export const PostSchema = RecipeSchema.extend({
   comments: z.array(CommentSchema).describe("post comments"),
   likes: z.array(LikeSchema).describe("post likes"),
   author: UserSchema.describe("post author"),
+});
+
+export const PostRequestSchema = PostSchema.omit({ id: true }).extend({
+  images: z
+    .array(ImageRelationRequestSchema)
+    .optional()
+    .describe("post images"),
 });
 
 export const PostParamsSchema = PostSchema.omit({ id: true }).extend({

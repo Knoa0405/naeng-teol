@@ -154,7 +154,7 @@ export function CommentItem({
               onClick={handleLike}
             >
               <Heart
-                className={`h-4 w-4 mr-1 ${isLiked ? "fill-primary text-primary" : ""}`}
+                className={`mr-1 h-4 w-4 ${isLiked ? "fill-primary text-primary" : ""}`}
               />
               <span>{likesCount}</span>
             </Button>
@@ -166,7 +166,7 @@ export function CommentItem({
                 className="h-8 px-2 text-muted-foreground"
                 onClick={() => setShowReplyForm(!showReplyForm)}
               >
-                <MessageCircle className="h-4 w-4 mr-1" />
+                <MessageCircle className="mr-1 h-4 w-4" />
                 <span>답글</span>
               </Button>
             )}

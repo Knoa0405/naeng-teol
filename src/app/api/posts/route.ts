@@ -1,11 +1,11 @@
 import { type NextRequest } from "next/server";
 
 import prisma from "@/db";
-import { IPost } from "@/types/posts";
+import { IPost, IPostRequest } from "@/types/posts";
 
-export interface ICreatePostRequestBody extends Partial<IPost> {}
+export interface ICreatePostRequestBody extends Partial<IPostRequest> {}
 export interface ICreatePostResponseBody {
-  post: IPost | null;
+  post: IPost;
   error?: string;
 }
 
@@ -19,6 +19,13 @@ export async function GET(request: NextRequest) {
     take: take + 1,
     cursor: cursor ? { id: cursor } : undefined,
     orderBy: { createdAt: "desc" },
+    include: {
+      images: {
+        include: {
+          image: true,
+        },
+      },
+    },
   });
 
   const hasNextPage = posts.length > take;
@@ -29,7 +36,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: Request): Promise<Response> {
   const body = (await request.json()) as ICreatePostRequestBody;
-  const { title, content, ingredients, rawContent, authorId } = body;
+  const { title, content, ingredients, rawContent, authorId, images } = body;
 
   if (!title || !content || !ingredients || !rawContent || !authorId) {
     const missingFields = Object.keys(body).filter(
@@ -43,14 +50,72 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   try {
-    const post = await prisma.post.create({
-      data: {
-        authorId,
-        title,
-        content,
-        rawContent,
-        ingredients,
-      },
+    const post = await prisma.$transaction(async tx => {
+      // 1. 먼저 post를 생성합니다
+      const newPost = await tx.post.create({
+        data: {
+          authorId,
+          title,
+          content,
+          rawContent,
+          ingredients,
+        },
+      });
+
+      // 2. 이미지가 있는 경우 이미지와 관계를 생성합니다
+      if (images && images.length > 0) {
+        await Promise.all(
+          images.map(async (imageRelation, index) => {
+            // 2-1. 이미지 hash로 기존 이미지 찾기
+            let image;
+            if (imageRelation.image.hash) {
+              image = await tx.image.findUnique({
+                where: { hash: imageRelation.image.hash },
+              });
+            }
+
+            // 2-2. 기존 이미지가 없는 경우에만 새로 생성
+            if (!image) {
+              image = await tx.image.create({
+                data: {
+                  url: imageRelation.image.url,
+                  alt: imageRelation.image.alt,
+                  hash: imageRelation.image.hash ?? undefined,
+                },
+              });
+            }
+
+            // 2-3. 이미지 관계 생성
+            await tx.imageRelation.create({
+              data: {
+                order: imageRelation.order ?? index,
+                post: {
+                  connect: {
+                    id: newPost.id,
+                  },
+                },
+                image: {
+                  connect: {
+                    id: image.id,
+                  },
+                },
+              },
+            });
+          }),
+        );
+      }
+
+      // 3. 생성된 post를 이미지 관계와 함께 조회합니다
+      return await tx.post.findUnique({
+        where: { id: newPost.id },
+        include: {
+          images: {
+            include: {
+              image: true,
+            },
+          },
+        },
+      });
     });
 
     return Response.json(

@@ -1,47 +1,41 @@
 "use client";
 
-import { useActionState, useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { experimental_useObject as useObject } from "@ai-sdk/react";
-import { PlusIcon, ReloadIcon } from "@radix-ui/react-icons";
-import { nanoid } from "nanoid/non-secure";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
-import {
-  getIngredientsFromAIVision,
-  saveRecipe,
-  signInWithGoogle,
-} from "@/actions";
 import { useToast } from "@/components/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ToastAction } from "@/components/ui/toast";
-import { getImageFile } from "@/lib/get-image-file";
-import { uploadFileToS3 } from "@/lib/upload-s3";
-import { createFormData, pipe } from "@/lib/utils";
+import { TagsInput } from "@/components/ui/tags-input";
 import { useRecipeStore } from "@/store";
-import { TInputIngredient } from "@/types/recipe";
 import { RecipeSchema } from "@/types/schema";
 
-import IngredientInput from "./ingredient-input";
 import RecipeCategories, { TCategoryOption } from "./recipe-categories";
+
+import RecipeForm from "./recipe-form";
+
+import { getIngredientsFromImage } from "../_lib/utils";
 
 const IngredientsForm = () => {
   const { toast } = useToast();
-  const { register, handleSubmit } = useForm({
-    shouldUnregister: true,
-  });
-
-  const addRecipe = useRecipeStore(state => state.addRecipe);
   const recipe = useRecipeStore(state => state.recipe);
-
+  const addRecipe = useRecipeStore(state => state.addRecipe);
   const [imagePreviewURL, setImagePreviewURL] = useState<string | null>(null);
-
   const [categories, setCategories] = useState<TCategoryOption[]>([]);
-  const [inputs, setInputs] = useState<TInputIngredient[]>([]);
   const [isPending, setIsPending] = useState(false);
+
+  const { register, handleSubmit, control, setValue } = useForm({
+    shouldUnregister: true,
+    defaultValues: {
+      ingredients: [] as string[],
+      image: undefined,
+    },
+  });
 
   const { submit, isLoading: isRecipeLoading } = useObject({
     api: "/api/ai/recipe",
@@ -62,78 +56,44 @@ const IngredientsForm = () => {
     },
   });
 
-  const handleAddInput = useCallback(({ content = "" } = {}) => {
-    setInputs(prev => [...prev, { id: `ingredient-${nanoid()}`, content }]);
-  }, []);
-
-  const getIngredientsFromImage = async (image: File): Promise<string[]> => {
-    try {
-      const ingredients = await pipe<File, string[]>(
-        createFormData,
-        getImageFile,
-        uploadFileToS3,
-        getIngredientsFromAIVision,
-      )(image);
-
-      return ingredients;
-    } catch (error) {
-      console.error("이미지에서 재료 추출 중 오류 발생:", error);
-      return [];
-    }
-  };
-
-  const handleSaveRecipe = async () => {
-    try {
-      const response = await saveRecipe({
-        recipe,
-      });
-
-      if (response.error) {
-        throw new Error(response.error);
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        switch (error.message) {
-          case "User not found":
-            toast({
-              variant: "destructive",
-              title: "레시피 저장 실패",
-              description: "로그인 후 이용해주세요",
-              action: (
-                <ToastAction
-                  altText="로그인"
-                  onClick={() => signInWithGoogle()}
-                >
-                  로그인
-                </ToastAction>
-              ),
-            });
-            break;
-        }
-      }
-    }
-  };
-
-  const [, saveRecipeAction, isSaveRecipePending] = useActionState(
-    handleSaveRecipe,
-    undefined,
-  );
-
   const onSubmit = async (data: any) => {
     try {
       setIsPending(true);
-      const { image, ...rest } = data;
+      const { image, ingredients } = data;
 
-      const ingredientsFromImage = image[0]
+      const ingredientsFromImage = image?.[0]
         ? await getIngredientsFromImage(image[0])
         : [];
 
-      const allIngredients = [...Object.values(rest), ...ingredientsFromImage];
+      const allIngredients: string[] = [
+        ...ingredients,
+        ...ingredientsFromImage,
+      ].filter(ingredient => ingredient !== "");
+
+      // 이미지가 있는데 식재료를 추출하지 못했을 때
+      if (image?.[0] && ingredientsFromImage.length === 0) {
+        toast({
+          variant: "destructive",
+          title: "이미지에서 식재료를 추출하지 못했어요",
+          description: "좀더 명확한 이미지로 시도해주세요",
+        });
+      }
+
+      if (allIngredients.length === 0) {
+        toast({
+          variant: "destructive",
+          title: "식재료가 없어 레시피를 만들 수 없어요",
+          description: "식재료를 추가해주세요",
+        });
+        return;
+      }
 
       submit({
         ingredients: allIngredients.toString(),
         categories: categories.toString(),
       });
+
+      setValue("ingredients", allIngredients);
     } catch (error) {
       console.error("재료 제출 중 오류 발생:", error);
     } finally {
@@ -152,7 +112,7 @@ const IngredientsForm = () => {
   }, [imagePreviewURL]);
 
   return (
-    <div className="flex flex-col gap-4 items-center">
+    <div className="flex flex-col items-center gap-4">
       <h3 className="text-xl font-bold">식재료를 추가해주세요</h3>
       <span className="text-sm text-gray-500">
         버튼을 누르고 기다리면 레시피가 나와요
@@ -169,7 +129,7 @@ const IngredientsForm = () => {
       )}
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-4 w-full"
+        className="flex w-full flex-col gap-4"
       >
         <Input
           key="image"
@@ -185,24 +145,19 @@ const IngredientsForm = () => {
           }}
         />
         <RecipeCategories setCategories={setCategories} />
-        {inputs.map((input, index) => (
-          <IngredientInput
-            key={input.id}
-            id={input.id}
-            defaultValue={input.content}
-            {...register(input.id)}
-            setInputs={setInputs}
-            index={index}
-          />
-        ))}
-        <Button
-          type="button"
-          onClick={() => handleAddInput()}
-          className="w-full"
-        >
-          <PlusIcon className="w-full h-4" />
-        </Button>
-        <Button type="submit" disabled={isLoading} className="w-full">
+        <Controller
+          control={control}
+          name="ingredients"
+          render={({ field }) => (
+            <TagsInput
+              id="ingredients"
+              placeholder="식재료를 입력해주세요"
+              value={field.value}
+              onValueChange={field.onChange}
+            />
+          )}
+        />
+        <Button type="submit" disabled={isLoading} className="w-full/2">
           {isLoading ? (
             <>
               <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
@@ -215,20 +170,7 @@ const IngredientsForm = () => {
           )}
         </Button>
       </form>
-      <form action={saveRecipeAction} className="flex flex-col w-full">
-        {recipe.content && (
-          <Button type="submit" disabled={isSaveRecipePending}>
-            {isSaveRecipePending ? (
-              <>
-                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                레시피 저장중
-              </>
-            ) : (
-              "레시피 저장"
-            )}
-          </Button>
-        )}
-      </form>
+      <RecipeForm />
     </div>
   );
 };

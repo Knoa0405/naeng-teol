@@ -13,16 +13,18 @@ export const POST = async (request: Request) => {
   const { rawContent } = (await request.json()) as IRequest;
 
   try {
-    const imageFilePath = createHashFromContents(rawContent);
+    const hashFileName = createHashFromContents(rawContent);
 
-    const prevFilePath = `images/${imageFilePath}.webp`;
+    const imagePath = `images/${hashFileName}.webp`;
 
-    const isImageExists = await isImageExistsFromS3(imageFilePath);
+    const isImageExists = await isImageExistsFromS3(hashFileName);
 
     if (isImageExists) {
       return Response.json(
         {
-          imageUrl: getFullImageUrl(prevFilePath),
+          imageUrl: getFullImageUrl(imagePath),
+          imagePath: imagePath,
+          hashFileName: hashFileName,
         },
         { status: 200 },
       );
@@ -37,12 +39,14 @@ export const POST = async (request: Request) => {
 
     const fullImageUrl = await uploadImageToS3(
       images[0].uint8Array,
-      imageFilePath,
+      hashFileName,
     );
 
     return Response.json(
       {
         imageUrl: fullImageUrl,
+        imagePath: imagePath,
+        hashFileName: hashFileName,
       },
       { status: 200 },
     );

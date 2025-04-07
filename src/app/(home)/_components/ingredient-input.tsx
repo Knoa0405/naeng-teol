@@ -26,7 +26,7 @@ const IngredientInput = forwardRef<HTMLInputElement, TIngredientInputProps>(
         <div className="flex gap-4">
           <Input {...props} ref={ref} />
           <Button type="button" onClick={handleRemove}>
-            <MinusIcon className="w-4 h-4" />
+            <MinusIcon className="h-4 w-4" />
           </Button>
         </div>
       </>

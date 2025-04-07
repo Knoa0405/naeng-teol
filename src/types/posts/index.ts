@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import { PostParamsSchema, PostSchema } from "@/types/schema";
+import {
+  PostParamsSchema,
+  PostRequestSchema,
+  PostSchema,
+} from "@/types/schema";
 
 export interface IPostsRouteParams {
   postId: string;
@@ -11,3 +15,5 @@ export interface IPostsRouteParams {
 export type IPostParams = z.infer<typeof PostParamsSchema>;
 
 export interface IPost extends z.infer<typeof PostSchema> {}
+
+export interface IPostRequest extends z.infer<typeof PostRequestSchema> {}
