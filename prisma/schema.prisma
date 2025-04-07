@@ -112,41 +112,40 @@ enum EntityType {
 }
 
 model ImageRelation {
-  id         Int        @id @default(autoincrement())
-  imageId    Int
-  entityType EntityType
-  entityId   Int
-  order      Int        @default(0)
-  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt  DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id        Int      @id @default(autoincrement())
+  order     Int      @default(0)
+  imageId   Int
+  postId    Int?
+  commentId Int?
+  image     Image    @relation(fields: [imageId], references: [id])
+  post      Post?    @relation(fields: [postId], references: [id])
+  comment   Comment? @relation(fields: [commentId], references: [id])
 
-  image   Image    @relation(fields: [imageId], references: [id])
-  post    Post?    @relation(fields: [entityId], references: [id], map: "image_relations_post_fkey")
-  comment Comment? @relation(fields: [entityId], references: [id], map: "image_relations_comment_fkey")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  @@unique([entityType, entityId, order])
+  @@unique([postId, order])
+  @@unique([commentId, order])
   @@index([imageId])
-  @@index([entityType, entityId])
   @@map("image_relations")
 }
 
 model Comment {
-  id         Int           @id @default(autoincrement())
-  authorId   String        @map("author_id")
-  createdAt  DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  id         Int             @id @default(autoincrement())
+  authorId   String          @map("author_id")
+  createdAt  DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
   content    String
-  postId     Int           @map("post_id")
-  parentId   Int?          @map("parent_id")
-  updatedAt  DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
-  likesCount Int           @default(0) @map("likes_count")
-  isDeleted  Boolean       @default(false) @map("is_deleted")
+  postId     Int             @map("post_id")
+  parentId   Int?            @map("parent_id")
+  updatedAt  DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  likesCount Int             @default(0) @map("likes_count")
+  isDeleted  Boolean         @default(false) @map("is_deleted")
   likes      CommentLike[]
-  author     User          @relation(fields: [authorId], references: [id])
-  parent     Comment?      @relation("CommentReplies", fields: [parentId], references: [id])
-  replies    Comment[]     @relation("CommentReplies")
-  post       Post          @relation(fields: [postId], references: [id])
-
-  ImageRelation ImageRelation[]
+  author     User            @relation(fields: [authorId], references: [id])
+  parent     Comment?        @relation("CommentReplies", fields: [parentId], references: [id])
+  replies    Comment[]       @relation("CommentReplies")
+  post       Post            @relation(fields: [postId], references: [id])
+  images     ImageRelation[]
 
   @@map("comments")
 }
