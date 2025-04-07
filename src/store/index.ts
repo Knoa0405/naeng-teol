@@ -7,6 +7,7 @@ import { IRecipe } from "@/types/recipe";
 interface IRecipeStore {
   recipe: IRecipe;
   addRecipe: (recipeData: Partial<IRecipe>) => void;
+  resetRecipe: () => void;
 }
 
 export const useRecipeStore = create<IRecipeStore>()(
@@ -30,6 +31,16 @@ export const useRecipeStore = create<IRecipeStore>()(
           false,
           "addRecipe",
         ),
+      resetRecipe: () =>
+        set({
+          recipe: {
+            title: "",
+            ingredients: [],
+            content: "",
+            rawContent: "",
+            images: [],
+          },
+        }),
     }),
     {
       name: "recipeStore",

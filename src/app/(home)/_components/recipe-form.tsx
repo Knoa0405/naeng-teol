@@ -14,6 +14,8 @@ import { useRecipeStore } from "@/store";
 const RecipeForm = () => {
   const router = useRouter();
   const recipe = useRecipeStore(state => state.recipe);
+  const resetRecipe = useRecipeStore(state => state.resetRecipe);
+
   const handleSaveRecipe = async () => {
     try {
       const response = await saveRecipe({
@@ -26,6 +28,7 @@ const RecipeForm = () => {
 
       if (!("error" in response) && response.post) {
         router.push(`/posts/${response.post.id}`);
+        resetRecipe();
       }
     } catch (error) {
       if (error instanceof Error) {
