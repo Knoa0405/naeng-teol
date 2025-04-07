@@ -13,7 +13,7 @@ import {
   type TPath,
 } from "./get-full-image-url";
 
-export const isImageExistsFromS3 = async (filePath: string) => {
+export const isImageExistsFromS3 = async (hashFileName: string) => {
   const s3Client = new S3Client({
     region: "ap-northeast-2",
     credentials: {
@@ -22,7 +22,7 @@ export const isImageExistsFromS3 = async (filePath: string) => {
     },
   });
 
-  const fullFilePath = `images/${filePath}.webp`;
+  const fullFilePath = `images/${hashFileName}.webp`;
 
   try {
     await s3Client.send(

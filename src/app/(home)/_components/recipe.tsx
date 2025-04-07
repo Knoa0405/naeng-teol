@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -21,42 +21,37 @@ const headingStyles = {
 const Recipe = () => {
   const recipe = useRecipeStore(state => state.recipe);
   const addRecipe = useRecipeStore(state => state.addRecipe);
-  const [imageUrl, setImageUrl] = useState<string>("");
+  const [imagePath, setImagePath] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
-  const stringifiedIngredients = useMemo(() => {
-    return recipe.ingredients.toString().replaceAll(",", "");
-  }, [recipe.ingredients]);
-
   useEffect(() => {
-    if (!recipe.rawContent) {
+    if (!recipe.rawContent || (recipe.images && recipe.images.length > 0)) {
       return;
     }
 
     const fetchImage = async () => {
       setIsLoading(true);
       const image = await getImageFromAI(recipe.rawContent);
+      setImagePath(image.imagePath);
 
-      setImageUrl(image.imageUrl);
       addRecipe({
-        ...recipe,
         images: [
           {
             order: 0,
-            entityType: "POST",
             image: {
-              id: 0,
-              url: image.imageUrl,
+              url: image.imagePath,
+              hash: image.hashFileName,
               alt: "AI generated recipe image",
-              hash: "",
             },
           },
         ],
       });
+
+      setIsLoading(false);
     };
 
     fetchImage();
-  }, [stringifiedIngredients]);
+  }, [recipe.rawContent, recipe.images, addRecipe]);
 
   if (!recipe.rawContent) {
     return null;
@@ -83,7 +78,11 @@ const Recipe = () => {
             </div>
           )}
           <Image
-            src={imageUrl || "/placeholder.png"}
+            src={
+              imagePath
+                ? `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${imagePath}`
+                : "/placeholder.png"
+            }
             alt="generated image from ai"
             fill
             className={cn(

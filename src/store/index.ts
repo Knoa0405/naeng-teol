@@ -6,7 +6,7 @@ import { IRecipe } from "@/types/recipe";
 
 interface IRecipeStore {
   recipe: IRecipe;
-  addRecipe: (recipe: IRecipe) => void;
+  addRecipe: (recipeData: Partial<IRecipe>) => void;
 }
 
 export const useRecipeStore = create<IRecipeStore>()(
@@ -19,11 +19,12 @@ export const useRecipeStore = create<IRecipeStore>()(
         rawContent: "",
         images: [],
       },
-      addRecipe: (recipe: IRecipe) =>
+      addRecipe: (recipeData: Partial<IRecipe>) =>
         set(
-          () => ({
+          (state: IRecipeStore) => ({
             recipe: {
-              ...recipe,
+              ...state.recipe,
+              ...recipeData,
             },
           }),
           false,

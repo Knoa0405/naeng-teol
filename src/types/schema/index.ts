@@ -1,10 +1,6 @@
 import { z } from "zod";
 
-import {
-  ImageRelationRequestSchema,
-  ImageRelationSchema,
-  ImageRequestSchema,
-} from "../common";
+import { ImageRelationRequestSchema, ImageRelationSchema } from "../common";
 
 export const RecipeSchema = z.object({
   title: z.string().describe("recipe title"),
@@ -68,7 +64,10 @@ export const PostSchema = RecipeSchema.extend({
 });
 
 export const PostRequestSchema = PostSchema.omit({ id: true }).extend({
-  images: z.array(ImageRequestSchema).optional().describe("post images"),
+  images: z
+    .array(ImageRelationRequestSchema)
+    .optional()
+    .describe("post images"),
 });
 
 export const PostParamsSchema = PostSchema.omit({ id: true }).extend({
