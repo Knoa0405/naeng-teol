@@ -5,7 +5,7 @@ import { IPost, IPostRequest } from "@/types/posts";
 
 export interface ICreatePostRequestBody extends Partial<IPostRequest> {}
 export interface ICreatePostResponseBody {
-  post: IPost | null;
+  post: IPost;
   error?: string;
 }
 

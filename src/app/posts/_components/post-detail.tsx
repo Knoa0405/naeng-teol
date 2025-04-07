@@ -1,4 +1,5 @@
 import { Eye } from "lucide-react";
+
 import Image from "next/image";
 
 import { getComments, getPost } from "@/actions";
@@ -22,10 +23,10 @@ export default async function PostDetail({ id }: IPostDetailProps) {
       <CardHeader className="p-0">
         <div className="relative h-64 sm:h-80">
           <Image
-            src="/placeholder.svg?height=400&width=800"
+            src={`${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${post.images[0].image.url}`}
             alt={`${post.title} 이미지`}
             fill
-            className="object-cover"
+            className="object-contain"
           />
         </div>
       </CardHeader>

@@ -2,6 +2,8 @@ import { useActionState } from "react";
 
 import { ReloadIcon } from "@radix-ui/react-icons";
 
+import { redirect } from "next/navigation";
+
 import { signInWithGoogle } from "@/actions";
 import { saveRecipe } from "@/actions";
 import { toast } from "@/components/hooks/use-toast";
@@ -11,7 +13,6 @@ import { useRecipeStore } from "@/store";
 
 const RecipeForm = () => {
   const recipe = useRecipeStore(state => state.recipe);
-
   const handleSaveRecipe = async () => {
     try {
       const response = await saveRecipe({
@@ -20,6 +21,11 @@ const RecipeForm = () => {
 
       if (response.error) {
         throw new Error(response.error);
+      }
+
+      if (!("error" in response)) {
+        const { post } = response;
+        redirect(`/posts/${post.id}`);
       }
     } catch (error) {
       if (error instanceof Error) {

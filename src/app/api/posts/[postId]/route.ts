@@ -11,6 +11,13 @@ export async function GET(
   try {
     const post = await prisma.post.findFirst({
       where: { id: Number(postId) },
+      include: {
+        images: {
+          include: {
+            image: true,
+          },
+        },
+      },
     });
 
     if (!post) {
