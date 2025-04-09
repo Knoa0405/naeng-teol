@@ -31,7 +31,9 @@ export const getIngredientsFromAIVision = async (imagePath: string) => {
 };
 
 export const getPost = async (id: string) => {
-  const response = await api.get<IPost>(`posts/${id}`);
+  const response = await api.get<IPost>(`posts/${id}`, {
+    cache: "force-cache",
+  });
 
   return response.json();
 };
@@ -84,6 +86,9 @@ export const getPosts = async () => {
 export const getComments = async (postId: string) => {
   const response = await api.get<{ comments: IComment[] }>(
     `posts/${postId}/comments`,
+    {
+      cache: "no-store",
+    },
   );
 
   return response.json();
