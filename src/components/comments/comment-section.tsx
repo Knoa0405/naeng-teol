@@ -177,10 +177,10 @@ export function CommentSection({
 
   return (
     <Card className="mt-8">
-      <CardHeader>
-        <CardTitle>댓글</CardTitle>
+      <CardHeader className="p-4">
+        <CardTitle className="p-0">댓글</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 p-4">
         {session?.user ? (
           <CommentForm
             onSubmit={handleCommentSubmit}

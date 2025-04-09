@@ -1,5 +1,3 @@
-import React from "react";
-
 import { IPost } from "@/types/posts";
 
 import PostListItem from "./post-list-item";
@@ -10,7 +8,7 @@ interface PostListsProps {
 
 const PostLists = ({ posts }: PostListsProps) => {
   return (
-    <div className="container mx-auto p-4">
+    <div className="mx-auto py-4">
       <div className="columns-2 gap-4 md:columns-2 lg:columns-3 xl:columns-4">
         {posts.map(item => (
           <PostListItem key={item.id} item={item} />

@@ -39,7 +39,7 @@ export function CommentForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-3">
+    <form onSubmit={handleSubmit} className="flex gap-2">
       <Avatar className="h-10 w-10 flex-shrink-0">
         <AvatarImage
           src={session?.user?.image || undefined}
