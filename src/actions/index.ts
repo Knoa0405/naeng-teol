@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidateTag } from "next/cache";
+
 import {
   ICreatePostRequestBody,
   ICreatePostResponseBody,
@@ -60,6 +62,8 @@ export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
     })
     .json();
 
+  revalidateTag("posts");
+
   return response;
 };
 
@@ -78,6 +82,12 @@ export const getImageFromAI = async (rawContent: string) => {
 export const getPosts = async () => {
   const response = await api.get<{ posts: IPost[]; hasNextPage: boolean }>(
     "posts",
+    {
+      next: {
+        revalidate: 3600,
+        tags: ["posts"],
+      }
+    },
   );
 
   return response.json();
