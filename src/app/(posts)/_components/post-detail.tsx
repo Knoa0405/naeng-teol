@@ -2,7 +2,7 @@ import { Eye } from "lucide-react";
 
 import Image from "next/image";
 
-import { getComments, getPost } from "@/actions";
+import { getPost } from "@/actions";
 import { CommentSection } from "@/components/comments/comment-section";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -16,7 +16,6 @@ interface IPostDetailProps {
 
 export default async function PostDetail({ id }: IPostDetailProps) {
   const post = await getPost(id);
-  const comments = (await getComments(id)).comments;
 
   return (
     <Card className="overflow-hidden">
@@ -72,8 +71,7 @@ export default async function PostDetail({ id }: IPostDetailProps) {
               ))}
           </ol>
         </div>
-
-        <CommentSection postId={post.id} comments={comments} />
+        <CommentSection postId={post.id} />
       </CardContent>
     </Card>
   );

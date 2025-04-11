@@ -1,4 +1,4 @@
-export default async function PostsLayout({
+export default function PostsLayout({
   children,
 }: {
   children: React.ReactNode;
