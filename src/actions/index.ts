@@ -11,7 +11,7 @@ import { auth, signIn, signOut } from "@/auth";
 import { api } from "@/lib/api-helper";
 import { getFullImageUrl } from "@/lib/get-full-image-url";
 import { IPost } from "@/types/posts";
-import { IComment } from "@/types/posts/comments";
+import { TComment } from "@/types/posts/comments";
 import { IRecipe } from "@/types/recipe";
 
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
@@ -86,7 +86,7 @@ export const getPosts = async () => {
       next: {
         revalidate: 3600,
         tags: ["posts"],
-      }
+      },
     },
   );
 
@@ -94,7 +94,7 @@ export const getPosts = async () => {
 };
 
 export const getComments = async (postId: string) => {
-  const response = await api.get<{ comments: IComment[] }>(
+  const response = await api.get<{ comments: TComment[] }>(
     `posts/${postId}/comments`,
     {
       cache: "no-store",
@@ -105,7 +105,7 @@ export const getComments = async (postId: string) => {
 };
 
 export const postComment = async (postId: string, content: string) => {
-  const response = await api.post<{ comment: IComment }>(
+  const response = await api.post<{ comment: TComment }>(
     `posts/${postId}/comments`,
     {
       json: { content },
