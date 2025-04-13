@@ -7,7 +7,7 @@ import "@/styles/globals.css";
 import { SessionProvider } from "next-auth/react";
 
 import MainNav from "@/components/layout/main-nav";
-import { ThemeProvider } from "@/components/theme-provider";
+import ThemeProvider from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 

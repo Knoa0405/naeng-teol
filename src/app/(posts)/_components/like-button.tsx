@@ -10,7 +10,7 @@ interface LikeButtonProps {
   initialLikeCount: number;
 }
 
-export default function LikeButton({ initialLikeCount }: LikeButtonProps) {
+const LikeButton = ({ initialLikeCount }: LikeButtonProps) => {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
 
@@ -39,4 +39,6 @@ export default function LikeButton({ initialLikeCount }: LikeButtonProps) {
       <span>{likeCount}</span>
     </Button>
   );
-}
+};
+
+export default LikeButton;

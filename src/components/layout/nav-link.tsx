@@ -14,7 +14,7 @@ interface NavLinkProps {
   label: string;
 }
 
-export function NavLink({ href, label }: NavLinkProps) {
+const NavLink = ({ href, label }: NavLinkProps) => {
   const pathname = usePathname();
   const isActive = pathname === href;
 
@@ -31,4 +31,6 @@ export function NavLink({ href, label }: NavLinkProps) {
       </NavigationMenuLink>
     </Link>
   );
-}
+};
+
+export default NavLink;

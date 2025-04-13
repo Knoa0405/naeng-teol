@@ -4,9 +4,9 @@ import {
 } from "@radix-ui/react-navigation-menu";
 import { NavigationMenuItem } from "@radix-ui/react-navigation-menu";
 
-import { ThemeToggle } from "@/components/theme-toggle";
+import ThemeToggle from "@/components/theme-toggle";
 
-import { NavLink } from "./nav-link";
+import NavLink from "./nav-link";
 import SessionSign from "./session-sign";
 
 const MainNav = async () => {

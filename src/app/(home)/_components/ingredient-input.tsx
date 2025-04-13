@@ -8,13 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TInputIngredient } from "@/types/recipe";
 
-type TIngredientInputProps = HTMLAttributes<HTMLInputElement> & {
+interface IngredientInputProps extends HTMLAttributes<HTMLInputElement> {
   id: string;
   setInputs: Dispatch<SetStateAction<TInputIngredient[]>>;
   index: number;
-};
+}
 
-const IngredientInput = forwardRef<HTMLInputElement, TIngredientInputProps>(
+const IngredientInput = forwardRef<HTMLInputElement, IngredientInputProps>(
   ({ setInputs, index, ...props }, ref) => {
     const handleRemove = () => {
       setInputs(prev => prev.filter(input => input.id !== props.id));
