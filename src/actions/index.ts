@@ -93,24 +93,41 @@ export const getPosts = async () => {
   return response.json();
 };
 
-export const getComments = async (postId: string) => {
-  const response = await api.get<{ comments: TComment[] }>(
-    `posts/${postId}/comments`,
-    {
-      cache: "no-store",
+export const getComments = async (postId: number) => {
+  const response = await api.get<{
+    comments: TComment[];
+  }>(`posts/${postId}/comments`, {
+    cache: "no-store",
+    next: {
+      tags: ["comments"],
     },
-  );
+  });
 
   return response.json();
 };
 
-export const postComment = async (postId: string, content: string) => {
-  const response = await api.post<{ comment: TComment }>(
-    `posts/${postId}/comments`,
-    {
-      json: { content },
-    },
-  );
+export const postComment = async ({
+  postId,
+  content,
+  parentId,
+}: {
+  postId: number;
+  content: string;
+  parentId?: number; // parentId는 대댓글의 부모 댓글의 id
+}) => {
+  const session = await auth();
+
+  if (!session?.user) {
+    return { error: "User not found" };
+  }
+
+  const response = await api.post<TComment>(`posts/${postId}/comments`, {
+    json: { postId, content, authorId: session.user.id, parentId },
+  });
+
+  if (response.ok) {
+    revalidateTag("comments");
+  }
 
   return response.json();
 };
