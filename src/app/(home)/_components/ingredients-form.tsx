@@ -25,11 +25,17 @@ const IngredientsForm = () => {
   const { toast } = useToast();
   const recipe = useRecipeStore(state => state.recipe);
   const addRecipe = useRecipeStore(state => state.addRecipe);
+
   const [imagePreviewURL, setImagePreviewURL] = useState<string | null>(null);
   const [categories, setCategories] = useState<TCategoryOption[]>([]);
-  const [isPending, setIsPending] = useState(false);
 
-  const { register, handleSubmit, control, setValue } = useForm({
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { isSubmitting },
+  } = useForm({
     shouldUnregister: true,
     defaultValues: {
       ingredients: [] as string[],
@@ -58,7 +64,6 @@ const IngredientsForm = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      setIsPending(true);
       const { image, ingredients } = data;
 
       const ingredientsFromImage = image?.[0]
@@ -97,11 +102,10 @@ const IngredientsForm = () => {
     } catch (error) {
       console.error("재료 제출 중 오류 발생:", error);
     } finally {
-      setIsPending(false);
     }
   };
 
-  const isLoading = isRecipeLoading || isPending;
+  const isLoading = isRecipeLoading || isSubmitting;
 
   useEffect(() => {
     return () => {
