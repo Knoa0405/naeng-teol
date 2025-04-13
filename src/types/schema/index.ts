@@ -20,25 +20,33 @@ export const UserSchema = z.object({
   emailVerified: z.date().nullable().describe("email verified date"),
   image: z.string().nullable().describe("user image"),
   role: z.enum(["ADMIN", "SUPER_ADMIN", "USER"]).describe("user role"),
-  updatedAt: z.date().describe("updated at"),
   avatar: z.string().nullable().describe("user avatar"),
   bio: z.string().nullable().describe("user bio"),
   instagram: z.string().nullable().describe("instagram username"),
-  createdAt: z.date().describe("created at"),
-  isDeleted: z.boolean().describe("is deleted"),
+  deletedAt: z.date().nullable().describe("deleted at"),
 });
 
 export const CommentSchema = z.object({
   id: z.number().describe("comment id"),
   authorId: z.string().describe("author id"),
-  createdAt: z.date().describe("created at"),
   content: z.string().describe("comment content"),
   postId: z.number().describe("post id"),
   parentId: z.number().nullable().describe("parent comment id"),
+  createdAt: z.date().describe("created at"),
   updatedAt: z.date().describe("updated at"),
   likesCount: z.number().describe("number of likes"),
-  isDeleted: z.boolean().describe("is deleted"),
+  deletedAt: z.date().nullable().describe("deleted at"),
   author: UserSchema.describe("comment author"),
+  images: z.array(ImageRelationSchema).describe("comment images"),
+});
+
+export const CommentRequestSchema = CommentSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  deletedAt: true,
+  author: true,
+  likesCount: true,
 });
 
 export const LikeSchema = z.object({
@@ -55,9 +63,7 @@ export const PostSchema = RecipeSchema.extend({
   images: z.array(ImageRelationSchema).describe("post images"),
   views: z.number().describe("number of views"),
   likesCount: z.number().describe("number of likes"),
-  isDeleted: z.boolean().describe("is deleted"),
-  updatedAt: z.date().describe("updated at"),
-  createdAt: z.date().describe("created at"),
+  deletedAt: z.date().nullable().describe("deleted at"),
   comments: z.array(CommentSchema).describe("post comments"),
   likes: z.array(LikeSchema).describe("post likes"),
   author: UserSchema.describe("post author"),
