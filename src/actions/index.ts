@@ -10,9 +10,9 @@ import {
 import { auth, signIn, signOut } from "@/auth";
 import { api } from "@/lib/api-helper";
 import { getFullImageUrl } from "@/lib/get-full-image-url";
-import { IPost } from "@/types/posts";
+import { TPost } from "@/types/posts";
 import { TComment } from "@/types/posts/comments";
-import { IRecipe } from "@/types/recipe";
+import { TRecipe } from "@/types/recipe";
 
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
 
@@ -33,14 +33,14 @@ export const getIngredientsFromAIVision = async (imagePath: string) => {
 };
 
 export const getPost = async (id: string) => {
-  const response = await api.get<IPost>(`posts/${id}`, {
+  const response = await api.get<TPost>(`posts/${id}`, {
     cache: "force-cache",
   });
 
   return response.json();
 };
 
-export const saveRecipe = async ({ recipe }: { recipe: IRecipe }) => {
+export const saveRecipe = async ({ recipe }: { recipe: TRecipe }) => {
   const session = await auth();
 
   if (!session?.user) {
@@ -80,7 +80,7 @@ export const getImageFromAI = async (rawContent: string) => {
 };
 
 export const getPosts = async () => {
-  const response = await api.get<{ posts: IPost[]; hasNextPage: boolean }>(
+  const response = await api.get<{ posts: TPost[]; hasNextPage: boolean }>(
     "posts",
     {
       next: {

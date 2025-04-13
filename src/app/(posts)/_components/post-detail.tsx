@@ -3,15 +3,15 @@ import { Eye } from "lucide-react";
 import Image from "next/image";
 
 import { getPost } from "@/actions";
-import { CommentSection } from "@/components/comments/comment-section";
+import CommentSection from "@/components/comments/comment-section";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { IPostParams } from "@/types/posts";
+import { TPostParams } from "@/types/posts";
 
 import LikeButton from "./like-button";
 
 interface IPostDetailProps {
-  id: IPostParams["id"];
+  id: TPostParams["id"];
 }
 
 export default async function PostDetail({ id }: IPostDetailProps) {

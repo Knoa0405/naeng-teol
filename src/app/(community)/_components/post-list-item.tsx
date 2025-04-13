@@ -4,10 +4,10 @@ import { Heart, MessageCircle, Share2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { IPost } from "@/types/posts";
+import { TPost } from "@/types/posts";
 
 interface PostListItemProps {
-  item: IPost;
+  item: TPost;
 }
 
 const PostListItem = ({ item }: PostListItemProps) => {
