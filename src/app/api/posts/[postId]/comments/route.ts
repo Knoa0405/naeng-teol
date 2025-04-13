@@ -12,6 +12,9 @@ export async function GET(
     where: {
       postId: Number(postId),
     },
+    include: {
+      author: true,
+    },
   });
 
   return Response.json({ comments }, { status: 200 });
@@ -19,13 +22,14 @@ export async function GET(
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { postId, content, authorId } = body;
+  const { postId, content, authorId, parentId } = body;
 
   const comment = await prisma.comment.create({
     data: {
       postId: Number(postId),
       content,
       authorId,
+      parentId,
     },
   });
 
