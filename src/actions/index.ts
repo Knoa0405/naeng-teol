@@ -106,6 +106,38 @@ export const getComments = async (postId: number) => {
   return response.json();
 };
 
+export const postCommentLike = async (postId: number, commentId: number) => {
+  const session = await auth();
+
+  if (!session?.user) {
+    return { error: "User not found" };
+  }
+
+  const response = await api.post(
+    `posts/${postId}/comments/${commentId}/like`,
+    {
+      json: {
+        userId: session.user.id,
+      },
+    },
+  );
+
+  return response.json();
+};
+
+export const postPostLike = async (postId: number) => {
+  const session = await auth();
+
+  if (!session?.user) {
+    return { error: "User not found" };
+  }
+
+  const response = await api.post(`posts/${postId}/like`, {
+    json: { userId: session.user.id },
+  });
+
+  return response.json();
+};
 export const postComment = async ({
   postId,
   content,

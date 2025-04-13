@@ -4,26 +4,19 @@ import { useState } from "react";
 
 import { Heart } from "lucide-react";
 
+import { postPostLike } from "@/actions";
 import { Button } from "@/components/ui/button";
-
 interface LikeButtonProps {
   initialLikeCount: number;
+  postId: number;
 }
 
-const LikeButton = ({ initialLikeCount }: LikeButtonProps) => {
+const LikeButton = ({ initialLikeCount, postId }: LikeButtonProps) => {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
 
-  const handleLike = () => {
-    if (liked) {
-      setLikeCount(likeCount - 1);
-    } else {
-      setLikeCount(likeCount + 1);
-    }
-    setLiked(!liked);
-
-    // In a real app, you would send a request to your API here
-    // to update the like count in your database
+  const handleLike = async () => {
+    const response = await postPostLike(postId);
   };
 
   return (

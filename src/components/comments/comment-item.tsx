@@ -7,6 +7,7 @@ import { ko } from "date-fns/locale";
 import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
 import { useSession } from "next-auth/react";
 
+import { postCommentLike } from "@/actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
@@ -46,7 +47,7 @@ const CommentItem = ({
   const replies = allComments.filter(reply => reply.parentId === comment.id);
 
   const isAuthor = session?.user?.email === comment.author.email;
-  const likesCount = comment.likesCount || 0;
+  const likesCount = comment.likesCount;
 
   const handleLike = async () => {
     if (!session?.user) return;
@@ -54,6 +55,7 @@ const CommentItem = ({
     try {
       // API 요청 - 실제 구현 시 추가 필요
       setIsLiked(!isLiked);
+      const response = await postCommentLike(postId, comment.id);
     } catch (error) {
       console.error("좋아요 오류:", error);
     }

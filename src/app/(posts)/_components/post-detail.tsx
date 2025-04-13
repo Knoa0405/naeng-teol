@@ -37,7 +37,7 @@ export default async function PostDetail({ id }: IPostDetailProps) {
               <Eye className="h-4 w-4" />
               <span>{post.views.toLocaleString()}</span>
             </div>
-            <LikeButton initialLikeCount={post.likesCount} />
+            <LikeButton initialLikeCount={post.likesCount} postId={post.id} />
           </div>
         </div>
 
