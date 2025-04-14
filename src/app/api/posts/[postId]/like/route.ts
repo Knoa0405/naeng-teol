@@ -18,10 +18,7 @@ export const POST = async (
   });
 
   if (existingLike) {
-    return Response.json(
-      { error: "이미 좋아요를 눌렀습니다." },
-      { status: 400 },
-    );
+    return Response.json(existingLike, { status: 200 });
   }
 
   const transaction = await prisma.$transaction(async tx => {
