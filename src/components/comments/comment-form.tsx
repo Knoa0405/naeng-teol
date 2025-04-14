@@ -1,45 +1,60 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState } from "react";
 
+import { AlertCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 
+import { postComment } from "@/actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import Textarea from "@/components/ui/textarea";
 
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Button } from "../ui/button";
+
 interface CommentFormProps {
-  onSubmit: (content: string) => Promise<void>;
-  isSubmitting?: boolean;
-  placeholder?: string;
-  initialValue?: string;
-  buttonText?: string;
-  onCancel?: () => void;
+  postId: number;
   parentId?: number;
 }
 
-export function CommentForm({
-  onSubmit,
-  isSubmitting = false,
-  placeholder = "댓글을 입력하세요",
-  initialValue = "",
-  buttonText = "댓글 작성",
-  onCancel,
-  parentId,
-}: CommentFormProps) {
+const CommentForm = ({ postId, parentId }: CommentFormProps) => {
   const { data: session } = useSession();
-  const [content, setContent] = useState(initialValue);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!content.trim() || isSubmitting) return;
+  const handleCommentSubmit = async (prevState: any, formData: FormData) => {
+    const content = formData.get("content");
 
-    await onSubmit(content);
-    setContent("");
+    if (!content || typeof content !== "string") {
+      throw new Error("Content is required");
+    }
+
+    const comment = await postComment({
+      postId,
+      content,
+      parentId,
+    });
+
+    return comment;
   };
 
+  const [state, formAction, isPending] = useActionState(
+    handleCommentSubmit,
+    null,
+  );
+
+  if (!session?.user) {
+    return (
+      <Alert variant="default">
+        <AlertCircle size={16} />
+        <AlertTitle>로그인이 필요해요!</AlertTitle>
+        <AlertDescription>
+          맛있는 요리 후기를 남기고 싶으신가요? 로그인하고 함께 이야기해요 😊
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2">
+    <form action={formAction} className="flex gap-2">
       <Avatar className="h-10 w-10 flex-shrink-0">
         <AvatarImage
           src={session?.user?.image || undefined}
@@ -52,32 +67,23 @@ export function CommentForm({
 
       <div className="flex-1 space-y-2">
         <Textarea
-          value={content}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-            setContent(e.target.value)
-          }
-          placeholder={placeholder}
+          name="content"
+          placeholder="댓글을 입력하세요"
           className="min-h-[80px] resize-none"
-          disabled={isSubmitting}
         />
 
         <div className="flex justify-end gap-2">
-          {onCancel && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-              disabled={isSubmitting}
-            >
-              취소
-            </Button>
-          )}
+          <Button type="reset" variant="outline">
+            취소
+          </Button>
 
-          <Button type="submit" disabled={!content.trim() || isSubmitting}>
-            {buttonText}
+          <Button type="submit" disabled={isPending}>
+            댓글 작성
           </Button>
         </div>
       </div>
     </form>
   );
-}
+};
+
+export default CommentForm;

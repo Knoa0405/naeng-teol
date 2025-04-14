@@ -7,8 +7,7 @@ import { ko } from "date-fns/locale";
 import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
 import { useSession } from "next-auth/react";
 
-import { z } from "zod";
-
+import { postCommentLike } from "@/actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
@@ -22,52 +21,33 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { cn } from "@/lib/utils";
-import { CommentSchema } from "@/types/schema";
 
-import { CommentForm } from "./comment-form";
+import { TComment } from "@/types/posts/comments";
 
-type Comment = z.infer<typeof CommentSchema>;
+import CommentForm from "./comment-form";
 
 interface CommentItemProps {
-  comment: Comment;
-  allComments: Comment[];
+  comment: TComment;
+  allComments: TComment[];
   postId: number;
   isReply?: boolean;
 }
 
-export function CommentItem({
+const CommentItem = ({
   comment,
   allComments,
   postId,
   isReply = false,
-}: CommentItemProps) {
+}: CommentItemProps) => {
   const { data: session } = useSession();
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 현재 댓글에 대한 답글 찾기
   const replies = allComments.filter(reply => reply.parentId === comment.id);
 
   const isAuthor = session?.user?.email === comment.author.email;
-  const likesCount = comment.likesCount || 0;
-
-  const handleReplySubmit = async (content: string) => {
-    if (!session?.user) return;
-
-    setIsSubmitting(true);
-    try {
-      // API 요청 - 실제 구현 시 추가 필요
-      console.log("답글 작성:", content, "to commentId:", comment.id);
-
-      // 성공 시 폼 닫기
-      setShowReplyForm(false);
-    } catch (error) {
-      console.error("답글 작성 오류:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const likesCount = comment.likesCount;
 
   const handleLike = async () => {
     if (!session?.user) return;
@@ -75,6 +55,7 @@ export function CommentItem({
     try {
       // API 요청 - 실제 구현 시 추가 필요
       setIsLiked(!isLiked);
+      const response = await postCommentLike(postId, comment.id);
     } catch (error) {
       console.error("좋아요 오류:", error);
     }
@@ -176,14 +157,7 @@ export function CommentItem({
 
       {showReplyForm && (
         <div className="ml-12 mt-2">
-          <CommentForm
-            onSubmit={handleReplySubmit}
-            isSubmitting={isSubmitting}
-            placeholder="답글을 입력하세요"
-            buttonText="답글 작성"
-            onCancel={() => setShowReplyForm(false)}
-            parentId={comment.id}
-          />
+          <CommentForm postId={postId} parentId={comment.id} />
         </div>
       )}
 
@@ -202,4 +176,6 @@ export function CommentItem({
       )}
     </div>
   );
-}
+};
+
+export default CommentItem;

@@ -8,5 +8,5 @@ export type TInputIngredient = {
 
 export type TInputIngredients = TInputIngredient[];
 
-export interface IIngredient extends z.infer<typeof IngredientSchema> {}
-export interface IRecipe extends z.infer<typeof RecipeSchema> {}
+export type TIngredient = z.infer<typeof IngredientSchema>;
+export type TRecipe = z.infer<typeof RecipeSchema>;

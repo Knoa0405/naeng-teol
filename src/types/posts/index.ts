@@ -12,8 +12,8 @@ export interface IPostsRouteParams {
   cursor?: string;
 }
 
-export type IPostParams = z.infer<typeof PostParamsSchema>;
+export type TPostParams = z.infer<typeof PostParamsSchema>;
 
-export interface IPost extends z.infer<typeof PostSchema> {}
+export type TPost = z.infer<typeof PostSchema>;
 
-export interface IPostRequest extends z.infer<typeof PostRequestSchema> {}
+export type TPostRequest = z.infer<typeof PostRequestSchema>;

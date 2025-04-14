@@ -1,15 +1,15 @@
 import { type NextRequest } from "next/server";
 
 import prisma from "@/db";
-import { IPost, IPostRequest } from "@/types/posts";
+import { TPost, TPostRequest } from "@/types/posts";
 
-export interface ICreatePostRequestBody extends Partial<IPostRequest> {}
+export interface ICreatePostRequestBody extends Partial<TPostRequest> {}
 export interface ICreatePostResponseBody {
-  post: IPost;
+  post: TPost;
   error?: string;
 }
 
-export async function GET(request: NextRequest) {
+export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
   const cursorParam = searchParams.get("cursor");
   const cursor = cursorParam ? Number(cursorParam) : undefined;
@@ -32,9 +32,9 @@ export async function GET(request: NextRequest) {
   if (hasNextPage) posts.pop(); // 다음 페이지가 있으면 마지막 포스트 제거
 
   return Response.json({ posts }, { status: 200 });
-}
+};
 
-export async function POST(request: Request): Promise<Response> {
+export const POST = async (request: Request): Promise<Response> => {
   const body = (await request.json()) as ICreatePostRequestBody;
   const { title, content, ingredients, rawContent, authorId, images } = body;
 
@@ -131,4 +131,4 @@ export async function POST(request: Request): Promise<Response> {
       { status: 500 },
     );
   }
-}
+};

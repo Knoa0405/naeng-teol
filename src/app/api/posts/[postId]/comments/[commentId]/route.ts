@@ -2,10 +2,10 @@ import prisma from "@/db";
 import { IRouteParams } from "@/types/common";
 import { IPostsRouteParams } from "@/types/posts";
 
-export async function GET(
+export const GET = async (
   request: Request,
   { params }: IRouteParams<IPostsRouteParams>,
-) {
+) => {
   const { commentId } = await params;
 
   const comment = await prisma.comment.findUnique({
@@ -13,12 +13,12 @@ export async function GET(
   });
 
   return Response.json({ comment }, { status: 200 });
-}
+};
 
-export async function PATCH(
+export const PATCH = async (
   request: Request,
   { params }: IRouteParams<IPostsRouteParams>,
-) {
+) => {
   const { commentId } = await params;
   const body = await request.json();
 
@@ -28,12 +28,12 @@ export async function PATCH(
   });
 
   return Response.json({ comment }, { status: 200 });
-}
+};
 
-export async function DELETE(
+export const DELETE = async (
   request: Request,
   { params }: IRouteParams<IPostsRouteParams>,
-) {
+) => {
   const { commentId } = await params;
 
   const comment = await prisma.comment.delete({
@@ -41,4 +41,4 @@ export async function DELETE(
   });
 
   return Response.json({ comment }, { status: 200 });
-}
+};

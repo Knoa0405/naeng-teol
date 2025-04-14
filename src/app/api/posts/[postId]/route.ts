@@ -2,10 +2,10 @@ import prisma from "@/db";
 import { IRouteParams } from "@/types/common";
 import { IPostsRouteParams } from "@/types/posts";
 
-export async function GET(
+export const GET = async (
   request: Request,
   { params }: IRouteParams<IPostsRouteParams>,
-) {
+) => {
   const { postId } = await params;
 
   try {
@@ -33,12 +33,12 @@ export async function GET(
       { status: 500 },
     );
   }
-}
+};
 
-export async function PATCH(
+export const PATCH = async (
   request: Request,
   { params }: IRouteParams<IPostsRouteParams>,
-) {
+) => {
   const { postId } = await params;
   const body = await request.json();
   const { title, content, authorId } = body;
@@ -67,12 +67,12 @@ export async function PATCH(
       { status: 500 },
     );
   }
-}
+};
 
-export async function DELETE(
+export const DELETE = async (
   request: Request,
   { params }: IRouteParams<IPostsRouteParams>,
-) {
+) => {
   const { postId } = await params;
 
   try {
@@ -94,4 +94,4 @@ export async function DELETE(
       { status: 500 },
     );
   }
-}
+};

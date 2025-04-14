@@ -1,12 +1,12 @@
 import PostDetail from "../../_components/post-detail";
 
 import { IRouteParams } from "@/types/common";
-import { IPostParams } from "@/types/posts";
+import { TPostParams } from "@/types/posts";
 
 export default async function PostPage({
   params,
 }: IRouteParams<{
-  id: IPostParams["id"];
+  id: TPostParams["id"];
 }>) {
   const { id } = await params;
 

@@ -5,16 +5,16 @@ import { twMerge } from "tailwind-merge";
 
 type AsyncOrSync<T> = T | Promise<T>;
 
-export function pipe<T, R>(
+export const pipe = <T, R>(
   ...fns: Array<(arg: any) => AsyncOrSync<any>>
-): (initial: T) => Promise<R> {
+): ((initial: T) => Promise<R>) => {
   return (initial: T) =>
     fns.reduce((promise, fn) => promise.then(fn), Promise.resolve(initial));
-}
+};
 
-export function cn(...inputs: ClassValue[]) {
+export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
-}
+};
 
 export const createFormData = async (file: File) => {
   const fileName = encodeURIComponent(file.name);

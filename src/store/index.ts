@@ -2,11 +2,11 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
 import { isProduction } from "@/constants";
-import { IRecipe } from "@/types/recipe";
+import { TRecipe } from "@/types/recipe";
 
 interface IRecipeStore {
-  recipe: IRecipe;
-  addRecipe: (recipeData: Partial<IRecipe>) => void;
+  recipe: TRecipe;
+  addRecipe: (recipeData: Partial<TRecipe>) => void;
   resetRecipe: () => void;
 }
 
@@ -20,7 +20,7 @@ export const useRecipeStore = create<IRecipeStore>()(
         rawContent: "",
         images: [],
       },
-      addRecipe: (recipeData: Partial<IRecipe>) =>
+      addRecipe: (recipeData: Partial<TRecipe>) =>
         set(
           (state: IRecipeStore) => ({
             recipe: {
