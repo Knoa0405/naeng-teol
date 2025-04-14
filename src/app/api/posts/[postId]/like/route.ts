@@ -1,6 +1,29 @@
 import prisma from "@/db";
 import { IRouteParams } from "@/types/common";
 
+export const GET = async (
+  request: Request,
+  { params }: IRouteParams<{ postId: string }>,
+) => {
+  const { postId } = await params;
+  const userId = request.headers.get("authorization")?.split(" ")[1];
+
+  if (!userId) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const like = await prisma.like.findUnique({
+    where: {
+      userId_postId: {
+        userId: userId,
+        postId: Number(postId),
+      },
+    },
+  });
+
+  return Response.json(like, { status: 200 });
+};
+
 export const POST = async (
   request: Request,
   { params }: IRouteParams<{ postId: string }>,
@@ -63,8 +86,12 @@ export const DELETE = async (
   request: Request,
   { params }: IRouteParams<{ postId: string }>,
 ) => {
-  const { userId } = await request.json();
   const { postId } = await params;
+  const userId = request.headers.get("authorization")?.split(" ")[1];
+
+  if (!userId) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const existingLike = await prisma.like.findUnique({
     where: {

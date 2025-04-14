@@ -133,6 +133,8 @@ export const postCommentLike = async (postId: number, commentId: number) => {
 export const getPostLike = async (postId: string) => {
   const session = await auth();
 
+  console.log(session, "session");
+
   const response = await api.get<TPostLike>(`posts/${postId}/like`, {
     cache: "no-store",
     headers: {

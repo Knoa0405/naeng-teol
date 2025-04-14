@@ -3,6 +3,7 @@ import ky, { HTTPError } from "ky";
 import { isProduction } from "@/constants";
 
 export const api = ky.create({
+  credentials: "include",
   prefixUrl: isProduction
     ? process.env.API_BASE_URL_PROD
     : process.env.API_BASE_URL,

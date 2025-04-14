@@ -49,7 +49,7 @@ export const CommentRequestSchema = CommentSchema.omit({
   likesCount: true,
 });
 
-export const LikeSchema = z.object({
+export const PostLikeSchema = z.object({
   id: z.number().describe("like id"),
   userId: z.string().describe("user id"),
   postId: z.number().describe("post id"),
@@ -73,7 +73,7 @@ export const PostSchema = RecipeSchema.extend({
   likesCount: z.number().describe("number of likes"),
   deletedAt: z.date().nullable().describe("deleted at"),
   comments: z.array(CommentSchema).describe("post comments"),
-  likes: z.array(LikeSchema).describe("post likes"),
+  likes: z.array(PostLikeSchema).describe("post likes"),
   author: UserSchema.describe("post author"),
 });
 
