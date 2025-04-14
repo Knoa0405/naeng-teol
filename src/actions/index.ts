@@ -12,6 +12,7 @@ import { api } from "@/lib/api-helper";
 import { getFullImageUrl } from "@/lib/get-full-image-url";
 import { TPost } from "@/types/posts";
 import { TComment } from "@/types/posts/comments";
+import { TPostLike } from "@/types/posts/like";
 import { TRecipe } from "@/types/recipe";
 
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
@@ -35,6 +36,10 @@ export const getIngredientsFromAIVision = async (imagePath: string) => {
 export const getPost = async (id: string) => {
   const response = await api.get<TPost>(`posts/${id}`, {
     cache: "force-cache",
+    next: {
+      revalidate: 3600,
+      tags: [`posts/${id}`],
+    },
   });
 
   return response.json();
@@ -125,19 +130,62 @@ export const postCommentLike = async (postId: number, commentId: number) => {
   return response.json();
 };
 
+export const getPostLike = async (postId: string) => {
+  const session = await auth();
+
+  const response = await api.get<TPostLike>(`posts/${postId}/like`, {
+    cache: "no-store",
+    headers: {
+      Authorization: `Bearer ${session?.user?.id}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("like 조회 실패");
+  }
+  const data = await response.json();
+
+  return data;
+};
+
 export const postPostLike = async (postId: number) => {
   const session = await auth();
 
   if (!session?.user) {
-    return { error: "User not found" };
+    throw new Error("User not found");
   }
 
-  const response = await api.post(`posts/${postId}/like`, {
+  const response = await api.post<TPostLike>(`posts/${postId}/like`, {
     json: { userId: session.user.id },
   });
 
+  if (response.ok) {
+    revalidateTag(`posts/${postId}`);
+  }
+
   return response.json();
 };
+
+export const deletePostLike = async (postId: number) => {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("User not found");
+  }
+
+  const response = await api.delete<TPostLike>(`posts/${postId}/like`, {
+    headers: {
+      Authorization: `Bearer ${session.user.id}`,
+    },
+  });
+
+  if (response.ok) {
+    revalidateTag(`posts/${postId}`);
+  }
+
+  return response.json();
+};
+
 export const postComment = async ({
   postId,
   content,
