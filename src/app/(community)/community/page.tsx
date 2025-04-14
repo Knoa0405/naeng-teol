@@ -1,7 +1,5 @@
 import PostLists from "../_components/post-lists";
 
-export const dynamic = "force-dynamic";
-
 export default function Community() {
   return (
     <section className="container flex min-h-screen flex-col gap-4 py-8">
