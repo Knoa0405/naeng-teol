@@ -2,8 +2,7 @@ import { Eye } from "lucide-react";
 
 import Image from "next/image";
 
-import { getPost, getPostLike } from "@/actions";
-import { auth } from "@/auth";
+import { getPost } from "@/actions";
 import CommentSection from "@/components/comments/comment-section";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -16,10 +15,7 @@ interface IPostDetailProps {
 }
 
 export default async function PostDetail({ id }: IPostDetailProps) {
-  const session = await auth();
-  console.log(session, "session");
   const post = await getPost(id);
-  const like = await getPostLike(id);
 
   return (
     <Card className="overflow-hidden">
@@ -41,11 +37,7 @@ export default async function PostDetail({ id }: IPostDetailProps) {
               <Eye className="h-4 w-4" />
               <span>{post.views.toLocaleString()}</span>
             </div>
-            <LikeButton
-              initialIsLiked={!!like}
-              initialLikeCount={post.likesCount}
-              postId={post.id.toString()}
-            />
+            <LikeButton initialLikeCount={post.likesCount} postId={id} />
           </div>
         </div>
 

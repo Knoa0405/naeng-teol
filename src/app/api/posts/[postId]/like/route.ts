@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import prisma from "@/db";
 import { IRouteParams } from "@/types/common";
 
@@ -6,22 +7,29 @@ export const GET = async (
   { params }: IRouteParams<{ postId: string }>,
 ) => {
   const { postId } = await params;
-  const userId = request.headers.get("authorization")?.split(" ")[1];
 
-  if (!userId) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  try {
+    const session = await auth();
 
-  const like = await prisma.like.findUnique({
-    where: {
-      userId_postId: {
-        userId: userId,
-        postId: Number(postId),
+    if (!session?.user?.id) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const like = await prisma.like.findUnique({
+      where: {
+        userId_postId: {
+          userId: session.user.id,
+          postId: Number(postId),
+        },
       },
-    },
-  });
+    });
 
-  return Response.json(like, { status: 200 });
+    return Response.json(like, { status: 200 });
+  } catch (error) {
+    console.error(error, "error in api/posts/[postId]/like");
+
+    return Response.json({ error: "Failed to get like" }, { status: 500 });
+  }
 };
 
 export const POST = async (

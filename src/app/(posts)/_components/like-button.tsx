@@ -1,26 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Heart } from "lucide-react";
 
-import { deletePostLike, postPostLike } from "@/actions";
+import { deletePostLike, getPostLike, postPostLike } from "@/actions";
 import { useToast } from "@/components/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 interface LikeButtonProps {
-  initialIsLiked: boolean;
   initialLikeCount: number;
   postId: string;
 }
 
-const LikeButton = ({
-  initialIsLiked,
-  initialLikeCount,
-  postId,
-}: LikeButtonProps) => {
+const LikeButton = ({ initialLikeCount, postId }: LikeButtonProps) => {
   const { toast } = useToast();
   const [likeCount, setLikeCount] = useState(initialLikeCount);
-  const [liked, setLiked] = useState(initialIsLiked);
+  const [liked, setLiked] = useState(false);
+
+  useEffect(() => {
+    const fetchLike = async () => {
+      const response = await getPostLike(postId);
+
+      if (response) {
+        setLiked(true);
+      }
+    };
+    fetchLike();
+  }, [postId]);
 
   const handleLike = async () => {
     try {
