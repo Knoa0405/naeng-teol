@@ -1,16 +1,16 @@
 import { auth } from "@/auth";
+
 import prisma from "@/db";
 import { IRouteParams } from "@/types/common";
-
 export const GET = async (
   request: Request,
   { params }: IRouteParams<{ postId: string }>,
 ) => {
   const { postId } = await params;
 
-  try {
-    const session = await auth();
+  const session = await auth();
 
+  try {
     if (!session?.user?.id) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }

@@ -130,18 +130,6 @@ export const postCommentLike = async (postId: number, commentId: number) => {
   return response.json();
 };
 
-export const getPostLike = async (postId: string) => {
-  const response = await api.get<TPostLike>(`posts/${postId}/like`, {
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    throw new Error("like 조회 실패");
-  }
-
-  return response.json();
-};
-
 export const postPostLike = async (postId: number) => {
   const session = await auth();
 
