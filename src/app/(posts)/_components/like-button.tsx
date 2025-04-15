@@ -26,7 +26,9 @@ const LikeButton = ({ initialLikeCount, postId }: LikeButtonProps) => {
       try {
         const response = await api.get(`/api/posts/${postId}/like`);
 
-        if (response.ok) {
+        const data = await response.json();
+
+        if (response.ok && data !== null) {
           setLiked(true);
         }
       } catch (error) {

@@ -26,10 +26,6 @@ export const GET = async (
       },
     });
 
-    if (!like) {
-      return Response.json({ error: "Like not found" }, { status: 404 });
-    }
-
     revalidateTag(`posts/${postId}`);
     revalidatePath("/community");
 
