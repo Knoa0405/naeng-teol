@@ -1,3 +1,5 @@
+import { revalidatePath, revalidateTag } from "next/cache";
+
 import { auth } from "@/auth";
 
 import prisma from "@/db";
@@ -23,6 +25,13 @@ export const GET = async (
         },
       },
     });
+
+    if (!like) {
+      return Response.json({ error: "Like not found" }, { status: 404 });
+    }
+
+    revalidateTag(`posts/${postId}`);
+    revalidatePath("/community");
 
     return Response.json(like, { status: 200 });
   } catch (error) {
@@ -95,16 +104,17 @@ export const DELETE = async (
   { params }: IRouteParams<{ postId: string }>,
 ) => {
   const { postId } = await params;
-  const userId = request.headers.get("authorization")?.split(" ")[1];
 
-  if (!userId) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const existingLike = await prisma.like.findUnique({
     where: {
       userId_postId: {
-        userId,
+        userId: session.user.id,
         postId: Number(postId),
       },
     },
@@ -132,7 +142,7 @@ export const DELETE = async (
     const response = await tx.like.delete({
       where: {
         userId_postId: {
-          userId,
+          userId: session.user?.id ?? "",
           postId: Number(postId),
         },
       },
@@ -140,6 +150,9 @@ export const DELETE = async (
 
     return response;
   });
+
+  revalidateTag(`posts/${postId}`);
+  revalidatePath(`/community`);
 
   return Response.json(transaction, { status: 200 });
 };
