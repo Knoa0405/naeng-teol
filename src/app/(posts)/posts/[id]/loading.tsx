@@ -1,6 +1,6 @@
 const PostLoading = () => {
   return (
-    <div className="mx-auto">
+    <section className="mx-auto">
       <div className="overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm">
         <div className="h-72 animate-pulse bg-gray-200 sm:h-80" />
         <div className="p-4">
@@ -39,7 +39,7 @@ const PostLoading = () => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

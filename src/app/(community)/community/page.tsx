@@ -1,8 +1,8 @@
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 
-import CommunityError from "./error";
+import PostLists from "@/community-components/post-lists";
 
-import PostLists from "../_components/post-lists";
+import CommunityError from "./error";
 
 export default function Community() {
   return (
