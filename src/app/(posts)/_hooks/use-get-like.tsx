@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { postPostLike } from "@/actions";
 import { useToast } from "@/components/hooks/use-toast";
 import { api } from "@/lib/api-helper";
 
@@ -37,7 +38,7 @@ const useGetLike = ({ postId }: IUseGetLikeProps) => {
 
   const handlePostLike = async () => {
     try {
-      const response = await api.post(`/api/posts/${postId}/like`);
+      const response = await postPostLike(Number(postId));
 
       if (response.ok) {
         setLiked(true);
