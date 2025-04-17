@@ -25,6 +25,7 @@ const IngredientsForm = () => {
   const { toast } = useToast();
   const recipe = useRecipeStore(state => state.recipe);
   const addRecipe = useRecipeStore(state => state.addRecipe);
+  const resetRecipe = useRecipeStore(state => state.resetRecipe);
 
   const [imagePreviewURL, setImagePreviewURL] = useState<string | null>(null);
   const [categories, setCategories] = useState<TCategoryOption[]>([]);
@@ -64,6 +65,10 @@ const IngredientsForm = () => {
 
   const onSubmit = async (data: any) => {
     try {
+      if (recipe.content) {
+        resetRecipe();
+      }
+
       const { image, ingredients } = data;
 
       const ingredientsFromImage = image?.[0]
