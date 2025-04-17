@@ -14,7 +14,7 @@ interface IPostDetailProps {
   id: TPostParams["id"];
 }
 
-export default async function PostDetail({ id }: IPostDetailProps) {
+const PostDetail = async ({ id }: IPostDetailProps) => {
   const post = await getPost(id);
 
   return (
@@ -75,4 +75,6 @@ export default async function PostDetail({ id }: IPostDetailProps) {
       </CardContent>
     </Card>
   );
-}
+};
+
+export default PostDetail;

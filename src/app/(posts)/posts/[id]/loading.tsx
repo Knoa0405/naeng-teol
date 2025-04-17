@@ -1,4 +1,4 @@
-export default function PostLoading() {
+const PostLoading = () => {
   return (
     <div className="mx-auto">
       <div className="overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm">
@@ -41,4 +41,6 @@ export default function PostLoading() {
       </div>
     </div>
   );
-}
+};
+
+export default PostLoading;
