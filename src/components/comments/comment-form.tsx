@@ -13,7 +13,7 @@ import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Button } from "../ui/button";
 
 interface CommentFormProps {
-  postId: number;
+  postId: string;
   parentId?: number;
 }
 
@@ -28,7 +28,7 @@ const CommentForm = ({ postId, parentId }: CommentFormProps) => {
     }
 
     const comment = await postComment({
-      postId,
+      postId: Number(postId),
       content,
       parentId,
     });

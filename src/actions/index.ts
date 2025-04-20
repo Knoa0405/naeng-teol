@@ -98,7 +98,7 @@ export const getPosts = async () => {
   return response.json();
 };
 
-export const getComments = async (postId: number) => {
+export const getComments = async (postId: string) => {
   const response = await api.get<{
     comments: TComment[];
   }>(`posts/${postId}/comments`, {
@@ -111,7 +111,7 @@ export const getComments = async (postId: number) => {
   return response.json();
 };
 
-export const postCommentLike = async (postId: number, commentId: number) => {
+export const postCommentLike = async (postId: string, commentId: number) => {
   const session = await auth();
 
   if (!session?.user) {

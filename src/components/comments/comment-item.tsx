@@ -29,7 +29,7 @@ import CommentForm from "./comment-form";
 interface CommentItemProps {
   comment: TComment;
   allComments: TComment[];
-  postId: number;
+  postId: string;
   isReply?: boolean;
 }
 
