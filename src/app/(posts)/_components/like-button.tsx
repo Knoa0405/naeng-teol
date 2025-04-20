@@ -1,22 +1,20 @@
 "use client";
 
-import { useState } from "react";
-
 import { Heart } from "lucide-react";
+
+import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 
 import useGetLike from "../_hooks/use-get-like";
 
-interface LikeButtonProps {
-  initialLikeCount: number;
-  postId: string;
-}
+const LikeButton = () => {
+  const path = usePathname();
 
-const LikeButton = ({ initialLikeCount, postId }: LikeButtonProps) => {
-  const [likeCount, setLikeCount] = useState(initialLikeCount);
+  const postId = path.split("/").pop() ?? "";
 
-  const { liked, handlePostLike, handleDeleteLike } = useGetLike({ postId });
+  const { liked, handlePostLike, handleDeleteLike, likeCount, setLikeCount } =
+    useGetLike({ postId });
 
   const handleLike = async () => {
     if (liked) {

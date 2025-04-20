@@ -145,7 +145,7 @@ export const postPostLike = async (postId: number) => {
     revalidateTag(`posts/${postId}`);
   }
 
-  return response;
+  return response.json();
 };
 
 export const postComment = async ({
