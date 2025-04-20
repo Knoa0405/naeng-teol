@@ -5,6 +5,8 @@ import { getPost } from "@/actions";
 import { CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
+import LikeButton from "./like-button";
+
 interface IPostContentProps {
   postId: string;
 }
@@ -30,6 +32,7 @@ const PostContent = async ({ postId }: IPostContentProps) => {
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <Eye className="h-4 w-4" />
             <span>{post.views.toLocaleString()}</span>
+            <LikeButton />
           </div>
         </div>
         <Separator className="my-4" />

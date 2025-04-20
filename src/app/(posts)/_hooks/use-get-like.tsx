@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 import { postPostLike } from "@/actions";
 import { useToast } from "@/components/hooks/use-toast";
 import { api } from "@/lib/api-helper";
-
+import { TPost } from "@/types/posts";
 interface IUseGetLikeProps {
   postId: string;
 }
 
 const useGetLike = ({ postId }: IUseGetLikeProps) => {
   const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -33,14 +34,24 @@ const useGetLike = ({ postId }: IUseGetLikeProps) => {
       }
     };
 
+    const getLikeCount = async () => {
+      const response = await api.get(`/api/posts/${postId}`);
+      const data = (await response.json()) as TPost;
+
+      if (response.ok && data !== null) {
+        setLikeCount(data.likesCount);
+      }
+    };
+
     getLike();
+    getLikeCount();
   }, [postId, toast]);
 
   const handlePostLike = async () => {
     try {
       const response = await postPostLike(Number(postId));
 
-      if (response.ok) {
+      if (response.id) {
         setLiked(true);
       }
     } catch (error) {
@@ -68,7 +79,7 @@ const useGetLike = ({ postId }: IUseGetLikeProps) => {
     }
   };
 
-  return { liked, handlePostLike, handleDeleteLike };
+  return { liked, handlePostLike, handleDeleteLike, likeCount, setLikeCount };
 };
 
 export default useGetLike;
