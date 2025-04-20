@@ -3,9 +3,12 @@ import { Suspense } from "react";
 import { Eye, Loader2 } from "lucide-react";
 import Image from "next/image";
 
-import { getPost } from "@/actions";
 import { CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+
+import { api } from "@/lib/api-helper";
+
+import { TPost } from "@/types/posts";
 
 import LikeButton from "./like-button";
 
@@ -14,7 +17,14 @@ interface IPostContentProps {
 }
 
 const PostContent = async ({ postId }: IPostContentProps) => {
-  const post = await getPost(postId);
+  const response = await api.get<TPost>(`posts/${postId}`, {
+    next: {
+      revalidate: 3600,
+      tags: ["post"],
+    },
+  });
+
+  const post = await response.json();
 
   return (
     <>

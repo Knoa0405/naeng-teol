@@ -1,4 +1,5 @@
-import { getComments } from "@/actions";
+import { api } from "@/lib/api-helper";
+import { TComment } from "@/types/posts/comments";
 
 import CommentItem from "./comment-item";
 
@@ -7,7 +8,17 @@ interface CommentListProps {
 }
 
 const CommentList = async ({ postId }: CommentListProps) => {
-  const { comments } = await getComments(postId);
+  const response = await api.get<{ comments: TComment[] }>(
+    `posts/${postId}/comments`,
+    {
+      cache: "no-store",
+      next: {
+        tags: ["comments"],
+      },
+    },
+  );
+
+  const { comments } = await response.json();
 
   const rootComments = comments.filter(comment => comment.parentId === null);
 
