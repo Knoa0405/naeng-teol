@@ -20,7 +20,7 @@ const PostContent = async ({ postId }: IPostContentProps) => {
   const response = await api.get<TPost>(`posts/${postId}`, {
     next: {
       revalidate: 3600,
-      tags: [`posts/${postId}`],
+      tags: ["post"],
     },
   });
 
