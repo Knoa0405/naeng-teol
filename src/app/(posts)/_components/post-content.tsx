@@ -1,4 +1,6 @@
-import { Eye } from "lucide-react";
+import { Suspense } from "react";
+
+import { Eye, Loader2 } from "lucide-react";
 import Image from "next/image";
 
 import { getPost } from "@/actions";
@@ -32,7 +34,9 @@ const PostContent = async ({ postId }: IPostContentProps) => {
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <Eye className="h-4 w-4" />
             <span>{post.views.toLocaleString()}</span>
-            <LikeButton />
+            <Suspense fallback={<Loader2 className="h-4 w-4 animate-spin" />}>
+              <LikeButton />
+            </Suspense>
           </div>
         </div>
         <Separator className="my-4" />

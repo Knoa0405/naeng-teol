@@ -9,6 +9,7 @@ import { TPostParams } from "@/types/posts";
 import PostContent from "./post-content";
 
 import PostLoading from "../posts/[id]/loading";
+
 interface IPostDetailProps {
   id: TPostParams["id"];
 }
