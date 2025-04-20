@@ -35,7 +35,6 @@ export const getIngredientsFromAIVision = async (imagePath: string) => {
 
 export const getPost = async (id: string) => {
   const response = await api.get<TPost>(`posts/${id}`, {
-    cache: "force-cache",
     next: {
       revalidate: 3600,
       tags: [`posts/${id}`],
