@@ -12,6 +12,7 @@ import { api } from "@/lib/api-helper";
 import { getFullImageUrl } from "@/lib/get-full-image-url";
 import { TPost } from "@/types/posts";
 import { TComment } from "@/types/posts/comments";
+import { TPostLike } from "@/types/posts/like";
 import { TRecipe } from "@/types/recipe";
 
 const IMAGE_ORIGIN_URL = process.env.CLOUDFRONT_URL;
@@ -35,6 +36,10 @@ export const getIngredientsFromAIVision = async (imagePath: string) => {
 export const getPost = async (id: string) => {
   const response = await api.get<TPost>(`posts/${id}`, {
     cache: "force-cache",
+    next: {
+      revalidate: 3600,
+      tags: [`posts/${id}`],
+    },
   });
 
   return response.json();
@@ -93,7 +98,7 @@ export const getPosts = async () => {
   return response.json();
 };
 
-export const getComments = async (postId: number) => {
+export const getComments = async (postId: string) => {
   const response = await api.get<{
     comments: TComment[];
   }>(`posts/${postId}/comments`, {
@@ -106,7 +111,7 @@ export const getComments = async (postId: number) => {
   return response.json();
 };
 
-export const postCommentLike = async (postId: number, commentId: number) => {
+export const postCommentLike = async (postId: string, commentId: number) => {
   const session = await auth();
 
   if (!session?.user) {
@@ -129,15 +134,20 @@ export const postPostLike = async (postId: number) => {
   const session = await auth();
 
   if (!session?.user) {
-    return { error: "User not found" };
+    throw new Error("User not found");
   }
 
-  const response = await api.post(`posts/${postId}/like`, {
+  const response = await api.post<TPostLike>(`posts/${postId}/like`, {
     json: { userId: session.user.id },
   });
 
-  return response.json();
+  if (response.ok) {
+    revalidateTag(`posts/${postId}`);
+  }
+
+  return response;
 };
+
 export const postComment = async ({
   postId,
   content,

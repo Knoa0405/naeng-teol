@@ -1,4 +1,4 @@
-import PostDetail from "../../_components/post-detail";
+import PostDetail from "@/posts-components/post-detail";
 
 import { IRouteParams } from "@/types/common";
 import { TPostParams } from "@/types/posts";

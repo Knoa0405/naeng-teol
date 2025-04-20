@@ -4,12 +4,12 @@ import CommentForm from "./comment-form";
 import CommentList from "./comment-list";
 
 interface CommentSectionProps {
-  postId: number;
+  postId: string;
 }
 
 const CommentSection = ({ postId }: CommentSectionProps) => {
   return (
-    <Card className="mt-8">
+    <Card className="m-4 pt-2">
       <CardHeader className="p-4">
         <CardTitle className="p-0">댓글</CardTitle>
       </CardHeader>

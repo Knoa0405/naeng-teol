@@ -23,7 +23,9 @@
       "@/components/*": ["./src/components/*"],
       "@/lib/*": ["./src/lib/*"],
       "@/utils/*": ["./src/utils/*"],
-      "@/auth/*": ["./src/auth/*"]
+      "@/auth/*": ["./src/auth/*"],
+      "@/posts-components/*": ["./src/app/(posts)/_components/*"],
+      "@/community-components/*": ["./src/app/(community)/_components/*"]
     },
     "target": "ES2017"
   },

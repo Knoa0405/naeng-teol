@@ -1,16 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
 
 import { useToast } from "@/components/hooks/use-toast";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import PreviewImage from "@/components/ui/preview-image";
 import { TagsInput } from "@/components/ui/tags-input";
 import { useRecipeStore } from "@/store";
 import { RecipeSchema } from "@/types/schema";
@@ -25,6 +24,7 @@ const IngredientsForm = () => {
   const { toast } = useToast();
   const recipe = useRecipeStore(state => state.recipe);
   const addRecipe = useRecipeStore(state => state.addRecipe);
+  const resetRecipe = useRecipeStore(state => state.resetRecipe);
 
   const [imagePreviewURL, setImagePreviewURL] = useState<string | null>(null);
   const [categories, setCategories] = useState<TCategoryOption[]>([]);
@@ -35,10 +35,13 @@ const IngredientsForm = () => {
     control,
     setValue,
     formState: { isSubmitting },
-  } = useForm({
+  } = useForm<{
+    ingredients: string[];
+    image: File | undefined;
+  }>({
     shouldUnregister: true,
     defaultValues: {
-      ingredients: [] as string[],
+      ingredients: [],
       image: undefined,
     },
   });
@@ -64,6 +67,10 @@ const IngredientsForm = () => {
 
   const onSubmit = async (data: any) => {
     try {
+      if (recipe.content) {
+        resetRecipe();
+      }
+
       const { image, ingredients } = data;
 
       const ingredientsFromImage = image?.[0]
@@ -107,30 +114,13 @@ const IngredientsForm = () => {
 
   const isLoading = isRecipeLoading || isSubmitting;
 
-  useEffect(() => {
-    return () => {
-      if (imagePreviewURL) {
-        URL.revokeObjectURL(imagePreviewURL);
-      }
-    };
-  }, [imagePreviewURL]);
-
   return (
     <div className="flex flex-col items-center gap-4">
       <h3 className="text-xl font-bold">식재료를 추가해주세요</h3>
       <span className="text-sm text-gray-500">
         버튼을 누르고 기다리면 레시피가 나와요
       </span>
-      {imagePreviewURL && (
-        <AspectRatio ratio={16 / 9} className="bg-muted">
-          <Image
-            src={imagePreviewURL}
-            alt="image preview"
-            fill
-            className="h-full w-full rounded-md object-cover"
-          />
-        </AspectRatio>
-      )}
+      <PreviewImage imagePreviewURL={imagePreviewURL} />
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex w-full flex-col gap-4"
@@ -141,7 +131,7 @@ const IngredientsForm = () => {
           type="file"
           accept="image/*"
           {...register("image")}
-          onChange={e => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files?.[0];
             if (file) {
               setImagePreviewURL(URL.createObjectURL(file));

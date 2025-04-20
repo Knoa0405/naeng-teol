@@ -3,7 +3,7 @@ import { getComments } from "@/actions";
 import CommentItem from "./comment-item";
 
 interface CommentListProps {
-  postId: number;
+  postId: string;
 }
 
 const CommentList = async ({ postId }: CommentListProps) => {

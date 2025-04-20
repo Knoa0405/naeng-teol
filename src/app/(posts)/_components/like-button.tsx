@@ -4,19 +4,30 @@ import { useState } from "react";
 
 import { Heart } from "lucide-react";
 
-import { postPostLike } from "@/actions";
 import { Button } from "@/components/ui/button";
+
+import useGetLike from "../_hooks/use-get-like";
+
 interface LikeButtonProps {
   initialLikeCount: number;
-  postId: number;
+  postId: string;
 }
 
 const LikeButton = ({ initialLikeCount, postId }: LikeButtonProps) => {
-  const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
 
+  const { liked, handlePostLike, handleDeleteLike } = useGetLike({ postId });
+
   const handleLike = async () => {
-    const response = await postPostLike(postId);
+    if (liked) {
+      await handleDeleteLike();
+      setLikeCount(likeCount - 1);
+    }
+
+    if (!liked) {
+      await handlePostLike();
+      setLikeCount(likeCount + 1);
+    }
   };
 
   return (

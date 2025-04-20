@@ -1,5 +1,41 @@
+import { revalidatePath, revalidateTag } from "next/cache";
+
+import { auth } from "@/auth";
+
 import prisma from "@/db";
 import { IRouteParams } from "@/types/common";
+export const GET = async (
+  request: Request,
+  { params }: IRouteParams<{ postId: string }>,
+) => {
+  const { postId } = await params;
+
+  const session = await auth();
+
+  try {
+    if (!session?.user?.id) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const like = await prisma.like.findUnique({
+      where: {
+        userId_postId: {
+          userId: session.user.id,
+          postId: Number(postId),
+        },
+      },
+    });
+
+    revalidateTag(`posts/${postId}`);
+    revalidatePath("/community");
+
+    return Response.json(like, { status: 200 });
+  } catch (error) {
+    console.error(error, "error in api/posts/[postId]/like");
+
+    return Response.json({ error: "Failed to get like" }, { status: 500 });
+  }
+};
 
 export const POST = async (
   request: Request,
@@ -18,10 +54,7 @@ export const POST = async (
   });
 
   if (existingLike) {
-    return Response.json(
-      { error: "이미 좋아요를 눌렀습니다." },
-      { status: 400 },
-    );
+    return Response.json(existingLike, { status: 200 });
   }
 
   const transaction = await prisma.$transaction(async tx => {
@@ -66,13 +99,18 @@ export const DELETE = async (
   request: Request,
   { params }: IRouteParams<{ postId: string }>,
 ) => {
-  const { userId } = await request.json();
   const { postId } = await params;
+
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const existingLike = await prisma.like.findUnique({
     where: {
       userId_postId: {
-        userId,
+        userId: session.user.id,
         postId: Number(postId),
       },
     },
@@ -100,7 +138,7 @@ export const DELETE = async (
     const response = await tx.like.delete({
       where: {
         userId_postId: {
-          userId,
+          userId: session.user?.id ?? "",
           postId: Number(postId),
         },
       },
@@ -108,6 +146,9 @@ export const DELETE = async (
 
     return response;
   });
+
+  revalidateTag(`posts/${postId}`);
+  revalidatePath(`/community`);
 
   return Response.json(transaction, { status: 200 });
 };
