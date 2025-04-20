@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Suspense,
-  useDeferredValue,
-  useEffect,
-  useState,
-  useTransition,
-} from "react";
-
-import { Loader2 } from "lucide-react";
+import { useDeferredValue, useEffect, useState, useTransition } from "react";
 
 import { getImageFromAI } from "@/actions";
 import { useRecipeStore } from "@/store";
@@ -58,22 +50,10 @@ const Recipe = () => {
 
   return (
     <section className="flex flex-col rounded-sm">
-      <Suspense
-        fallback={
-          <div className="absolute inset-0 z-10 flex items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
-          </div>
-        }
-      >
-        {deferredImagePath && (
-          <RecipeImage imagePath={deferredImagePath} isLoading={isPending} />
-        )}
-      </Suspense>
-      <Suspense
-        fallback={<Loader2 className="h-8 w-8 animate-spin text-gray-600" />}
-      >
-        <RecipeContent rawContent={deferredRawContent} />
-      </Suspense>
+      {(isPending || deferredImagePath) && (
+        <RecipeImage imagePath={deferredImagePath} isLoading={isPending} />
+      )}
+      <RecipeContent rawContent={deferredRawContent || recipe.rawContent} />
     </section>
   );
 };
