@@ -10,7 +10,6 @@ import {
 import { auth, signIn, signOut } from "@/auth";
 import { api } from "@/lib/api-helper";
 import { getFullImageUrl } from "@/lib/get-full-image-url";
-import { TPost } from "@/types/posts";
 import { TComment } from "@/types/posts/comments";
 import { TPostLike } from "@/types/posts/like";
 import { TRecipe } from "@/types/recipe";
@@ -31,17 +30,6 @@ export const getIngredientsFromAIVision = async (imagePath: string) => {
     .json();
 
   return response.ingredients ?? [];
-};
-
-export const getPost = async (id: string) => {
-  const response = await api.get<TPost>(`posts/${id}`, {
-    next: {
-      revalidate: 3600,
-      tags: [`posts/${id}`],
-    },
-  });
-
-  return response.json();
 };
 
 export const saveRecipe = async ({ recipe }: { recipe: TRecipe }) => {
@@ -78,33 +66,6 @@ export const getImageFromAI = async (rawContent: string) => {
     hashFileName: string;
   }>("ai/image", {
     json: { rawContent },
-  });
-
-  return response.json();
-};
-
-export const getPosts = async () => {
-  const response = await api.get<{ posts: TPost[]; hasNextPage: boolean }>(
-    "posts",
-    {
-      next: {
-        revalidate: 3600,
-        tags: ["posts"],
-      },
-    },
-  );
-
-  return response.json();
-};
-
-export const getComments = async (postId: string) => {
-  const response = await api.get<{
-    comments: TComment[];
-  }>(`posts/${postId}/comments`, {
-    cache: "no-store",
-    next: {
-      tags: ["comments"],
-    },
   });
 
   return response.json();
