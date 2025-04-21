@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { useSession } from "next-auth/react";
+
 import { postPostLike } from "@/actions";
 import { useToast } from "@/components/hooks/use-toast";
 import { api } from "@/lib/api-helper";
@@ -8,6 +10,7 @@ interface IUseGetLikeProps {
 }
 
 const useGetLike = ({ postId }: IUseGetLikeProps) => {
+  const session = useSession();
   const [liked, setLiked] = useState(false);
   const { toast } = useToast();
 
@@ -24,16 +27,14 @@ const useGetLike = ({ postId }: IUseGetLikeProps) => {
           setLiked(true);
         }
       } catch (error) {
-        toast({
-          variant: "destructive",
-          title: "좋아요 조회 실패",
-          description: "로그인 후 시도해주세요.",
-        });
+        console.error(error, "error in useGetLike");
       }
     };
 
-    getLike();
-  }, [postId, toast]);
+    if (session.status === "authenticated") {
+      getLike();
+    }
+  }, [postId, toast, session]);
 
   const handlePostLike = async () => {
     try {
