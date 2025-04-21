@@ -47,15 +47,16 @@ const CommentItem = ({
   const replies = allComments.filter(reply => reply.parentId === comment.id);
 
   const isAuthor = session?.user?.email === comment.author.email;
-  const likesCount = comment.likesCount;
+  const [likesCount, setLikesCount] = useState(comment.likesCount);
 
   const handleLike = async () => {
-    if (!session?.user) return;
-
     try {
-      // API 요청 - 실제 구현 시 추가 필요
       setIsLiked(!isLiked);
-      const response = await postCommentLike(postId, comment.id);
+      const data = await postCommentLike(postId, comment.id);
+      if (data.commentId) {
+        setIsLiked(true);
+        setLikesCount(likesCount + 1);
+      }
     } catch (error) {
       console.error("좋아요 오류:", error);
     }
