@@ -1,4 +1,4 @@
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 
 import { auth } from "@/auth";
 
@@ -25,9 +25,6 @@ export const GET = async (
         },
       },
     });
-
-    revalidateTag(`posts/${postId}`);
-    revalidatePath("/community");
 
     return Response.json(like, { status: 200 });
   } catch (error) {
@@ -92,6 +89,9 @@ export const POST = async (
     return response;
   });
 
+  revalidatePath(`/posts/${postId}`);
+  revalidatePath(`/community`);
+
   return Response.json(transaction, { status: 200 });
 };
 
@@ -147,7 +147,7 @@ export const DELETE = async (
     return response;
   });
 
-  revalidateTag(`posts/${postId}`);
+  revalidatePath(`/posts/${postId}`);
   revalidatePath(`/community`);
 
   return Response.json(transaction, { status: 200 });

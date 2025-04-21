@@ -20,7 +20,7 @@ const PostContent = async ({ postId }: IPostContentProps) => {
   const response = await api.get<TPost>(`posts/${postId}`, {
     next: {
       revalidate: 3600,
-      tags: ["post"],
+      tags: [`posts/${postId}`],
     },
   });
 
@@ -45,7 +45,7 @@ const PostContent = async ({ postId }: IPostContentProps) => {
             <Eye className="h-4 w-4" />
             <span>{post.views.toLocaleString()}</span>
             <Suspense fallback={<Loader2 className="h-4 w-4 animate-spin" />}>
-              <LikeButton />
+              <LikeButton postId={postId} likesCount={post.likesCount} />
             </Suspense>
           </div>
         </div>

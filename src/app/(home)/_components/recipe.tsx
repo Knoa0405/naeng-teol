@@ -27,7 +27,10 @@ const Recipe = () => {
     }
 
     const fetchImage = async () => {
-      const image = await getImageFromAI(recipe.rawContent);
+      const image = await getImageFromAI({
+        title: recipe.title,
+        ingredients: recipe.ingredients,
+      });
       setImagePath(image.imagePath);
 
       addRecipe({
