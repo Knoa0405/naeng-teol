@@ -25,6 +25,11 @@ export const GET = async (request: NextRequest) => {
           image: true,
         },
       },
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
     },
   });
 

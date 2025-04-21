@@ -79,6 +79,9 @@ export const PostSchema = RecipeSchema.extend({
   comments: z.array(CommentSchema).describe("post comments"),
   likes: z.array(PostLikeSchema).describe("post likes"),
   author: UserSchema.describe("post author"),
+  _count: z.object({
+    comments: z.number().describe("number of comments"),
+  }),
 });
 
 export const PostRequestSchema = PostSchema.omit({ id: true }).extend({
