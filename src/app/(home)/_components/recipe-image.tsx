@@ -28,7 +28,11 @@ const RecipeImage = ({ imagePath, isLoading }: RecipeImageProps) => {
           <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
         </div>
         <Image
-          src={`${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${imagePath}`}
+          src={
+            imagePath
+              ? `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${imagePath}`
+              : "/placeholder.png"
+          }
           alt="generated image from ai"
           fill
           className={cn(
