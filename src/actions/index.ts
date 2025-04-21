@@ -111,10 +111,6 @@ export const postPostLike = async (postId: number) => {
     json: { userId: session.user.id },
   });
 
-  if (response.ok) {
-    revalidateTag(`posts/${postId}`);
-  }
-
   return response.json();
 };
 
