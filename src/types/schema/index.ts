@@ -65,6 +65,10 @@ export const CommentLikeSchema = z.object({
   user: UserSchema.describe("user who liked"),
 });
 
+export const CommentLikeResponseSchema = CommentLikeSchema.omit({
+  user: true,
+});
+
 export const PostSchema = RecipeSchema.extend({
   id: z.number().describe("post id"),
   authorId: z.string().describe("author id"),

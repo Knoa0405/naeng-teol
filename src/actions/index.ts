@@ -10,7 +10,7 @@ import {
 import { auth, signIn, signOut } from "@/auth";
 import { api } from "@/lib/api-helper";
 import { getFullImageUrl } from "@/lib/get-full-image-url";
-import { TComment } from "@/types/posts/comments";
+import { TComment, TCommentLikeResponse } from "@/types/posts/comments";
 import { TPostLike } from "@/types/posts/like";
 import { TRecipe } from "@/types/recipe";
 
@@ -75,10 +75,10 @@ export const postCommentLike = async (postId: string, commentId: number) => {
   const session = await auth();
 
   if (!session?.user) {
-    return { error: "User not found" };
+    throw new Error("User not found");
   }
 
-  const response = await api.post(
+  const response = await api.post<TCommentLikeResponse>(
     `posts/${postId}/comments/${commentId}/like`,
     {
       json: {
@@ -86,6 +86,10 @@ export const postCommentLike = async (postId: string, commentId: number) => {
       },
     },
   );
+
+  if (response.ok) {
+    revalidateTag("comments");
+  }
 
   return response.json();
 };
