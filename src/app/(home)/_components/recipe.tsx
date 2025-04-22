@@ -15,14 +15,14 @@ const Recipe = () => {
   const [imagePath, setImagePath] = useState<string>(
     recipe.images?.[0]?.image?.url || "",
   );
-  const [rawContent, setRawContent] = useState<string>(recipe.rawContent || "");
+  const [rawContent, setRawContent] = useState<string>(recipe.rawContent);
   const [isPending, startTransition] = useTransition();
 
   const deferredImagePath = useDeferredValue(imagePath);
   const deferredRawContent = useDeferredValue(rawContent);
 
   useEffect(() => {
-    if (!recipe.rawContent || (recipe.images && recipe.images.length > 0)) {
+    if (!recipe.title || (recipe.images && recipe.images.length > 0)) {
       return;
     }
 
@@ -49,7 +49,13 @@ const Recipe = () => {
 
     startTransition(fetchImage);
     setRawContent(recipe.rawContent);
-  }, [recipe.rawContent, recipe.images, addRecipe]);
+  }, [
+    recipe.rawContent,
+    recipe.images,
+    addRecipe,
+    recipe.title,
+    recipe.ingredients,
+  ]);
 
   return (
     <section className="flex flex-col rounded-sm">
