@@ -22,7 +22,7 @@ const NavLink = ({ href, label }: NavLinkProps) => {
     <Link href={href} legacyBehavior passHref>
       <NavigationMenuLink
         className={cn(
-          "text-sm font-medium text-muted-foreground hover:text-primary",
+          "text-sm font-medium text-muted-foreground hover:text-primary max-sm:px-2",
           isActive && "text-primary",
           navigationMenuTriggerStyle(),
         )}

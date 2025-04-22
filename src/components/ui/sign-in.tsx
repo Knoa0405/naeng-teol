@@ -17,8 +17,8 @@ const SignIn = () => {
         <Image
           src={`${PROVIDER_LOGO_PATH}/google.svg`}
           alt="google logo"
-          width={20}
-          height={20}
+          width={16}
+          height={16}
         />
         구글 로그인
       </Button>

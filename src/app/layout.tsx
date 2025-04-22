@@ -11,8 +11,7 @@ import ThemeProvider from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 
-export const fetchCache = "default-cache";
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 const fontSans = FontSans({
   subsets: ["latin"],
