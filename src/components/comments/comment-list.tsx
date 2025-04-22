@@ -13,7 +13,7 @@ const CommentList = async ({ postId }: CommentListProps) => {
     {
       cache: "no-store",
       next: {
-        tags: ["comments"],
+        tags: [`posts/${postId}/comments`],
       },
     },
   );

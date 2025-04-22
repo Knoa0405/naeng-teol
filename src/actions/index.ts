@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 import {
   ICreatePostRequestBody,
@@ -94,7 +94,7 @@ export const postCommentLike = async (postId: string, commentId: number) => {
   );
 
   if (response.ok) {
-    revalidateTag("comments");
+    revalidateTag(`posts/${postId}/comments`);
   }
 
   return response.json();
@@ -110,6 +110,11 @@ export const postPostLike = async (postId: number) => {
   const response = await api.post<TPostLike>(`posts/${postId}/like`, {
     json: { userId: session.user.id },
   });
+
+  if (response.ok) {
+    revalidatePath(`/posts/${postId}`);
+    revalidateTag("posts");
+  }
 
   return response.json();
 };
@@ -134,7 +139,7 @@ export const postComment = async ({
   });
 
   if (response.ok) {
-    revalidateTag("comments");
+    revalidateTag(`posts/${postId}/comments`);
   }
 
   return response.json();
