@@ -45,7 +45,7 @@ const PostListItem = ({ item }: PostListItemProps) => {
             </button>
             <button className="flex items-center gap-1 hover:text-blue-500">
               <MessageCircle className="h-4 w-4" />
-              <span className="text-sm">{item._count.comments}</span>
+              <span className="text-sm">{item._count?.comments}</span>
             </button>
           </div>
           <button
