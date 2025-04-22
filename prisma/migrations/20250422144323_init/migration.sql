@@ -1,4 +1,7 @@
 -- CreateEnum
+CREATE TYPE "EntityType" AS ENUM ('POST', 'COMMENT');
+
+-- CreateEnum
 CREATE TYPE "role" AS ENUM ('ADMIN', 'SUPER_ADMIN', 'USER');
 
 -- CreateTable
@@ -14,7 +17,7 @@ CREATE TABLE "users" (
     "bio" TEXT,
     "instagram" TEXT,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "is_deleted" BOOLEAN NOT NULL DEFAULT false,
+    "deleted_at" TIMESTAMPTZ(6),
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -66,9 +69,34 @@ CREATE TABLE "posts" (
     "likes_count" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6) NOT NULL,
-    "is_deleted" BOOLEAN NOT NULL DEFAULT false,
+    "deleted_at" TIMESTAMPTZ(6),
 
     CONSTRAINT "posts_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "images" (
+    "id" SERIAL NOT NULL,
+    "url" TEXT NOT NULL,
+    "hash" TEXT,
+    "alt" TEXT,
+    "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ(6) NOT NULL,
+
+    CONSTRAINT "images_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "image_relations" (
+    "id" SERIAL NOT NULL,
+    "order" INTEGER NOT NULL DEFAULT 0,
+    "imageId" INTEGER NOT NULL,
+    "postId" INTEGER,
+    "commentId" INTEGER,
+    "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ(6) NOT NULL,
+
+    CONSTRAINT "image_relations_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -81,7 +109,7 @@ CREATE TABLE "comments" (
     "parent_id" INTEGER,
     "updated_at" TIMESTAMPTZ(6) NOT NULL,
     "likes_count" INTEGER NOT NULL DEFAULT 0,
-    "is_deleted" BOOLEAN NOT NULL DEFAULT false,
+    "deleted_at" TIMESTAMPTZ(6),
 
     CONSTRAINT "comments_pkey" PRIMARY KEY ("id")
 );
@@ -146,6 +174,18 @@ CREATE UNIQUE INDEX "sessions_session_token_key" ON "sessions"("session_token");
 CREATE UNIQUE INDEX "verification_tokens_identifier_token_key" ON "verification_tokens"("identifier", "token");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "images_hash_key" ON "images"("hash");
+
+-- CreateIndex
+CREATE INDEX "image_relations_imageId_idx" ON "image_relations"("imageId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "image_relations_postId_order_key" ON "image_relations"("postId", "order");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "image_relations_commentId_order_key" ON "image_relations"("commentId", "order");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "blocks_blocker_id_blocked_id_key" ON "blocks"("blocker_id", "blocked_id");
 
 -- CreateIndex
@@ -162,6 +202,15 @@ ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_fkey" FOREIGN KEY ("user
 
 -- AddForeignKey
 ALTER TABLE "posts" ADD CONSTRAINT "posts_author_id_fkey" FOREIGN KEY ("author_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "image_relations" ADD CONSTRAINT "image_relations_imageId_fkey" FOREIGN KEY ("imageId") REFERENCES "images"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "image_relations" ADD CONSTRAINT "image_relations_postId_fkey" FOREIGN KEY ("postId") REFERENCES "posts"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "image_relations" ADD CONSTRAINT "image_relations_commentId_fkey" FOREIGN KEY ("commentId") REFERENCES "comments"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "comments" ADD CONSTRAINT "comments_author_id_fkey" FOREIGN KEY ("author_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
