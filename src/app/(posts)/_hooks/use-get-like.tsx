@@ -20,7 +20,10 @@ const useGetLike = ({ postId }: IUseGetLikeProps) => {
       // 이유는 클라이언트에서는 브라우저 쿠키를 사용하여 세션을 관리하기 때문에 서버액션이나 서버 컴포넌트 호출하면 쿠키를 가져오지 못하기 때문
       // 서버 액션에서 인위적으로 쿠키를 넣어주는 방법도 있지만 아직은 클라이언트에서 호출하는 방법으로 해결
       try {
-        const response = await api.get(`/api/posts/${postId}/like`);
+        const response = await api.get(`/api/posts/${postId}/like`, {
+          cache: "no-store",
+        });
+
         const data = await response.json();
 
         if (response.ok && data !== null) {

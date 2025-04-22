@@ -1,5 +1,3 @@
-import { revalidateTag } from "next/cache";
-
 import { auth } from "@/auth";
 import prisma from "@/db";
 import { IRouteParams } from "@/types/common";
@@ -27,8 +25,6 @@ export const GET = async (
         },
       },
     });
-
-    revalidateTag("comments");
 
     return Response.json(like, { status: 200 });
   } catch (error) {
