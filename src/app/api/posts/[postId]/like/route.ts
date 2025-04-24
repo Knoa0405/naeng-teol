@@ -1,5 +1,3 @@
-import { revalidatePath, revalidateTag } from "next/cache";
-
 import { auth } from "@/auth";
 
 import prisma from "@/db";
@@ -96,18 +94,13 @@ export const DELETE = async (
   request: Request,
   { params }: IRouteParams<{ postId: string }>,
 ) => {
+  const { userId } = await request.json();
   const { postId } = await params;
-
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
 
   const existingLike = await prisma.like.findUnique({
     where: {
       userId_postId: {
-        userId: session.user.id,
+        userId,
         postId: Number(postId),
       },
     },
@@ -135,7 +128,7 @@ export const DELETE = async (
     const response = await tx.like.delete({
       where: {
         userId_postId: {
-          userId: session.user?.id ?? "",
+          userId,
           postId: Number(postId),
         },
       },
@@ -143,9 +136,6 @@ export const DELETE = async (
 
     return response;
   });
-
-  revalidatePath(`/posts/${postId}`);
-  revalidateTag("posts");
 
   return Response.json(transaction, { status: 200 });
 };
