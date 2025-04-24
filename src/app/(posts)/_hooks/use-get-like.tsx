@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useSession } from "next-auth/react";
 
-import { postPostLike } from "@/actions";
+import { deletePostLike, postPostLike } from "@/actions";
 import { useToast } from "@/components/hooks/use-toast";
 import { api } from "@/lib/api-helper";
 interface IUseGetLikeProps {
@@ -41,11 +41,8 @@ const useGetLike = ({ postId }: IUseGetLikeProps) => {
 
   const handlePostLike = async () => {
     try {
-      const response = await postPostLike(Number(postId));
-
-      if (response.id) {
-        setLiked(true);
-      }
+      setLiked(true);
+      await postPostLike(Number(postId));
     } catch (error) {
       toast({
         variant: "destructive",
@@ -57,11 +54,8 @@ const useGetLike = ({ postId }: IUseGetLikeProps) => {
 
   const handleDeleteLike = async () => {
     try {
-      const response = await api.delete(`/api/posts/${postId}/like`);
-
-      if (response.ok) {
-        setLiked(false);
-      }
+      setLiked(false);
+      await deletePostLike(Number(postId));
     } catch (error) {
       toast({
         variant: "destructive",

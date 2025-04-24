@@ -119,6 +119,25 @@ export const postPostLike = async (postId: number) => {
   return response.json();
 };
 
+export const deletePostLike = async (postId: number) => {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("User not found");
+  }
+
+  const response = await api.delete<TPostLike>(`posts/${postId}/like`, {
+    json: { userId: session.user.id },
+  });
+
+  if (response.ok) {
+    revalidatePath(`/posts/${postId}`);
+    revalidateTag("posts");
+  }
+
+  return response.json();
+};
+
 export const postComment = async ({
   postId,
   content,

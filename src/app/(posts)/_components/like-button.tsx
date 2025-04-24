@@ -19,13 +19,13 @@ const LikeButton = ({ postId, likesCount }: ILikeButtonProps) => {
 
   const handleLike = async () => {
     if (liked) {
-      await handleDeleteLike();
       setLikeCount(likeCount - 1);
+      await handleDeleteLike();
     }
 
     if (!liked) {
-      await handlePostLike();
       setLikeCount(likeCount + 1);
+      await handlePostLike();
     }
   };
 
