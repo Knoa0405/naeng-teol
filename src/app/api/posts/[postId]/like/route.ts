@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 
 import prisma from "@/db";
 import { IRouteParams } from "@/types/common";
+
 export const GET = async (
   request: Request,
   { params }: IRouteParams<{ postId: string }>,
