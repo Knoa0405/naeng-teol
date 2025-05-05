@@ -20,7 +20,7 @@ export const generateMetadata = async ({
     description: `${data.content.slice(0, 100)}...`,
     openGraph: {
       title: data.title,
-      description: `${data.content.slice(0, 100)}...`,
+      description: "AI가 만든 새 레시피가 궁금하다면 클릭!",
       images: data.images.map(image => ({
         url: `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${image.image.url}`,
       })),
