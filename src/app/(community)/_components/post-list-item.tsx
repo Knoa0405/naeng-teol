@@ -21,6 +21,12 @@ const PostListItem = ({ item }: PostListItemProps) => {
   const handleShare = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
+    navigator.share({
+      title: item.title,
+      text: item.content,
+      url: `${window.location.origin}/posts/${item.id}`,
+    });
+
     navigator.clipboard.writeText(`${window.location.origin}/posts/${item.id}`);
     toast({
       variant: "default",

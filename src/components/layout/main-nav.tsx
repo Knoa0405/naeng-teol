@@ -1,3 +1,4 @@
+"use client";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -6,10 +7,13 @@ import { NavigationMenuItem } from "@radix-ui/react-navigation-menu";
 
 import ThemeToggle from "@/components/theme-toggle";
 
+import AuthGuard from "./auth-guard";
+import AuthNav from "./auth-nav";
+
 import NavLink from "./nav-link";
 import SessionSign from "./session-sign";
 
-const MainNav = async () => {
+const MainNav = () => {
   const navigationItems = [
     { label: "냉장고 털기", href: "/" },
     { label: "커뮤니티", href: "/community" },
@@ -27,6 +31,9 @@ const MainNav = async () => {
         </NavigationMenuList>
       </NavigationMenu>
       <ThemeToggle />
+      <AuthGuard>
+        <AuthNav />
+      </AuthGuard>
       <SessionSign />
     </nav>
   );
