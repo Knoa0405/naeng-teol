@@ -1,7 +1,32 @@
+import { api } from "@/lib/api-helper";
 import PostDetail from "@/posts-components/post-detail";
 
 import { IRouteParams } from "@/types/common";
-import { TPostParams } from "@/types/posts";
+import { TPost, TPostParams } from "@/types/posts";
+
+export const generateMetadata = async ({
+  params,
+}: IRouteParams<{
+  id: TPostParams["id"];
+}>) => {
+  const { id } = await params;
+
+  const response = await api.get<TPost>(`posts/${id}`);
+
+  const data = await response.json();
+
+  return {
+    title: data.title,
+    description: `${data.content.slice(0, 100)}...`,
+    openGraph: {
+      title: data.title,
+      description: `${data.content.slice(0, 100)}...`,
+      images: data.images.map(image => ({
+        url: `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${image.image.url}`,
+      })),
+    },
+  };
+};
 
 export default async function PostPage({
   params,
