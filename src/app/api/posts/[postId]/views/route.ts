@@ -46,7 +46,12 @@ export const PATCH = async (
 
     viewsCookieArray.push(postId);
 
-    cookieStore.set("viewedPosts", viewsCookieArray.join(","));
+    cookieStore.set("viewedPosts", viewsCookieArray.join(","), {
+      httpOnly: true,
+      secure: true,
+      maxAge: 60 * 60 * 12,
+      path: "/",
+    });
 
     return Response.json({ views: post.views });
   }
