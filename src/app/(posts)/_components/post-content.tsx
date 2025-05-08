@@ -26,7 +26,7 @@ const PostContent = async ({ postId }: IPostContentProps) => {
   });
 
   const post = await response.json();
-
+  // TODO: 유튜브 관련 영상 추가
   return (
     <>
       <CardHeader className="p-0">
