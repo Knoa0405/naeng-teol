@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import { Eye, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
 
 import { CardContent, CardHeader } from "@/components/ui/card";
@@ -11,6 +11,7 @@ import { api } from "@/lib/api-helper";
 import { TPost } from "@/types/posts";
 
 import LikeButton from "./like-button";
+import PostViewCount from "./post-view-count";
 
 interface IPostContentProps {
   postId: string;
@@ -25,7 +26,7 @@ const PostContent = async ({ postId }: IPostContentProps) => {
   });
 
   const post = await response.json();
-
+  // TODO: 유튜브 관련 영상 추가
   return (
     <>
       <CardHeader className="p-0">
@@ -42,8 +43,7 @@ const PostContent = async ({ postId }: IPostContentProps) => {
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold">{post.title}</h2>
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <Eye className="h-4 w-4" />
-            <span>{post.views.toLocaleString()}</span>
+            <PostViewCount postId={postId} />
             <Suspense fallback={<Loader2 className="h-4 w-4 animate-spin" />}>
               <LikeButton postId={postId} likesCount={post.likesCount} />
             </Suspense>
