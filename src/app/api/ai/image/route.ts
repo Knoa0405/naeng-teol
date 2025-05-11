@@ -5,6 +5,9 @@ import { AI_IMAGE_MODEL_NAME, AI_IMAGE_SIZE, AI_IMAGE_N } from "@/constants";
 import { getFullImageUrl } from "@/lib/get-full-image-url";
 import { isImageExistsFromS3, uploadImageToS3 } from "@/lib/upload-s3";
 import { createHashFromContents } from "@/lib/utils";
+
+export const maxDuration = 50;
+
 interface IRequest {
   title: string;
   ingredients: string[];

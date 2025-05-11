@@ -31,3 +31,11 @@ export const createHashFromContents = (contents: string) => {
 
   return hash;
 };
+
+export const createYoutubeUrl = (videoId: string) => {
+  return `https://www.youtube.com/watch?v=${videoId}`;
+};
+
+export const createYoutubeEmbedUrl = (videoId: string) => {
+  return `https://www.youtube.com/embed/${videoId}`;
+};

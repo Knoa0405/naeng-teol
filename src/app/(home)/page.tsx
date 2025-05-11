@@ -1,6 +1,5 @@
 import IngredientsForm from "./_components/ingredients-form";
 import Recipe from "./_components/recipe";
-
 import TutorialModal from "./_components/tutorial-modal";
 
 export default function Home() {

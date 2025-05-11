@@ -19,17 +19,16 @@ const NavLink = ({ href, label }: NavLinkProps) => {
   const isActive = pathname === href;
 
   return (
-    <Link href={href} legacyBehavior passHref>
-      <NavigationMenuLink
-        className={cn(
-          "text-sm font-medium text-muted-foreground hover:text-primary max-sm:px-2",
-          isActive && "text-primary",
-          navigationMenuTriggerStyle(),
-        )}
-      >
-        {label}
-      </NavigationMenuLink>
-    </Link>
+    <NavigationMenuLink
+      asChild
+      className={cn(
+        "text-sm font-medium text-muted-foreground hover:text-primary max-sm:px-2",
+        isActive && "text-primary",
+        navigationMenuTriggerStyle(),
+      )}
+    >
+      <Link href={href}>{label}</Link>
+    </NavigationMenuLink>
   );
 };
 
