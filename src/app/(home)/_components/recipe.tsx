@@ -1,12 +1,20 @@
 "use client";
 
-import { useDeferredValue, useEffect, useState, useTransition } from "react";
+import {
+  Suspense,
+  useDeferredValue,
+  useEffect,
+  useState,
+  useTransition,
+} from "react";
 
 import { getImageFromAI } from "@/actions";
+import Loader from "@/components/ui/loader";
 import { useRecipeStore } from "@/store";
 
 import RecipeContent from "./recipe-content";
 import RecipeImage from "./recipe-image";
+import RecipeVideos from "./recipe-videos";
 
 const Recipe = () => {
   const recipe = useRecipeStore(state => state.recipe);
@@ -63,6 +71,9 @@ const Recipe = () => {
         <RecipeImage imagePath={deferredImagePath} isLoading={isPending} />
       )}
       <RecipeContent rawContent={deferredRawContent || recipe.rawContent} />
+      <Suspense fallback={<Loader />}>
+        <RecipeVideos />
+      </Suspense>
     </section>
   );
 };

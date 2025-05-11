@@ -1,4 +1,4 @@
-import { createYoutubeUrl } from "@/lib/utils";
+import { createYoutubeEmbedUrl, createYoutubeUrl } from "@/lib/utils";
 
 type Params = Promise<{ q: string }>;
 
@@ -22,6 +22,7 @@ export const GET = async (request: Request) => {
   const formattedVideos = data.items.map((item: any) => ({
     ...item,
     url: createYoutubeUrl(item.id.videoId),
+    embedUrl: createYoutubeEmbedUrl(item.id.videoId),
   }));
 
   return Response.json(formattedVideos, { status: 200 });
