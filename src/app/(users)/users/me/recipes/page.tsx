@@ -32,7 +32,7 @@ export default function MeRecipesPage() {
   if (isPending) {
     return (
       <section className="container mx-auto flex h-screen items-center justify-center">
-        <Loader />;
+        <Loader />
       </section>
     );
   }

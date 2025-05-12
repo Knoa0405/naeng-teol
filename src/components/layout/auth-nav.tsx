@@ -14,7 +14,7 @@ const AuthNav = () => {
   ];
 
   return (
-    <NavigationMenuList className="flex">
+    <NavigationMenuList className="flex items-center gap-2">
       {navLinks.map(link => (
         <NavigationMenuItem key={link.href}>
           <NavLink href={link.href} label={link.label} />
