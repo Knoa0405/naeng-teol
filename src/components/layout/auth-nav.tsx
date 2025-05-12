@@ -9,7 +9,10 @@ import {
 import NavLink from "./nav-link";
 
 const AuthNav = () => {
-  const navLinks = [{ label: "내 좋아요", href: "/users/me/likes" }];
+  const navLinks = [
+    { label: "내 좋아요", href: "/users/me/likes" },
+    { label: "내 레시피", href: "/users/me/recipes" },
+  ];
 
   return (
     <NavigationMenu>
