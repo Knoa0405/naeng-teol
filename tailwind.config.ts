@@ -1,6 +1,19 @@
 import { fontFamily } from "tailwindcss/defaultTheme";
 
+import { PluginCreator } from "tailwindcss/types/config";
+
 import type { Config } from "tailwindcss";
+
+const utilsPlugin: PluginCreator = ({ addUtilities }) =>
+  addUtilities({
+    ".scrollbar-hide": {
+      "-ms-overflow-style": "none" /* IE and Edge */,
+      "scrollbar-width": "none" /* Firefox */,
+      "&::-webkit-scrollbar": {
+        display: "none" /* Safari and Chrome */,
+      },
+    },
+  });
 
 const config = {
   darkMode: ["class"],
@@ -79,7 +92,7 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), utilsPlugin],
 } satisfies Config;
 
 export default config;
