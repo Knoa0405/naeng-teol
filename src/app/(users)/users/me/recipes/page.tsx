@@ -31,14 +31,14 @@ export default function MeRecipesPage() {
 
   if (isPending) {
     return (
-      <section className="container mx-auto flex h-screen items-center justify-center">
+      <section className="mx-auto flex h-screen items-center justify-center">
         <Loader />
       </section>
     );
   }
 
   return (
-    <section className="container mx-auto flex flex-col gap-4">
+    <section className="mx-auto flex flex-col gap-4">
       {data.map(recipe => (
         <Card
           onClick={() => {

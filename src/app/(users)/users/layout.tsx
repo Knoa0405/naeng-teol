@@ -3,7 +3,5 @@ export default function UsersLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <section className="container mx-auto max-w-4xl py-8">{children}</section>
-  );
+  return <section className="mx-auto max-w-4xl px-4 py-8">{children}</section>;
 }

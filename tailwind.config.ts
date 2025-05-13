@@ -25,12 +25,13 @@ const config = {
   ],
   prefix: "",
   theme: {
-    container: {
-      center: true,
-      padding: "1rem",
-      screens: {
-        "2xl": "1400px",
-      },
+    screens: {
+      xs: "360px",
+      sm: "640px", // 소형 화면
+      md: "768px", // 중형 화면
+      lg: "1024px", // 대형 화면
+      xl: "1280px", // 초대형 화면
+      "2xl": "1400px", // 2배 초대형 화면
     },
     extend: {
       fontFamily: {
