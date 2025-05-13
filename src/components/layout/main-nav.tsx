@@ -21,7 +21,7 @@ const MainNav = () => {
 
   return (
     <nav className="flex items-center justify-center space-x-2 pt-4 md:space-x-4 lg:space-x-8">
-      <NavigationMenu>
+      <NavigationMenu className="scrollbar-hide max-xs:w-60 flex items-center gap-2 max-sm:w-48 max-sm:overflow-x-scroll lg:gap-8">
         <NavigationMenuList className="flex items-center gap-2 lg:gap-8">
           {navigationItems.map(item => (
             <NavigationMenuItem key={item.href}>
@@ -29,12 +29,12 @@ const MainNav = () => {
             </NavigationMenuItem>
           ))}
         </NavigationMenuList>
+        <AuthGuard>
+          <AuthNav />
+        </AuthGuard>
       </NavigationMenu>
-      <ThemeToggle />
-      <AuthGuard>
-        <AuthNav />
-      </AuthGuard>
       <SessionSign />
+      <ThemeToggle />
     </nav>
   );
 };
