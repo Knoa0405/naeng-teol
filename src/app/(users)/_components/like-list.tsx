@@ -46,7 +46,7 @@ const LikeList = () => {
   }
 
   return (
-    <div className="space-y-4">
+    <main className="space-y-4">
       {likes.map(like => (
         <Card
           onClick={() => {
@@ -70,7 +70,7 @@ const LikeList = () => {
           </CardContent>
         </Card>
       ))}
-    </div>
+    </main>
   );
 };
 
