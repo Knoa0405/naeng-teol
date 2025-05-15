@@ -39,9 +39,9 @@ const LikeList = () => {
 
   if (isPending) {
     return (
-      <div className="flex h-full w-full items-center justify-center">
+      <section className="mx-auto flex h-screen items-center justify-center">
         <Loader />
-      </div>
+      </section>
     );
   }
 
