@@ -38,38 +38,41 @@ export default function MeRecipesPage() {
   }
 
   return (
-    <section className="mx-auto flex flex-col gap-4">
-      {data.map(recipe => (
-        <Card
-          onClick={() => {
-            router.push(`/posts/${recipe.id}`);
-          }}
-          key={recipe.id}
-          className="cursor-pointer hover:bg-accent/50"
-        >
-          <CardHeader className="p-4">
-            <h3 className="text-lg font-semibold">{recipe.title}</h3>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <p className="line-clamp-2 text-sm text-muted-foreground">
-              {recipe.content}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              <span className="font-bold">재료 : </span>
-              {recipe.ingredients
-                .map((ingredient: string) => ingredient)
-                .join(", ")}
-            </p>
-            <span className="text-sm text-muted-foreground">
-              {recipe.views}명이 본 레시피
-            </span>
-            <span className="mx-1 text-sm text-muted-foreground">-</span>
-            <span className="text-sm text-muted-foreground">
-              {recipe.likesCount}명이 좋아요
-            </span>
-          </CardContent>
-        </Card>
-      ))}
-    </section>
+    <main className="mx-auto flex flex-col items-center justify-center gap-4">
+      <h1 className="text-2xl font-bold">내 레시피</h1>
+      <section className="mx-auto flex flex-col gap-4">
+        {data.map(recipe => (
+          <Card
+            onClick={() => {
+              router.push(`/posts/${recipe.id}`);
+            }}
+            key={recipe.id}
+            className="cursor-pointer hover:bg-accent/50"
+          >
+            <CardHeader className="p-4">
+              <h3 className="text-lg font-semibold">{recipe.title}</h3>
+            </CardHeader>
+            <CardContent className="p-4 pt-0">
+              <p className="line-clamp-2 text-sm text-muted-foreground">
+                {recipe.content}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                <span className="font-bold">재료 : </span>
+                {recipe.ingredients
+                  .map((ingredient: string) => ingredient)
+                  .join(", ")}
+              </p>
+              <span className="text-sm text-muted-foreground">
+                {recipe.views}명이 본 레시피
+              </span>
+              <span className="mx-1 text-sm text-muted-foreground">-</span>
+              <span className="text-sm text-muted-foreground">
+                {recipe.likesCount}명이 좋아요
+              </span>
+            </CardContent>
+          </Card>
+        ))}
+      </section>
+    </main>
   );
 }

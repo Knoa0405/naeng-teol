@@ -1,6 +1,7 @@
 "use client";
 
 import { Heart, MessageCircle, Share2 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { toast } from "@/components/hooks/use-toast";
@@ -36,12 +37,24 @@ const PostListItem = ({ item }: PostListItemProps) => {
   };
 
   return (
-    <div className="mb-4 break-inside-avoid">
-      <Card className="cursor-pointer overflow-hidden" onClick={handleClick}>
-        <CardContent className="p-0">{/* 이미지 영역 */}</CardContent>
+    <li className="mb-4 break-inside-avoid">
+      <Card
+        as="article"
+        className="cursor-pointer overflow-hidden"
+        onClick={handleClick}
+      >
+        <CardContent className="p-0">
+          <Image
+            src={`${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${item.images[0].image.url}`}
+            className="h-full w-full object-cover"
+            alt={item.title}
+            width={300}
+            height={200}
+          />
+        </CardContent>
         <CardContent className="p-4">
           <h3 className="text-lg font-semibold">{item.title}</h3>
-          <p className="text-sm text-gray-600">{item.content}</p>
+          <p className="line-clamp-3 text-sm text-gray-600">{item.content}</p>
         </CardContent>
         <CardFooter className="flex justify-between p-4 pt-0">
           <div className="flex items-center gap-2">
@@ -63,7 +76,7 @@ const PostListItem = ({ item }: PostListItemProps) => {
           </button>
         </CardFooter>
       </Card>
-    </div>
+    </li>
   );
 };
 

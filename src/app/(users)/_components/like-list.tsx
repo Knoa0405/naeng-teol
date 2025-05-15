@@ -39,14 +39,14 @@ const LikeList = () => {
 
   if (isPending) {
     return (
-      <div className="flex h-full w-full items-center justify-center">
+      <section className="mx-auto flex h-screen items-center justify-center">
         <Loader />
-      </div>
+      </section>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <main className="space-y-4">
       {likes.map(like => (
         <Card
           onClick={() => {
@@ -70,7 +70,7 @@ const LikeList = () => {
           </CardContent>
         </Card>
       ))}
-    </div>
+    </main>
   );
 };
 

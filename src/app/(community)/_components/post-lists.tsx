@@ -17,13 +17,13 @@ const PostLists = async () => {
   const data = await response.json();
 
   return (
-    <div className="mx-auto px-4 py-4">
-      <div className="xs:columns-1 gap-4 sm:columns-2 md:columns-2 lg:columns-3 xl:columns-4">
+    <section className="mx-auto px-4 py-4">
+      <ul className="gap-4 xs:columns-1 sm:columns-2 md:columns-2 lg:columns-3 xl:columns-4">
         {data.posts.map(item => (
           <PostListItem key={item.id} item={item} />
         ))}
-      </div>
-    </div>
+      </ul>
+    </section>
   );
 };
 
