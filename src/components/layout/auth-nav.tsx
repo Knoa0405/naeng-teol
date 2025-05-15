@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  NavigationMenuItem,
-  NavigationMenuList,
-} from "@radix-ui/react-navigation-menu";
+import { NavigationMenuItem } from "@radix-ui/react-navigation-menu";
 
 import NavLink from "./nav-link";
 
@@ -14,13 +11,13 @@ const AuthNav = () => {
   ];
 
   return (
-    <NavigationMenuList className="flex items-center gap-2">
+    <>
       {navLinks.map(link => (
         <NavigationMenuItem key={link.href}>
           <NavLink href={link.href} label={link.label} />
         </NavigationMenuItem>
       ))}
-    </NavigationMenuList>
+    </>
   );
 };
 

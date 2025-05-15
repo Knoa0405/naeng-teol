@@ -1,4 +1,5 @@
 "use client";
+
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -20,22 +21,20 @@ const MainNav = () => {
   ];
 
   return (
-    <nav className="flex items-center justify-center space-x-2 pt-4 md:space-x-4 lg:space-x-8">
-      <NavigationMenu className="scrollbar-hide max-xs:w-48 flex items-center gap-2 max-sm:w-60 max-sm:overflow-x-scroll lg:gap-8">
-        <NavigationMenuList className="flex items-center gap-2 lg:gap-8">
-          {navigationItems.map(item => (
-            <NavigationMenuItem key={item.href}>
-              <NavLink href={item.href} label={item.label} />
-            </NavigationMenuItem>
-          ))}
-        </NavigationMenuList>
+    <NavigationMenu className="flex items-center justify-center space-x-2 pt-4 md:space-x-4 lg:space-x-8">
+      <NavigationMenuList className="flex items-center gap-2 scrollbar-hide max-sm:w-60 max-sm:overflow-x-scroll max-xs:w-48 lg:gap-8">
+        {navigationItems.map(item => (
+          <NavigationMenuItem key={item.href}>
+            <NavLink href={item.href} label={item.label} />
+          </NavigationMenuItem>
+        ))}
         <AuthGuard>
           <AuthNav />
         </AuthGuard>
-      </NavigationMenu>
+      </NavigationMenuList>
       <SessionSign />
       <ThemeToggle />
-    </nav>
+    </NavigationMenu>
   );
 };
 
