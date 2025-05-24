@@ -9,7 +9,6 @@ import { NavigationMenuItem } from "@radix-ui/react-navigation-menu";
 import ThemeToggle from "@/components/theme-toggle";
 
 import AuthGuard from "./auth-guard";
-import AuthNav from "./auth-nav";
 
 import NavLink from "./nav-link";
 import SessionSign from "./session-sign";
@@ -18,6 +17,8 @@ const MainNav = () => {
   const navigationItems = [
     { label: "냉장고 털기", href: "/" },
     { label: "커뮤니티", href: "/community" },
+    { label: "내 좋아요", href: "/users/me/likes", authOnly: true },
+    { label: "내 레시피", href: "/users/me/recipes", authOnly: true },
   ];
 
   return (
@@ -25,11 +26,10 @@ const MainNav = () => {
       <NavigationMenuList className="flex items-center gap-2 scrollbar-hide max-sm:w-52 max-sm:overflow-x-scroll max-xs:w-48 lg:gap-8">
         <AuthGuard>
           {navigationItems.map(item => (
-            <NavigationMenuItem key={item.href}>
+            <NavigationMenuItem key={item.href} data-auth-only={item.authOnly}>
               <NavLink href={item.href} label={item.label} />
             </NavigationMenuItem>
           ))}
-          <AuthNav />
         </AuthGuard>
       </NavigationMenuList>
       <SessionSign />
