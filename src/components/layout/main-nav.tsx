@@ -21,14 +21,14 @@ const MainNav = () => {
   ];
 
   return (
-    <NavigationMenu className="flex items-center justify-center space-x-2 pt-4 md:space-x-4 lg:space-x-8">
-      <NavigationMenuList className="flex items-center gap-2 scrollbar-hide max-sm:w-60 max-sm:overflow-x-scroll max-xs:w-48 lg:gap-8">
-        {navigationItems.map(item => (
-          <NavigationMenuItem key={item.href}>
-            <NavLink href={item.href} label={item.label} />
-          </NavigationMenuItem>
-        ))}
+    <NavigationMenu className="flex items-center justify-center space-x-2 p-4 md:space-x-4 lg:space-x-8">
+      <NavigationMenuList className="flex items-center gap-2 scrollbar-hide max-sm:w-52 max-sm:overflow-x-scroll max-xs:w-48 lg:gap-8">
         <AuthGuard>
+          {navigationItems.map(item => (
+            <NavigationMenuItem key={item.href}>
+              <NavLink href={item.href} label={item.label} />
+            </NavigationMenuItem>
+          ))}
           <AuthNav />
         </AuthGuard>
       </NavigationMenuList>
