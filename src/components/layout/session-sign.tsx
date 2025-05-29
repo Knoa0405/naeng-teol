@@ -10,7 +10,7 @@ const SessionSign = () => {
 
   if (session.status === "loading") {
     return (
-      <div className="flex h-10 w-20 items-center justify-center rounded-md bg-gray-200" />
+      <div className="flex h-10 w-20 items-center justify-center rounded-md bg-gray-100" />
     );
   }
 
