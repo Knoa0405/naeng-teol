@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { useRouter } from "next/navigation";
 
+import useSWR from "swr";
+
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Loader from "@/components/ui/loader";
-import { api } from "@/lib/api-helper";
+import { fetcher } from "@/lib/api-helper";
+
 import { TPostLike } from "@/types/posts/like";
 
 type TLike = TPostLike & {
@@ -24,20 +25,13 @@ type TLike = TPostLike & {
 
 const LikeList = () => {
   const router = useRouter();
-  const [likes, setLikes] = useState<TLike[]>([]);
-  const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    const fetchLikes = async () => {
-      const response = await api.get(`/api/users/me/likes`);
-      const data = (await response.json()) as TLike[];
-      setLikes(data);
-    };
+  const { data: likes, isLoading } = useSWR<TLike[]>(
+    "/api/users/me/likes",
+    fetcher,
+  );
 
-    startTransition(fetchLikes);
-  }, []);
-
-  if (isPending) {
+  if (isLoading || !likes) {
     return (
       <section className="mx-auto flex h-screen items-center justify-center">
         <Loader />
