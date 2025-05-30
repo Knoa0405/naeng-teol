@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useSession } from "next-auth/react";
+import useSWR from "swr";
 
 import { deletePostLike, postPostLike } from "@/actions";
 import { useToast } from "@/components/hooks/use-toast";
-import { api } from "@/lib/api-helper";
+import { fetcher } from "@/lib/api-helper";
+import { TPostLike } from "@/types/posts/like";
+
 interface IUseGetLikeProps {
   postId: string;
 }
@@ -14,30 +17,21 @@ const useGetLike = ({ postId }: IUseGetLikeProps) => {
   const [liked, setLiked] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    const getLike = async () => {
-      // TODO: session 을 가져오려면 클라이언트에서 호출해야 하는데 서버에서 호출하면 안됨
-      // 이유는 클라이언트에서는 브라우저 쿠키를 사용하여 세션을 관리하기 때문에 서버액션이나 서버 컴포넌트 호출하면 쿠키를 가져오지 못하기 때문
-      // 서버 액션에서 인위적으로 쿠키를 넣어주는 방법도 있지만 아직은 클라이언트에서 호출하는 방법으로 해결
-      try {
-        const response = await api.get(`/api/posts/${postId}/like`, {
-          cache: "no-store",
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data !== null) {
+  const { error } = useSWR<TPostLike>(
+    session.status === "authenticated" ? `/api/posts/${postId}/like` : null,
+    url =>
+      fetcher(url, {
+        cache: "no-store",
+      }),
+    {
+      onSuccess: data => {
+        if (!data) return;
+        if (data.postId === Number(postId)) {
           setLiked(true);
         }
-      } catch (error) {
-        console.error(error, "error in useGetLike");
-      }
-    };
-
-    if (session.status === "authenticated") {
-      getLike();
-    }
-  }, [postId, toast, session]);
+      },
+    },
+  );
 
   const handlePostLike = async () => {
     try {
@@ -65,7 +59,7 @@ const useGetLike = ({ postId }: IUseGetLikeProps) => {
     }
   };
 
-  return { liked, handlePostLike, handleDeleteLike };
+  return { liked, handlePostLike, handleDeleteLike, error };
 };
 
 export default useGetLike;
