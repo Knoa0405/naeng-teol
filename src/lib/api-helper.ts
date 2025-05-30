@@ -2,7 +2,8 @@ import ky, { HTTPError } from "ky";
 
 import { isProduction } from "@/constants";
 
-export const fetcher = <T>(url: string): Promise<T> => api.get(url).json();
+export const fetcher = <T>(url: string, options?: RequestInit): Promise<T> =>
+  api.get(url, options).json();
 
 export const api = ky.create({
   credentials: "include",
