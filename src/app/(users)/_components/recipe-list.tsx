@@ -1,33 +1,20 @@
-import { useState, useTransition } from "react";
-
-import { useEffect } from "react";
-
 import { useRouter } from "next/navigation";
+
+import useSWR from "swr";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Loader from "@/components/ui/loader";
-import { api } from "@/lib/api-helper";
+import { fetcher } from "@/lib/api-helper";
 import { TPost } from "@/types/posts";
 
 const RecipeList = () => {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [data, setData] = useState<TPost[]>([]);
+  const { data = [], isLoading } = useSWR<TPost[]>(
+    "/api/users/me/recipes",
+    fetcher,
+  );
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await api.get("/api/users/me/recipes");
-
-      if (response.ok) {
-        const data = (await response.json()) as TPost[];
-        setData(data);
-      }
-    };
-
-    startTransition(fetchData);
-  }, []);
-
-  if (isPending) {
+  if (isLoading) {
     return (
       <section className="mx-auto flex h-screen items-center justify-center">
         <Loader />
