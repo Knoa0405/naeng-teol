@@ -116,9 +116,10 @@ const IngredientsForm = () => {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <h3 className="text-xl font-bold">식재료를 추가해주세요</h3>
-      <span className="text-sm text-gray-500">
-        버튼을 누르고 기다리면 레시피가 나와요
+      <span className="text-center text-sm text-gray-500">
+        냉장고 속 사진을 찍어서 식재료를 추출해보세요.
+        <br />
+        레시피 생성 버튼을 누르고 기다리면 레시피가 나와요.
       </span>
       <PreviewImage imagePreviewURL={imagePreviewURL} />
       <form
@@ -145,7 +146,7 @@ const IngredientsForm = () => {
           render={({ field }) => (
             <TagsInput
               id="ingredients"
-              placeholder="식재료를 입력해주세요"
+              placeholder="식재료를 입력하고 엔터를 눌러주세요"
               value={field.value}
               onValueChange={field.onChange}
             />
