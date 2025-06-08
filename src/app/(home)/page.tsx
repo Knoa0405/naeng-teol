@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col gap-4 px-4 py-8">
       <Image
-        src="/refrigerator.png"
+        src="/refrigerator.avif"
         alt="refrigerator"
         width={80}
         height={80}

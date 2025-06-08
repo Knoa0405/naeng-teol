@@ -31,7 +31,7 @@ const RecipeImage = ({ imagePath, isLoading }: RecipeImageProps) => {
           src={
             imagePath
               ? `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${imagePath}`
-              : "/placeholder.png"
+              : "/placeholder.avif"
           }
           alt="generated image from ai"
           fill
