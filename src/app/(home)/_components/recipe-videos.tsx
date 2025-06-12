@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import YoutubeVideo from "@/components/common/youtube-video";
 import { useRecipeStore } from "@/store";
 
 type Video = {
@@ -64,12 +65,11 @@ const RecipeVideos = () => {
   return (
     <div className="grid grid-cols-2 gap-4 pt-4">
       {videos.map(video => (
-        <iframe
+        <YoutubeVideo
           key={video.id.videoId}
-          src={video.embedUrl}
-          className="aspect-video w-full rounded-sm"
-          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
+          title={video.snippet.title}
+          videoSrc={video.embedUrl}
+          thumbnail={video.snippet.thumbnails.default}
         />
       ))}
     </div>
