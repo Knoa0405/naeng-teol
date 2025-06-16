@@ -11,8 +11,8 @@ const CommentList = async ({ postId }: CommentListProps) => {
   const response = await api.get<{ comments: TComment[] }>(
     `posts/${postId}/comments`,
     {
-      cache: "no-store",
       next: {
+        revalidate: 3600,
         tags: [`posts/${postId}/comments`],
       },
     },

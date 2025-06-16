@@ -4,11 +4,7 @@ import { Button } from "./button";
 
 const SignOut = () => {
   return (
-    <form
-      action={async () => {
-        await signOutAction();
-      }}
-    >
+    <form action={signOutAction}>
       <Button type="submit">로그아웃</Button>
     </form>
   );

@@ -1,19 +1,11 @@
-"use client";
-
 import React from "react";
 
-import { useSession } from "next-auth/react";
+import { auth } from "@/auth";
 
-const AuthOnly = ({ children }: { children: React.ReactNode }) => {
-  const session = useSession();
+const AuthOnly = async ({ children }: { children: React.ReactNode }) => {
+  const session = await auth();
 
-  if (session.status === "loading") {
-    return (
-      <div className="flex h-10 w-20 items-center justify-center rounded-md bg-gray-100" />
-    );
-  }
-
-  if (session.status !== "authenticated") return null;
+  if (!session) return null;
 
   return <>{children}</>;
 };

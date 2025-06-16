@@ -1,20 +1,11 @@
-"use client";
-
-import { useSession } from "next-auth/react";
-
+import { auth } from "@/auth";
 import SignIn from "@/components/ui/sign-in";
 import SignOut from "@/components/ui/sign-out";
 
-const SessionSign = () => {
-  const session = useSession();
+const SessionSign = async () => {
+  const session = await auth();
 
-  if (session.status === "loading") {
-    return (
-      <div className="flex h-10 w-32 items-center justify-center rounded-md bg-gray-100" />
-    );
-  }
-
-  return <>{session.data?.user?.id ? <SignOut /> : <SignIn />}</>;
+  return <>{session?.user?.id ? <SignOut /> : <SignIn />}</>;
 };
 
 export default SessionSign;
