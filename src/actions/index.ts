@@ -159,6 +159,7 @@ export const postComment = async ({
 
   if (response.ok) {
     revalidateTag(`posts/${postId}/comments`);
+    revalidateTag("posts");
   }
 
   return response.json();

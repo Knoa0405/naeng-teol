@@ -4,6 +4,13 @@ import PostDetail from "@/posts-components/post-detail";
 import { IRouteParams } from "@/types/common";
 import { TPost, TPostParams } from "@/types/posts";
 
+export const generateStaticParams = async () => {
+  const response = await api.get<{ posts: TPost[] }>("posts");
+  const data = await response.json();
+
+  return data.posts.map(post => ({ id: post.id.toString() }));
+};
+
 export const generateMetadata = async ({
   params,
 }: IRouteParams<{
@@ -11,7 +18,12 @@ export const generateMetadata = async ({
 }>) => {
   const { id } = await params;
 
-  const response = await api.get<TPost>(`posts/${id}`);
+  const response = await api.get<TPost>(`posts/${id}`, {
+    cache: "force-cache",
+    next: {
+      tags: [`posts/${id}`],
+    },
+  });
 
   const data = await response.json();
 

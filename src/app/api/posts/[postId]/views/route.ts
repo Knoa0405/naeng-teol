@@ -56,7 +56,11 @@ export const PATCH = async (
     return Response.json({ views: post.views });
   }
 
-  const response = await api.get<{ views: number }>(`posts/${postId}/views`);
+  const response = await api.get<{ views: number }>(`posts/${postId}/views`, {
+    next: {
+      revalidate: 60 * 60 * 12,
+    },
+  });
 
   const data = await response.json();
 

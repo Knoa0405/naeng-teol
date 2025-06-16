@@ -19,8 +19,8 @@ interface IPostContentProps {
 
 const PostContent = async ({ postId }: IPostContentProps) => {
   const response = await api.get<TPost>(`posts/${postId}`, {
+    cache: "force-cache",
     next: {
-      revalidate: 3600,
       tags: [`posts/${postId}`],
     },
   });

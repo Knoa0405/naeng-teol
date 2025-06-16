@@ -8,11 +8,7 @@ const PROVIDER_LOGO_PATH = "https://authjs.dev/img/providers";
 
 const SignIn = () => {
   return (
-    <form
-      action={async () => {
-        await signInWithGoogle();
-      }}
-    >
+    <form action={signInWithGoogle}>
       <Button type="submit" variant="outline" className="gap-2">
         <Image
           src={`${PROVIDER_LOGO_PATH}/google.svg`}
