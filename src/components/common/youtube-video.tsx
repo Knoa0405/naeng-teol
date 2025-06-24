@@ -38,9 +38,13 @@ const YoutubeVideo = ({ title, videoSrc, thumbnail }: YoutubeVideoProps) => {
 
   return (
     <MediaPlayer
+      viewType="video"
+      logLevel="warn"
+      crossOrigin
+      playsInline
       title={title}
       src={videoSrc}
-      aspectRatio={`${thumbnail.width} / ${thumbnail.height}`}
+      aspectRatio={`${thumbnail.height} / ${thumbnail.width}`}
       onError={() => setError(true)}
       onCanPlay={() => setReady(true)}
       load="eager"
