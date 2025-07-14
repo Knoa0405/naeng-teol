@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+
 import YoutubeVideo from "@/components/common/youtube-video";
 import { useRecipeStore } from "@/store";
+
+import "swiper/css";
 
 type Video = {
   kind: string;
@@ -42,7 +46,6 @@ type Video = {
 
 const RecipeVideos = () => {
   const [videos, setVideos] = useState<Video[]>([]);
-
   const recipe = useRecipeStore(state => state.recipe);
 
   useEffect(() => {
@@ -63,16 +66,21 @@ const RecipeVideos = () => {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4 pt-4">
-      {videos.map(video => (
-        <YoutubeVideo
-          key={video.id.videoId}
-          title={video.snippet.title}
-          videoSrc={video.embedUrl}
-          thumbnail={video.snippet.thumbnails.default}
-        />
-      ))}
-    </div>
+    <section className="flex justify-center pt-10">
+      <div className="h-[1430px] w-[740px]">
+        <Swiper direction="horizontal" slidesPerView={2} spaceBetween={40}>
+          {videos.map(video => (
+            <SwiperSlide key={video.id.videoId}>
+              <YoutubeVideo
+                title={video.snippet.title}
+                videoSrc={video.embedUrl}
+                thumbnail={video.snippet.thumbnails.default}
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+    </section>
   );
 };
 
